@@ -1,0 +1,23 @@
+nav {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  padding-top: 50px;
+  height: 100%;
+  position: fixed;
+  ul {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+
+    li {
+      list-style-type: none;
+
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}

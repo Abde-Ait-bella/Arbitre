@@ -1,0 +1,26 @@
+.addRapport {
+    background-color: var(--light);
+    font-family: Amiri Quran;
+    font-weight: 600;
+
+    .btn-primary {
+        background-color: #14161d;
+        border-color: #14161d;
+        color: #6C7293;
+
+        &:hover {
+            background-color: #ffc107;
+            border-color: #9ea04c;
+            color: #6C7293;
+        }
+    }
+    .moin:hover{
+        background-color: #dc3545;
+        border-color: #a5313c;
+        color: #6C7293;
+    }
+    .valider{
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+}

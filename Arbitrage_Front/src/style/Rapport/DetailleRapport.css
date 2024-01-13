@@ -1,0 +1,521 @@
+.detailleRapport {
+  margin-top: 50px;
+  padding: 25px;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.detailleRapport h1 {
+  font-family: 'El Messiri', sans-serif;
+}
+
+.detailleRapport .images {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detailleRapport .images .logoLigue {
+  left: 25px;
+  width: 238px;
+  height: 112px;
+}
+
+.detailleRapport .images .titleLigue {
+  width: 337px;
+  height: 50px;
+  opacity: 0.5;
+}
+
+.detailleRapport .sub-table-1 {
+  width: 49.5%;
+}
+
+.detailleRapport .sub-table-1 .th-border {
+  border-left: none;
+}
+
+.detailleRapport .sub-table-2 {
+  width: 50.5%;
+}
+
+.detailleRapport .sub-table-2 .th-border {
+  border-left: none;
+}
+
+@media screen and (max-width: 815px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 53px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 74.01px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 78.5px;
+  }
+}
+
+  .btn_print{
+    border-radius: 5px;
+    border: solid 3px;
+    background-color: #fff;
+    border-color: #6C7293;
+  }
+  .btn_print:hover{
+    background-color: #c0c0c0;
+    border: solid 3px;
+  }
+
+  .btn_print i:hover{
+    color: #000;
+  }
+
+@media screen and (max-width: 800px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 53px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 73.5px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 78px;
+  }
+}
+
+@media screen and (max-width: 766px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    left: 53px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 255px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 261px;
+  }
+}
+
+@media screen and (max-width: 574px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    left: 53px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 221px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 225px;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 108px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 152px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 156px;
+  }
+}
+
+@media screen and (max-width: 415px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 97px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 145px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 147px;
+  }
+}
+
+@media screen and (max-width: 412px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    left: 53px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 143px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 147px;
+  }
+}
+
+@media screen and (max-width: 391px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    left: 53px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 132px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 136px;
+  }
+}
+
+@media screen and (max-width: 376px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 90px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 125px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 128.5px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 70px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 117.5px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 121px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .detailleRapport .images {
+    display: block;
+    position: relative;
+    justify-content: center;
+    padding-bottom: 95px;
+  }
+
+  .detailleRapport .images .logoLigue {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+  }
+
+  .detailleRapport .images .titleLigue {
+    width: 115px;
+    height: 17px;
+    opacity: 0.5;
+    position: absolute;
+    top: 17px;
+  }
+
+  .detailleRapport .images h1 {
+    font-family: "El Messiri", sans-serif;
+    position: absolute;
+    top: 67px;
+    font-size: small;
+    right: 59px;
+    width: 111px;
+  }
+
+  .detailleRapport .sub-table-1 {
+    width: 97.5px;
+  }
+
+  .detailleRapport .sub-table-2 {
+    width: 101px;
+  }
+}
