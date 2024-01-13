@@ -43,7 +43,7 @@ function DetailleRapport() {
                 setCategories(respense.data)
             })
 
-        axios.get('http://localhost:8000/api/avertissemet')
+        axios.get('http://localhost:8000/api/avertissement')
             .then((respense) => {
                 setAvertissemets(respense.data)
             })
@@ -165,8 +165,6 @@ function DetailleRapport() {
     const restBUT_2 = Array.from({ length: RestBUT2 }, (_, index) => index + 1);
     const restBUT_1 = Array.from({ length: RestBUT1 }, (_, index) => index + 1);
 
-    console.log(RestBUT1)
-
     //Gestion column table Changements 
 
     const [RestCH1, setRestCH1] = useState();
@@ -189,10 +187,7 @@ function DetailleRapport() {
     const restCH_2 = Array.from({ length: RestCH2 }, (_, index) => index + 1);
     const restCH_1 = Array.from({ length: RestCH1 }, (_, index) => index + 1);
 
-    console.log(RestCH1);
-
-
-
+    
     return (
         <>
             {

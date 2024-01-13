@@ -1,27 +1,24 @@
 import { React, useEffect, useState } from "react";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, Filler, ArcElement } from 'chart.js';
-import { Bar, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, Filler, ArcElement, RadialLinearScale } from 'chart.js';
+import { Bar, Pie, PolarArea } from "react-chartjs-2";
 import axios from "axios";
 
 import { Line } from 'react-chartjs-2';
 // import faker from 'faker';
 
 ChartJS.register(
+    ArcElement,
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
+    BarElement,
+    RadialLinearScale,
     Title,
     Tooltip,
     Filler,
     Legend
 );
-
-
-
-
-
-ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function Home() {
 
@@ -116,7 +113,10 @@ function Home() {
     const senior_2 = matcheData?.filter((m) => m.categorie_id === 5)
     const senior_3 = matcheData?.filter((m) => m.categorie_id === 6)
 
-    const options_2 = {
+    const compBotola = matcheData?.filter((m) => m.competition_id === 1)
+    const compKaas = matcheData?.filter((m) => m.competition_id === 2)
+
+    const options_Line = {
         responsive: true,
         scales: {
             x: {
@@ -127,6 +127,15 @@ function Home() {
                         size: 14,
                     }
                 },
+            },  
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#6C7293', // Change x-axis label color
+                    callback: function (value) {
+                        return value.toLocaleString(); // Format the value as needed
+                      },
+                },
             },
         },
         plugins: {
@@ -135,73 +144,7 @@ function Home() {
             },
             title: {
                 display: true,
-                text: 'عدد المباريات بالشهور',
-                color: 'white',
-                font: {
-                    size: 19,
-                    weight: 'bold',
-                }
-            },
-            legend: {
-                labels: {
-                    color: '#6C7293', // Change legend text color
-                    font: {
-                        size: 16,
-                        weight: 'bold',
-                    }
-                },
-            },
-        },
-    };
-
-    const labels = ['يوليوز', 'يونيو', 'ماي', 'ابريل', 'مارس', 'فبراير', 'يناير'];
-
-    const data_2 = {
-        labels,
-        datasets: [
-            {
-                fill: true,
-                label: 'عدد المباريات',
-                data: [matche_07?.length, matche_06?.length, matche_05?.length, matche_04?.length, matche_03?.length, matche_02?.length, matche_01?.length],
-                borderColor: 'rgb(53, 162, 235)',
-                backgroundColor: 'rgba(53, 162, 235, 0.5)',
-            },
-        ],
-    };
-
-    const data_3 = {
-        labels: ['الصغار', 'الفتيان', 'الشبان', 'الشرفي التاني', 'الشرفي التاني', 'الشرفي الممتاز'],
-        datasets: [
-            {
-                label: 'عدد المباريات',
-                data: [minim?.length, cade?.length, jenior?.length, senior_1?.length, senior_2?.length, senior_3?.length],
-                backgroundColor: [
-                    '#b9ff07',
-                    '#fff707',
-                    '#ffb007',
-                    '#ff7707',
-                    '#ff5607',
-                    '#ff0707',
-                ],
-                borderColor: [
-                    '#6C7293',
-                    '#6C7293',
-                    '#6C7293',
-                    '#6C7293',
-                    '#6C7293',
-                    '#6C7293',
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const options_3 = {
-        maintainAspectRatio : false ,
-        plugins : {
-            title: {
-                display: true,
-                text: 'الفئات',
+                text: 'المبـاريــــــــات',
                 color: 'white',
                 font: {
                     size: 20,
@@ -217,10 +160,66 @@ function Home() {
                     }
                 },
             },
+        },
+    };
+
+    const data_Line = {
+        labels : ['يوليوز', 'يونيو', 'ماي', 'ابريل', 'مارس', 'فبراير', 'يناير'],
+        datasets: [
+            {
+                fill: true,
+                label: 'عدد المباريات',
+                data: [matche_07?.length, matche_06?.length, matche_05?.length, matche_04?.length, matche_03?.length, matche_02?.length, matche_01?.length],
+                borderColor: 'rgb(53, 162, 235)',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+        ],
+    };
+
+    const data_Pie = {
+        labels: ['كأس العرش', 'البطولة'],
+        datasets: [
+            {
+                label: 'عدد المباريات',
+                data: [compKaas?.length, compBotola?.length],
+                backgroundColor: [
+                    '#fff707',
+                    '#ff5607',
+                ],
+                borderColor: [
+                    '#6C7293',
+                    '#6C7293',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const options_Pie = {
+        maintainAspectRatio : false ,
+        plugins : {
+            title: {
+                display: true,
+                text: 'المنافسات',
+                color: '#6C7293',
+                font: {
+                    size: 35,
+                    weight: 'bold',
+                }
+            },
+            legend: {
+                labels: {
+                    color: '#6C7293', // Change legend text color
+                    font: {
+                        size: 16,
+                        weight: 'bold',
+                    }
+                },
+            },
         }
     }
 
-    const options = {
+    const optionsBar = {
         // responsive: true,
         scales: {
             x: {
@@ -234,18 +233,22 @@ function Home() {
             },
             y: {
                 beginAtZero: true,
-                // ticks: {
-                //     font: {
-                //         size: 1,
-                //     } // Change y-axis label color
-                // },
+                ticks: {
+                    color : '#6C7293',
+                    // font: {
+                    //     size: 1,
+                    // } // Change y-axis label color
+                    // callback: function (value) {
+                    //     return value.toLocaleString(); // Format the value as needed
+                    //   },
+                },
             },
         },
 
         plugins: {
             title: {
                 display: true,
-                text: 'عدد البطاقات بالشهور',
+                text: 'البطـاقـــــــــات',
                 color: 'white',
                 font: {
                     size: 19,
@@ -264,7 +267,7 @@ function Home() {
         },
     }
 
-    const data = {
+    const dataBar = {
         labels: ['يوليوز', 'يونيو', 'ماي', 'ابريل', 'مارس', 'فبراير', 'يناير'],
         datasets: [
             {
@@ -280,6 +283,48 @@ function Home() {
         ],
     };
 
+    const dataPolarAria = {
+        labels: ['الصغار', 'الفتيان', 'الشبان', 'الشرفي التاني', 'الشرفي التاني', 'الشرفي الممتاز'],
+        datasets: [
+          {
+            label: 'عدد المباريات',
+            data: [minim?.length, cade?.length, jenior?.length, senior_1?.length, senior_2?.length, senior_3?.length],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.5)',
+              'rgba(54, 162, 235, 0.5)',
+              'rgba(255, 206, 86, 0.5)',
+              'rgba(75, 192, 192, 0.5)',
+              'rgba(153, 102, 255, 0.5)',
+              'rgba(255, 159, 64, 0.5)',
+            ],
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      const optionsPolarAria = {
+        // responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'الفئات',
+                color: '#6C7293',
+                font: {
+                    size: 35,
+                    weight: 'bold',
+                }
+            },
+            legend: {
+                labels: {
+                    color: '#6C7293', // Change legend text color
+                    font: {
+                        size: 16,
+                        weight: 'bold',
+                    }
+                },
+            },
+        },
+    }
     return (
         <>
             {/* <!-- Sale & Revenue Start --> */}
@@ -296,22 +341,22 @@ function Home() {
                     </div> */}
                     <div class="col-sm-6 col-xl-6">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Bar data={data} options={options} />
+                            <Bar data={dataBar} options={optionsBar} />
                         </div>
                     </div>
                     <div class="col-sm-6 col-xl-6">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Line options={options_2} data={data_2} />
+                            <Line options={options_Line} data={data_Line} />
                         </div>
                     </div>
                     <div className="col-sm-12 col-xl-12 pt-4" >
                         <div className="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Pie data={data_3} options={options_3} style={{ height: '500px' }}/>
+                            <Pie data={data_Pie} options={options_Pie} style={{ height: '500px' }}/>
                         </div>
                     </div>
                     <div className="col-sm-12 col-xl-12 pt-4" >
                         <div className="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Pie data={data_3} options={options_3} style={{ height: '500px' }}/>
+                            <PolarArea data={dataPolarAria} options={optionsPolarAria}/>
                         </div>
                     </div>
                     {/* <div class="col-sm-6 col-xl-3">

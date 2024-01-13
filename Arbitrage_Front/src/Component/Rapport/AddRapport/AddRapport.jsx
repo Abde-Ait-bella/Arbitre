@@ -23,7 +23,7 @@ function AddRapport() {
                 navigate('/rapport')
             }
             if (dataAvert) {
-                const responseAvert = axios.post('http://localhost:8000/api/avertissemet', dataAvert);
+                const responseAvert = axios.post('http://localhost:8000/api/avertissement', dataAvert);
                 console.log('Server response Avert:', responseAvert);
                 console.log(dataAvert)
             }
