@@ -58,6 +58,7 @@ import DeletedVille from './Component/Villes/DeletedVille';
 
 
 
+
 function App() {
 
   useEffect(() => {
@@ -71,7 +72,7 @@ function App() {
     }
     spinner();  // Call the spinner function when the component mounts
 
-    // Clean up (optional): If you want to clear the timeout when the component unmounts
+    
     return () => clearTimeout(spinner);
   }, []);
 
@@ -99,7 +100,7 @@ function App() {
         <div className={`sidebar ps-4 pb-3 ${isSidebarOpen ? 'open' : ''}`}>
           <nav className="navbar bg-secondary navbar-dark" >
             <Link to='/' className="navbar-brand mx-4 mb-3 mt-2">
-              <h3 class="logo"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i>ArbiTre</h3>
+              <h3 className="logo"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i>ArbiTre</h3>
             </Link>
             <div class="d-flex align-items-center me-5 mb-4">
               <div class="position-relative">
@@ -125,9 +126,9 @@ function App() {
               </div>
               <div class="nav-item dropdown mt-1 me-2">
                 <NavLink to={'/composants'} className={({ isActive }) => isActive ? "nav-link dropdown-toggle active show Active" : "nav-link dropdown-toggle"}
-                 data-bs-toggle="dropdown" ><i class="fa-solid fa-screwdriver-wrench me-2 ms-3"></i>المكونات</NavLink>
+                  data-bs-toggle="dropdown" ><i class="fa-solid fa-screwdriver-wrench me-2 ms-3"></i>المكونات</NavLink>
                 <div class="dropdown-menu bg-transparent border-0"
-                  >
+                >
                   <Link to="/composants/stades" className="dropdown-item" >الملاعب<i class="fa-solid fa-ring me-3 mt-1"></i></Link>
                   <Link to="/composants/clubs" className="dropdown-item">الأندية<i class="fa-solid fa-shield me-4 mt-1"></i></Link>
                   <Link to="/composants/arbitres" className="dropdown-item">الحكام <i class="fa-solid fa-clone me-4 mt-1"></i></Link>
@@ -191,7 +192,7 @@ function App() {
               {/* <Route path='/composants/AddedMatche' element={<AddedMatche />} /> */}
               <Route path='/updatedMatche' element={<UpdatedMatche />} />
 
-              
+
               <Route path="/composants/stades" element={<Stades />} />
               <Route path="/composants/addStade" element={<AddStade />} />
               <Route path='/composants/DeletedStade' element={<DeletedStade />} />

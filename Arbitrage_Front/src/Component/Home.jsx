@@ -183,12 +183,12 @@ function Home() {
                 label: 'عدد المباريات',
                 data: [compKaas?.length, compBotola?.length],
                 backgroundColor: [
-                    '#fff707',
-                    '#ff5607',
+                    '#ffb007',
+                    '#bf0231',
                 ],
                 borderColor: [
-                    '#6C7293',
-                    '#6C7293',
+                    '#c78802',
+                    '#8c0124',
                 ],
                 borderWidth: 1,
             },
@@ -219,7 +219,7 @@ function Home() {
         }
     }
 
-    const optionsBar = {
+    const optionsBar = {    
         // responsive: true,
         scales: {
             x: {
@@ -233,14 +233,12 @@ function Home() {
             },
             y: {
                 beginAtZero: true,
+                precision: 0,
                 ticks: {
                     color : '#6C7293',
                     // font: {
                     //     size: 1,
                     // } // Change y-axis label color
-                    // callback: function (value) {
-                    //     return value.toLocaleString(); // Format the value as needed
-                    //   },
                 },
             },
         },

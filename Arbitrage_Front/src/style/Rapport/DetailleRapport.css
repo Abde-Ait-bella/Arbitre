@@ -166,14 +166,14 @@
     top: 17px;
   }
 
-  .detailleRapport .images h1 {
+  /* .detailleRapport .images h1 {
     font-family: "El Messiri", sans-serif;
     position: absolute;
     top: 67px;
     font-size: small;
     left: 53px;
     width: 111px;
-  }
+  } */
 
   .detailleRapport .sub-table-1 {
     width: 255px;

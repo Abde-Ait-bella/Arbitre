@@ -46,7 +46,7 @@ Route::delete('/matche/{id}' , [matcheController::class, 'destroy']);
 Route::get('/avertissement' , [AvertissementCotroller::class, 'index']);
 Route::post('/avertissement' , [AvertissementCotroller::class, 'store']);
 Route::put('/avertissement/{id}' , [AvertissementCotroller::class, 'update']);
-Route::delete('/ /{id}' , [AvertissementCotroller::class, 'destroy']);
+Route::delete('/avertissement/{id}' , [AvertissementCotroller::class, 'destroy']);
 
 // Route::apiResource('changement', ChangementCotroller::class);
 
