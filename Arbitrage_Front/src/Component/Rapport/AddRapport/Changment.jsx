@@ -80,7 +80,7 @@ export function Changement(props) {
 
     //--------Sélection joueur entrant
 
-    const createOptionJEntr = (label: string) => ({
+    const createOptionJEntr = (label) => ({
         label : label.toUpperCase(),
         value: label.toLowerCase(),
         name: "joueur_nom_entr"
@@ -90,7 +90,7 @@ export function Changement(props) {
     const [optionsJEntr, setOptionsJEntr] = useState();
     const [valueJEntr, setValueJEntr] = useState();
 
-    const handleCreateJEntr = (inputValue: string) => {
+    const handleCreateJEntr = (inputValue) => {
         setIsLoadingJEntr(true);
         setTimeout(() => {
             const newOption = createOptionJEntr(inputValue);
@@ -123,7 +123,7 @@ export function Changement(props) {
 
     //--------Sélection du joueur sortant
 
-    const createOptionJSort = (label: string) => ({
+    const createOptionJSort = (label) => ({
         label : label.toUpperCase(),
         value: label.toLowerCase(),
         name: "joueur_nom_sort"
@@ -133,7 +133,7 @@ export function Changement(props) {
     const [optionsJSort, setOptionsJSort] = useState();
     const [valueJSort, setValueJSort] = useState();
 
-    const handleCreateSort = (inputValue: string) => {
+    const handleCreateSort = (inputValue) => {
         setIsLoadingJSort(true);
         setTimeout(() => {
             const newOption = createOptionJSort(inputValue);
@@ -166,7 +166,7 @@ export function Changement(props) {
 
     //-----Sélection licence de joueur entrant
 
-    const createOptionLicenceE = (label: string) => ({
+    const createOptionLicenceE = (label) => ({
         label : label.toUpperCase(),
         value: label.toLowerCase().replace(/\W/g, ''),
         name: "joueur_licence_entr"
@@ -178,7 +178,7 @@ export function Changement(props) {
     const [valueLicenceE, setValueLicenceE] = useState();
 
 
-    const handleCreateLicenceE = (inputValue: string) => {
+    const handleCreateLicenceE = (inputValue) => {
         setIsLoadingLicenceE(true);
         setTimeout(() => {
             const newOption = createOptionLicenceE(inputValue);
@@ -211,7 +211,7 @@ export function Changement(props) {
 
     //-----Sélection licence de joueur sortant
 
-    const createOptionLicenceS = (label: string) => ({
+    const createOptionLicenceS = (label) => ({
         label,
         value: label.toLowerCase().replace(/\W/g, ''),
         name: "joueur_licence_sort"
@@ -223,7 +223,7 @@ export function Changement(props) {
     const [valueLicenceS, setValueLicenceS] = useState();
 
 
-    const handleCreateLicenceS = (inputValue: string) => {
+    const handleCreateLicenceS = (inputValue) => {
         setIsLoadingLicenceS(true);
         setTimeout(() => {
             const newOption = createOptionLicenceS(inputValue);

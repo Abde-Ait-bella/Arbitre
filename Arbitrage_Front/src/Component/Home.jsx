@@ -1,9 +1,11 @@
 import { React, useEffect, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, Filler, ArcElement, RadialLinearScale } from 'chart.js';
 import { Bar, Pie, PolarArea } from "react-chartjs-2";
+import { axiosClinet } from "../Api/axios";
 import axios from "axios";
 
 import { Line } from 'react-chartjs-2';
+import { useNavigate } from "react-router-dom";
 // import faker from 'faker';
 
 ChartJS.register(
@@ -31,8 +33,16 @@ function Home() {
     const [matche_06, setMatche_06] = useState();
     const [matche_07, setMatche_07] = useState();
     const [avertData, setAvertData] = useState();
+    const [user, setUser] = useState();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!window.localStorage.getItem('ACCESS_TOKEN')) {
+            navigate('/login')
+        }
+        axiosClinet.get('/api/user').then(
+            (Response) => {setUser(Response.data)
+          })
         axios.get('http://localhost:8000/api/matche')
             .then((res) => {
                 setMatcheData(res.data);
@@ -139,9 +149,6 @@ function Home() {
             },
         },
         plugins: {
-            legend: {
-                // position: 'top',
-            },
             title: {
                 display: true,
                 text: 'المبـاريــــــــات',
@@ -337,6 +344,7 @@ function Home() {
                         </div>
                         </div>
                     </div> */}
+                    <h1>هاده احصاءياتك سيدي الحكم {user?.name}</h1>
                     <div class="col-sm-6 col-xl-6">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
                             <Bar data={dataBar} options={optionsBar} />

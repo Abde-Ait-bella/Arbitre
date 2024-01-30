@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link, NavLink } from "react-router-dom";
-// import { Home } from './Component/Analytic';
+import { Route, Link, NavLink, Outlet, Routes, useNavigate } from "react-router-dom";
+
 import Matches from './Component/Matche/MatchesListe';
 import UpdateMatche from './Component/Matche/UpdateMatche/UpdateMatche';
 import DeletedMatche from './Component/Matche/DeletedMatche';
@@ -55,13 +55,22 @@ import AddedVille from './Component/Villes/AddedVille';
 import UpdateVille from './Component/Villes/UpdateVille';
 import UpdatedVille from './Component/Villes/UpdatedVille';
 import DeletedVille from './Component/Villes/DeletedVille';
-
-
+import { axiosClinet } from './Api/axios';
 
 
 function App() {
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [user, setUser] = useState();
+  const [authenticated, _setAuthenticated] = useState('true' === window.localStorage.getItem('AUTHENTICATED'))
+
+
   useEffect(() => {
+
+    axiosClinet.get('/api/user').then(
+      (Response) => {setUser(Response.data)
+    })
+
     const spinner = () => {
       setTimeout(() => {
         const $spinner = $('#spinner');
@@ -72,15 +81,29 @@ function App() {
     }
     spinner();  // Call the spinner function when the component mounts
 
-    
+
     return () => clearTimeout(spinner);
   }, []);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate(); 
+
+  const logout = async () =>{
+    await axiosClinet.post('/api/logout').then(() =>{
+      window.localStorage.setItem('ACCESS_TOKEN', '')
+      // setAuthenticated(false)
+      navigate('/login')
+    })
+  }
+
+  // const setAuthenticated = (isAuthenticated) => {
+  //   // _setAuthenticated(isAuthenticated)
+  //   window.localStorage.setItem('AUTHENTICATED', isAuthenticated)
+  // }
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(prevState => !prevState);
   };
+
 
 
   return (
@@ -100,16 +123,19 @@ function App() {
         <div className={`sidebar ps-4 pb-3 ${isSidebarOpen ? 'open' : ''}`}>
           <nav className="navbar bg-secondary navbar-dark" >
             <Link to='/' className="navbar-brand mx-4 mb-3 mt-2">
-              <h3 className="logo"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i>ArbiTre</h3>
+              <h3 className="logo">
+                <i class="fa-solid fa-flag-checkered ms-2 me-3"></i>
+                {/* <img style={{ width: php'40px', height: '40px', marginLeft: '10px'}} src="./img/user.svg" alt="" /> */}
+                ArbiTre</h3>
             </Link>
             <div class="d-flex align-items-center me-5 mb-4">
               <div class="position-relative">
-                <img class="rounded-circle" src="img/Abde.jpg" alt="" style={{ width: '40px', height: '40px' }} />
+                <img class="rounded-circle" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
                 <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
               </div>
               <div class="me-3 mt-2">
-                <h6 class="mb-0">Abde Ssamad</h6>
-                <span>Admin</span>
+                <h6 class="mb-0 text-center">{user?.name}</h6>
+                <span>الحكم</span>
               </div>
             </div>
             <div class="navbar-nav w-100">
@@ -145,6 +171,7 @@ function App() {
             </div>
           </nav>
         </div>
+        <Outlet />
         {/* <!-- Sidebar End --> */}
 
         {/* <!-- Content Start --> */}
@@ -164,13 +191,13 @@ function App() {
             <div class="navbar-nav align-items-center me-auto">
               <div class="nav-item dropdown ms-4">
                 <Link href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                  <img class="rounded-circle me-lg-2 ms-2" src="img/Abde.jpg" alt="" style={{ width: '40px', height: '40px' }} />
-                  <span class="d-none d-lg-inline-flex ms-2 me-2">AbdeSsamad Ait-bella</span>
+                  <img class="rounded-circle me-lg-2 ms-2" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
+                  <span class="d-none d-lg-inline-flex ms-2 me-2">{user?.name}</span>
                 </Link>
                 <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                   <Link href="#" class="dropdown-item">My Profile</Link>
                   <Link href="#" class="dropdown-item">Settings</Link>
-                  <Link href="#" class="dropdown-item">Log Out</Link>
+                  <Link href="#" class="dropdown-item"><button onClick={logout}>Log Out</button></Link>
                 </div>
               </div>
             </div>
@@ -179,62 +206,64 @@ function App() {
 
           <div>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/rapport" element={<RapportListe />} />
-              <Route path="/detailleRapport/:id" element={<DetailleRapport />} />
-              <Route path='/addRapport' element={<AddRapport />} />
-              <Route path='/addedRapport' element={<AddedRapport />} />
+              <Route path="/" >
+                <Route index element={<Home />} />
+                <Route path="/rapport" element={<RapportListe />} />
+                <Route path="/detailleRapport/:id" element={<DetailleRapport />} />
+                <Route path='/addRapport' element={<AddRapport />} />
+                <Route path='/addedRapport' element={<AddedRapport />} />
 
-              <Route path="/matches" element={<Matches />} />
-              <Route path="/addMatche" element={<AddRapport />} />
-              <Route path='/updateMatche/:id' element={<UpdateMatche />} />
-              <Route path='/DeletedMatche' element={<DeletedMatche />} />
-              {/* <Route path='/composants/AddedMatche' element={<AddedMatche />} /> */}
-              <Route path='/updatedMatche' element={<UpdatedMatche />} />
+                <Route path="/matches" element={<Matches />} />
+                <Route path="/addMatche" element={<AddRapport />} />
+                <Route path='/updateMatche/:id' element={<UpdateMatche />} />
+                <Route path='/DeletedMatche' element={<DeletedMatche />} />
+                <Route path='/updatedMatche' element={<UpdatedMatche />} />
 
 
-              <Route path="/composants/stades" element={<Stades />} />
-              <Route path="/composants/addStade" element={<AddStade />} />
-              <Route path='/composants/DeletedStade' element={<DeletedStade />} />
-              <Route path='/composants/updateStade/:id' element={<UpdateStade />} />
-              <Route path='/composants/AddedStade' element={<AddedStade />} />
-              <Route path='/composants/updatedStade' element={<UpdatedStade />} />
+                <Route path="/composants/stades" element={<Stades />} />
+                <Route path="/composants/addStade" element={<AddStade />} />
+                <Route path='/composants/DeletedStade' element={<DeletedStade />} />
+                <Route path='/composants/updateStade/:id' element={<UpdateStade />} />
+                <Route path='/composants/AddedStade' element={<AddedStade />} />
+                <Route path='/composants/updatedStade' element={<UpdatedStade />} />
 
-              <Route path="/composants/clubs" element={<ClubListe />} />
-              <Route path="/composants/addClub" element={<AddClub />} />
-              <Route path='/composants/addedClub' element={<AddedClub />} />
-              <Route path='/composants/deletedClub' element={<DeletedClub />} />
-              <Route path='/composants/updateClub/:id' element={<UpdateClub />} />
-              <Route path='/composants/updatedClub' element={<UpdatedClub />} />
+                <Route path="/composants/clubs" element={<ClubListe />} />
+                <Route path="/composants/addClub" element={<AddClub />} />
+                <Route path='/composants/addedClub' element={<AddedClub />} />
+                <Route path='/composants/deletedClub' element={<DeletedClub />} />
+                <Route path='/composants/updateClub/:id' element={<UpdateClub />} />
+                <Route path='/composants/updatedClub' element={<UpdatedClub />} />
 
-              <Route path='/composants/arbitres' element={<ArbiTreListe />} />
-              <Route path='/composants/addArbitre' element={<AddArbitre />} />
-              <Route path='/composants/updateArbitre/:id' element={<UpdateArbitre />} />
-              <Route path='/composants/addedArbitre' element={<AddedArbitre />} />
-              <Route path='/composants/deletedArbitre' element={<DeletedArbitre />} />
-              <Route path='/composants/updatedArbitre' element={<UpdatedArbitre />} />
+                <Route path='/composants/arbitres' element={<ArbiTreListe />} />
+                <Route path='/composants/addArbitre' element={<AddArbitre />} />
+                <Route path='/composants/updateArbitre/:id' element={<UpdateArbitre />} />
+                <Route path='/composants/addedArbitre' element={<AddedArbitre />} />
+                <Route path='/composants/deletedArbitre' element={<DeletedArbitre />} />
+                <Route path='/composants/updatedArbitre' element={<UpdatedArbitre />} />
 
-              <Route path='/composants/delegue' element={<DelegueListe />} />
-              <Route path='/composants/addDelegue' element={<AddDelegue />} />
-              <Route path='/composants/updateDelegue/:id' element={<UpdateDelegue />} />
-              <Route path='/composants/addedDelegue' element={<AddedDelegue />} />
-              <Route path='/composants/deletedDelegue' element={<DeletedDelegue />} />
-              <Route path='/composants/updatedDelegue' element={<UpdatedDelegue />} />
+                <Route path='/composants/delegue' element={<DelegueListe />} />
+                <Route path='/composants/addDelegue' element={<AddDelegue />} />
+                <Route path='/composants/updateDelegue/:id' element={<UpdateDelegue />} />
+                <Route path='/composants/addedDelegue' element={<AddedDelegue />} />
+                <Route path='/composants/deletedDelegue' element={<DeletedDelegue />} />
+                <Route path='/composants/updatedDelegue' element={<UpdatedDelegue />} />
 
-              <Route path='/composants/joueur' element={<JoueurListe />} />
-              <Route path='/composants/addJoueur' element={<AddJoueur />} />
-              <Route path='/composants/updateJoueur/:id' element={<UpdateJoueur />} />
-              <Route path='/composants/addedJoueur' element={<AddedJoueur />} />
-              <Route path='/composants/deletedJoueur' element={<DeletedJoueur />} />
-              <Route path='/composants/updatedJoueur' element={<UpdatedJoueur />} />
+                <Route path='/composants/joueur' element={<JoueurListe />} />
+                <Route path='/composants/addJoueur' element={<AddJoueur />} />
+                <Route path='/composants/updateJoueur/:id' element={<UpdateJoueur />} />
+                <Route path='/composants/addedJoueur' element={<AddedJoueur />} />
+                <Route path='/composants/deletedJoueur' element={<DeletedJoueur />} />
+                <Route path='/composants/updatedJoueur' element={<UpdatedJoueur />} />
 
-              <Route path='/composants/villes' element={<VillesListe />} />
-              <Route path='/composants/addVille' element={<AddVille />} />
-              <Route path='/composants/updateVille/:id' element={<UpdateVille />} />
-              <Route path='/composants/addedVille' element={<AddedVille />} />
-              <Route path='/composants/deletedVille' element={<DeletedVille />} />
-              <Route path='/composants/updatedVille' element={<UpdatedVille />} />
+                <Route path='/composants/villes' element={<VillesListe />} />
+                <Route path='/composants/addVille' element={<AddVille />} />
+                <Route path='/composants/updateVille/:id' element={<UpdateVille />} />
+                <Route path='/composants/addedVille' element={<AddedVille />} />
+                <Route path='/composants/deletedVille' element={<DeletedVille />} />
+                <Route path='/composants/updatedVille' element={<UpdatedVille />} />
+              </ Route>
             </Routes>
+            {/* <RouterProvider router={router}/> */}
           </div>
         </div>
 

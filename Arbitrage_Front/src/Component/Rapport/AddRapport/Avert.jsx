@@ -71,7 +71,7 @@ export function Avert(props) {
 
     //--------select nom joueur
 
-    const createOptionJ = (label: string) => ({
+    const createOptionJ = (label) => ({
         label: label.toUpperCase(),
         value: label.toLowerCase(),
         name: "nom"
@@ -81,7 +81,7 @@ export function Avert(props) {
     const [optionsJ, setOptionsJ] = useState();
     const [valueJ, setValueJ] = useState();
 
-    const handleCreate = (inputValue: string) => {
+    const handleCreate = (inputValue) => {
         setIsLoadingJ(true);
         setTimeout(() => {
             const newOption = createOptionJ(inputValue);
@@ -115,7 +115,7 @@ export function Avert(props) {
 
     //-----select licence de joueur
 
-    const createOptionLicence = (label: string) => ({
+    const createOptionLicence = (label) => ({
         label: label.toUpperCase(),
         value: label.toUpperCase(),
         name: "joueur_numero_licence"
@@ -127,7 +127,7 @@ export function Avert(props) {
     const [valueLicence, setValueLicence] = useState();
 
 
-    const handleCreateLicence = (inputValue: string) => {
+    const handleCreateLicence = (inputValue) => {
         setIsLoadingLicence(true);
         setTimeout(() => {
             const newOption = createOptionLicence(inputValue);

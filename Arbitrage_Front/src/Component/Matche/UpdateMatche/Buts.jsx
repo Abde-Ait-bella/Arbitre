@@ -79,7 +79,7 @@ export function Buts(props) {
 
     //--------Sélection joueur
 
-    const createOptionJ = (label: string) => ({
+    const createOptionJ = (label) => ({
         label: label.toUpperCase(),
         value: label.toLowerCase(),
         name: "joueur_nom"
@@ -88,7 +88,7 @@ export function Buts(props) {
     const [isLoadingJ, setIsLoadingJ] = useState(false);
     const [optionsJ, setOptionsJ] = useState();
 
-    const handleCreateJ = (inputValue: string) => {
+    const handleCreateJ = (inputValue) => {
         setIsLoadingJ(true);
         setTimeout(() => {
             const newOption = createOptionJ(inputValue);
@@ -114,7 +114,7 @@ export function Buts(props) {
 
     //-----Sélection licence de joueur entrant
 
-    const createOptionLicence = (label: string) => ({
+    const createOptionLicence = (label) => ({
         label: label.toUpperCase(),
         value: label.toLowerCase(),
         name: "joueur_numero_licence"
@@ -125,7 +125,7 @@ export function Buts(props) {
     const [optionsLicence, setOptionsLicence] = useState();
 
 
-    const handleCreateLicence = (inputValue: string) => {
+    const handleCreateLicence = (inputValue) => {
         setIsLoadingLicence(true);
         setTimeout(() => {
             const newOption = createOptionLicence(inputValue);
