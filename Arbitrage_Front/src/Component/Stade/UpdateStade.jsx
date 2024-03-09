@@ -2,26 +2,35 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate, useParams } from 'react-router-dom';
+import { axiosClinet } from "../../Api/axios";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { AuthUser } from "../../AuthContext";
 
 function UpdateStade() {
 
     const [stades, setStades] = useState();
     const [villes, setVilles] = useState();
     const [updateStade, setUpdateStade] = useState();
+    const [loading, setLoading] = useState(true);
+    const [loadingUpdate, setLoadingUpdate] = useState(false);
     const navigate = useNavigate();
+    const { user } = AuthUser();
     const { id } = useParams();
 
     useEffect(() => {
         axios.get('http://localhost:8000/api/stade')
-            .then((res) => setStades(res.data))
+            .then((res) => {
+                setStades(res.data.find((s) => s.id === parseInt(id)))
+            })
         axios.get('http://localhost:8000/api/ville')
-            .then((res) => setVilles(res.data))
+            .then((res) => {
+                setVilles(res.data.filter((v) => v.user_id === user?.id || v.user_id === null))
+                setLoading(false)
+            })
     }, [])
 
 
-    const stade = stades?.find((s) => s.id === parseInt(id));
-
-    console.log(updateStade);
 
     const handleUpdateStade = (event) => {
         const { name, value } = event.target;
@@ -38,49 +47,168 @@ function UpdateStade() {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        try {
-            if (updateStade) {
-                const responseUpdateStade = axios.put(`http://localhost:8000/api/stade/${id}`, updateStade);
-                console.log('Server response AddStade:', responseUpdateStade);
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        setLoadingUpdate(true)
+        if (updateStade) {
+            await axiosClinet.put(`http://localhost:8000/api/stade/${id}`, updateStade).then(
+                (response) => {
+                    const { status } = response;
+                    if (status === 200) {
+                        setLoadingUpdate(false)
+                        navigate('/composants/updatedStade');
+                    }
+                }
+            ).catch(
+                (error) => {
+                    setLoadingUpdate(false)
+                    console.log('error', error);
+                }
+            )
+        } else {
+            setLoadingUpdate(false)
         }
-        navigate('/composants/updatedStade');
     }
-
-
 
 
     return (
         <>
-            <div className="d-flex justify-content-center my-4">
-                <div class="col-sm-12 col-xl-6 text-center">
-                    <div class="bg-secondary rounded h-100 p-4">
-                        <h4 class="mb-4">تعديل الملعب</h4>
-                        <form onSubmit={handleSubmit}>
-                            <div class="row mb-3">
-                                <label for="inputEmail3" class="col-sm-2 col-form-label"> الاسم</label>
-                                <div class="col-sm-10">
-                                    <input name="nom" value={updateStade ? updateStade?.nom : stade?.nom  } onChange={handleUpdateStade} type="text" class="form-control" id="inputEmail3" />
+            {
+                loading ?
+                    <>
+                        <div className="d-flex justify-content-center my-4 ">
+                            <div class="col-sm-12 col-xl-6 text-center d-none d-lg-block">
+                                <div class="bg-secondary rounded h-100 p-4">
+                                    <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                        <div className="row d-flex align-items-center justify-content-center">
+                                            <div className="col-md-5">
+                                                <Skeleton height={40} />
+                                            </div>
+                                        </div>
+
+                                        <div className="row mt-4">
+                                            <div className="col-2">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                            <div className="col-10">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mt-2">
+                                            <div className="col-12">
+                                                <div className="mt-2">
+                                                    <Skeleton height={40} />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mt-4 d-flex justify-content-between">
+                                            <div className="col-4">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                            <div className="col-4">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </SkeletonTheme>
                                 </div>
                             </div>
-                            <select name="ville_id" onChange={handleUpdateStadeSelect} class="form-select mb-3" aria-label="Default select example">
-                                <option selected disabled>المدينة</option>
-                                {villes?.map((v) =>
-                                    <option selected={stade.ville_id === v.id} key={v.id} value={(v.id)}>{v.nom}</option>
-                                )}
-                            </select>
-                            <div className="d-flex justify-content-between">
-                                <Link to="/composants/stade" class="btn btn-danger pe-3 pt-1 mt-3"> رجوع<i class="fa-solid fa-caret-right me-4"></i></Link>
-                                <button type="submit" class="btn btn-danger mt-3">تعديل <i class="fa-solid fa-circle-check me-3"></i></button>
+                        </div>
+
+                        <div className="d-lg-none mx-4">
+                            <div class="col-sm-12 col-xl-6 text-center">
+                                <div class="bg-secondary rounded h-100 p-4">
+                                    <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+
+                                        <div className="row d-flex align-items-center justify-content-center">
+                                            <div className="col-6">
+                                                <Skeleton height={40} />
+                                            </div>
+                                        </div>
+
+                                        <div className="row mt-4">
+                                            <div className="col-2">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                            <div className="col-10">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mt-2">
+                                            <div className="col-12">
+                                                <div className="mt-2">
+                                                    <Skeleton height={40} />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="row mt-4 d-flex justify-content-between">
+                                            <div className="col-5">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                            <div className="col-6">
+                                                <div className="mt-2">
+                                                    <Skeleton height={35} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </SkeletonTheme>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+                    </>
+
+                    :
+                    <div className="d-flex justify-content-center my-4">
+                        <div class="col-sm-12 col-xl-6 text-center">
+                            <div class="bg-secondary rounded h-100 p-4">
+                                <p class="mb-4 fs-2 fw-bold text-white">تعديل الملعب</p>
+                                <form onSubmit={handleSubmit}>
+                                    <div class="row mb-3">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label"> الاسم</label>
+                                        <div class="col-sm-10">
+                                            <input name="nom" value={updateStade ? updateStade?.nom : stades?.nom} onChange={handleUpdateStade} type="text" class="form-control" id="inputEmail3" />
+                                        </div>
+                                    </div>
+                                    <select name="ville_id" onChange={handleUpdateStadeSelect} class="form-select mb-3" aria-label="Default select example">
+                                        <option selected disabled>المدينة</option>
+                                        {villes?.map((v) =>
+                                            <option selected={stades.ville_id === v.id} key={v.id} value={(v.id)}>{v.nom}</option>
+                                        )}
+                                    </select>
+                                    <div className="d-flex justify-content-between mt-4">
+                                        <Link to="/composants/stades" class="btn btn-danger pt-0 px-4 mt-3"> رجوع<i class="fa-solid fa-caret-right pt-2 me-4"></i></Link>
+                                        <button type="submit" class="btn btn-danger pt-0 px-4 mt-3">تعديل
+                                            {
+                                                loadingUpdate ? (
+                                                    <div className="spinner-border spinner-border-sm fs-2 mt-2 me-3" role="status">
+                                                        <span className="sr-only">Loading...</span>
+                                                    </div>)
+                                                    : <i class="fa-solid fa-circle-check pt-2 me-3"></i>
+                                            }
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+            }
         </>
     )
 }

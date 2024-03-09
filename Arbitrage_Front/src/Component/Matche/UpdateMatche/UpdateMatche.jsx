@@ -1,42 +1,82 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Avert } from "./Avert";
 import { Changement } from "./Changment";
 import { Matche } from "./Matche"
 import { Buts } from "./Buts";
 import { useParams, useNavigate } from "react-router-dom";
-// import { TestPrint } from "./TestPrint";
+import { axiosClinet } from "../../../Api/axios";
+import "../../../style/Matche/updateMatche.scss"
 
 
 function AddMatche() {
 
     const { id } = useParams();
     const navigate = useNavigate();
+    
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        try {
-            if (dataMatche) {
-                const responseMatche = axios.put(`http://localhost:8000/api/matche/${id}`, dataMatche);
-                console.log('Server response matche:', responseMatche);
-                navigate('/updatedMatche')
-            } else {
-                navigate('/updatedMatche')
-            }
-            if (dataAvert) {
-                const responseAvert = axios.put(`http://localhost:8000/api/avertissement/${id}`, dataAvert);
-                console.log('Server response Avert:', responseAvert);
-            }
-            if (dataChangement) {
-                const responseChangement = axios.put(`http://localhost:8000/api/changement/${id}`, dataChangement);
-                console.log('Server response changements:', responseChangement);
-            }
-            if (dataButs) {
-                const responseButs = axios.put(`http://localhost:8000/api/but/${id}`, dataButs);
-                console.log('Server response Buts:', responseButs);
-            }
-        } catch (error) {
-            console.error('Error axios:', error);
+        if (dataMatche) {
+            setLoading(true)
+            await axiosClinet.put(`api/matche/${id}`, dataMatche).then(
+                (response) => {
+                    const { data } = response;
+                    if (data.status == true) {
+                        setLoading(false)
+                        navigate('/updatedMatche')
+                    }
+                }
+            ).catch((response) => {
+                setLoading(false)
+                console.log(response)
+            })
+        }
+        if (dataAvert) {
+            setLoading(true)
+            console.log(id)
+            await axiosClinet.put(`api/avertissement/${id}`, dataAvert).then(
+                (response) => {
+                    const { data } = response;
+                    console.log(response)
+                    if (data.status == true) {
+                        setLoading(false)
+                        navigate('/updatedMatche')
+                    }
+                }
+            ).catch((response) => {
+                console.log(response)
+                setLoading(false)
+            })
+        }
+        if (dataChangement) {
+            setLoading(true)
+            await axiosClinet.put(`api/changement/${id}`, dataChangement).then(
+                (response) => {
+                    const { data } = response;
+                    if (data.status == true) {
+                        setLoading(false)
+                        navigate('/updatedMatche')
+                    }
+                }
+            ).catch((response) => {
+                setLoading(false)
+                console.log(response)
+            })
+        }
+        if (dataButs) {
+            setLoading(true)
+            await axiosClinet.put(`api/but/${id}`, dataButs).then(
+                (response) => {
+                    const { data } = response;
+                    if (data.status == true) {
+                        setLoading(false)
+                        navigate('/updatedMatche')
+                    }
+                }
+            ).catch((response) => {
+                setLoading(false)
+                console.log(response)
+            })
         }
     }
 
@@ -44,6 +84,7 @@ function AddMatche() {
     const [dataMatche, setDataMatche] = useState();
     const [dataChangement, setDataChangement] = useState();
     const [dataButs, setDataButs] = useState();
+    const [loading, setLoading] = useState(false);
 
     const handleAvertData = (dataFromChild) => {
         setDataAvert(dataFromChild);
@@ -65,15 +106,13 @@ function AddMatche() {
     }
     console.log("dataButs", dataButs)
 
-    console.log(dataAvert)
-
     return (
         <div className="bg-dark p-4">
             <div class="card-header bg-secondary border border-light">
-                <h4 class=" mt-2 text-light text-center">تعديل التقرير</h4>
+                <p class=" mt-2 text-light text-center fs-3 fw-bold mb-1">تعديل التقرير</p>
             </div>
-            <div className="addRapport px-5 py-3 rounded-bottom bg-light">
-                {/* <TestPrint /> */}
+            <div className="addRapport px-lg-5 py-3 rounded-bottom bg-light">
+
                 <Matche dataMatche={handleMatcheData} />
                 <Avert dataAvert={handleAvertData} />
                 <Changement dataChangement={handleChangementData} />
@@ -82,7 +121,12 @@ function AddMatche() {
                 <form onSubmit={handleSubmit}>
                     <div className="d-flex justify-content-center">
                         <div>
-                            <button type="submit" onChange={handleSubmit} className="btn btn-outline-warning">Enregistrer</button>
+                            <button type="submit" onChange={handleSubmit} className="btn btn-outline-warning px-5 py-2 fw-bold">التعديـــل
+                                {loading ? (
+                                    <div className="spinner-border spinner-border-sm me-3 fs-2" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>) : ''}
+                            </button>
                         </div>
                     </div>
                 </form>

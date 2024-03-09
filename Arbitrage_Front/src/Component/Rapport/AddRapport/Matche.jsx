@@ -1,7 +1,10 @@
 import { React, useEffect, useState } from 'react';
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
-import axios from 'axios';
+import { axiosClinet } from '../../../Api/axios';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { AuthUser } from '../../../AuthContext';
 
 export function Matche(props) {
 
@@ -30,21 +33,26 @@ export function Matche(props) {
         delegueVille: [],
         dernierIdMatche: []
     });
-    useEffect(() => {
 
-        axios.get('http://localhost:8000/api/arbitre')
+    const { user } = AuthUser();
+    const [loading, setLoanding] = useState(true);
+
+    useEffect(() => {
+        axiosClinet.get('api/arbitre')
             .then((res) => {
-                const data = res.data
-                const transformedOption = data.map(item => ({
+                const arbitreUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+
+                const transformedOption = arbitreUser.map(item => ({
                     value: item.id,
                     label: item.nom.toUpperCase() + " " + item.prenom.toUpperCase(),
                     type: item.type,
                     ville: item.ville,
-                    name: "arbitre_c_id"
+                    name: "arbitre_c_id",
                 }))
+
                 const centre = transformedOption.filter(item => item.type === 'center')
                 const assistant = transformedOption.filter(item => item.type === 'Assistant')
-
+                console.log('arbitreUser', arbitreUser)
 
                 const arbireAssistant_1 = assistant.map(item => ({
                     value: item.value,
@@ -68,11 +76,10 @@ export function Matche(props) {
                     assistant_2: arbireAssistant_2,
                 }))
             })
-
-        axios.get('http://localhost:8000/api/delegue')
+        axiosClinet.get('api/delegue')
             .then((res) => {
-                const dataDelegue = res.data
-                const optionDelegue = dataDelegue.map(item => ({
+                const delegueUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const optionDelegue = delegueUser.map(item => ({
                     value: item.id,
                     label: item.nom.toUpperCase() + " " + item.prenom.toUpperCase(),
                     ville: item.ville,
@@ -83,22 +90,22 @@ export function Matche(props) {
                     delegue: optionDelegue
                 }))
             })
-            axios.get('http://localhost:8000/api/club')
-                .then((res) => {
-                const dataClubs = res.data
-                const optionClubs = dataClubs.map(item => ({
+        axiosClinet.get('api/club')
+            .then((res) => {
+                const clubUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const optionClubs = clubUser.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr.toUpperCase(),
                     stade: item.stade,
                     name: "club"
                 }))
-                const optionClubs_1 = dataClubs.map(item => ({
+                const optionClubs_1 = clubUser.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr.toUpperCase(),
                     stade: item.stade,
                     name: "club_id_1"
                 }))
-                const optionClubs_2 = dataClubs.map(item => ({
+                const optionClubs_2 = clubUser.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr.toUpperCase(),
                     stade: item.stade,
@@ -111,9 +118,9 @@ export function Matche(props) {
                     clubs_2: optionClubs_2
                 }))
             })
-        axios.get('http://localhost:8000/api/stade')
+        axiosClinet.get('api/stade')
             .then((res) => {
-                const dataStades = res.data
+                const dataStades = res.data.filter(item => item.user_id === user?.id || item.user_id === null)
                 const optionStades = dataStades.map(item => ({
                     value: item.id,
                     label: item.nom,
@@ -125,9 +132,9 @@ export function Matche(props) {
                     stades: optionStades
                 }))
             })
-        axios.get('http://localhost:8000/api/ville')
+        axiosClinet.get('api/ville')
             .then((res) => {
-                const dataVilles = res.data
+                const dataVilles = res.data.filter(item => item.user_id === user?.id || item.user_id === null)
                 const optionVilles = dataVilles.map(item => ({
                     value: item.id,
                     label: item.nom,
@@ -162,7 +169,7 @@ export function Matche(props) {
                     delegueVille: optionDelegue_ville
                 }))
             })
-        axios.get('http://localhost:8000/api/competition')
+        axiosClinet.get('api/competition')
             .then((res) => {
                 const dataCompetition = res.data
                 const optionCompetition = dataCompetition.map(item => ({
@@ -175,7 +182,7 @@ export function Matche(props) {
                     competition: optionCompetition
                 }))
             })
-        axios.get('http://localhost:8000/api/saison')
+        axiosClinet.get('api/saison')
             .then((res) => {
                 const dataSaison = res.data
                 const optionSaison = dataSaison.map(item => ({
@@ -188,7 +195,7 @@ export function Matche(props) {
                     saison: optionSaison
                 }))
             })
-        axios.get('http://localhost:8000/api/category')
+        axiosClinet.get('api/category')
             .then((res) => {
                 const dataCategory = res.data
                 const optionCategory = dataCategory.map(item => ({
@@ -201,9 +208,9 @@ export function Matche(props) {
                     category: optionCategory
                 }))
             })
-        axios.get('http://localhost:8000/api/joueur')
+        axiosClinet.get('api/joueur')
             .then((res) => {
-                const dataJoueurs = res.data
+                const dataJoueurs = res.data.filter(item => item.user_id === user?.id)
                 const optionJoueurs = dataJoueurs?.map(item => ({
                     value: item.joueur_nom,
                     label: item.joueur_nom,
@@ -220,19 +227,19 @@ export function Matche(props) {
                     joueursLicence: optionJoueursLicence
                 }))
             })
-        axios.get('http://localhost:8000/api/matche')
+        axiosClinet.get('api/matche')
             .then((res) => {
                 const dernierId = Math.max(...res.data.map(match => match.id), 0);
                 setState(prevData => ({
                     ...prevData,
                     dernierIdMatche: dernierId + 1
                 }))
+                setLoanding(false);
             })
             .catch((error) => {
                 console.error("Une erreur s'est produite lors de la récupération des données de Matches : " + error);
             })
-    }, [])
-
+    }, [user])
 
     const [inputValue, setInputValue] = useState([]);
 
@@ -247,12 +254,14 @@ export function Matche(props) {
         stadeClub_1: ""
     });
 
-
+    console.log('dernierIdMatche', state?.dernierIdMatche)
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setInputValue(prevValues => ({
             ...prevValues,
             [name]: value,
+            user_id: parseInt(user?.id),
+            id: parseInt(state?.dernierIdMatche)
         }));
     };
 
@@ -306,222 +315,407 @@ export function Matche(props) {
             villeDelegue: villeDelegue,
             stadeClub_1: stadeClub_1,
         }))
-
         console.log("matche :", inputValue)
     };
 
     const [isValide, setIsValide] = useState();
 
-    const sendData = ()=>{
+    const sendData = () => {
         props.dataMatche(inputValue);
         setIsValide(prev => !prev)
     }
 
     return (
         <>
-            <div >
-                <div className="row my-2 mx-2">
-                    <div className="form-group col-md-3">
-                        <label className='text-white' htmlFor="inputEmail4">الموسم الرياضي</label>
-                        <div className='my-2'>
-                            <CreatableSelect  isClearable name={selectedSelect} onChange={handleSelectChange} options={state.saison} placeholder="أكتب..." required/>
-                        </div>
-                    </div>
-                    <div className="form-group col-md-3">
-                        <label className='text-white' htmlFor="inputPassword4">التاريخ</label>
-                        <input type="date" name='date' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" required/>
-                    </div>
-                    <div className="form-group col-md-3">
-                        <label className='text-white' htmlFor="inputPassword4">المنافسة</label>
-                        <div className='my-2'>
-                            <CreatableSelect isClearable name={selectedSelect} onChange={handleSelectChange} options={state.competition} placeholder="أكتب..." required/>
-                        </div>
-                    </div>
-                    <div  className="form-group col-md-3 text-white">
-                        <label htmlFor="inputEmail4">الفئة</label>
-                        <div className='my-2'>
-                            <CreatableSelect className='text-light' isClearable name={selectedSelect} onChange={handleSelectChange} options={state.category} placeholder="أكتب..." required/>
-                        </div>
-                    </div>
-                </div>
-                <div className="row my-2">
-                    <div className="col-md-12">
-                        <div class=" card text-center bg-light text-white">
-                            <div class="card-header bg-secondary">
-                                طاقم تحكيمي
-                            </div>
-                            <div class="card-body">
-                                <div className="row">
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">الحكم</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' options={state.centre} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
-                                            {/* onChange={(a) => setSelectedCentre(a)} */}
+            {
+                loading ?
+                    <>
+                        <div className="d-none d-lg-break">
+                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <Skeleton height={40} />
+                                </div>
+
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">الحكم المساعد 1</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' options={state.assistant_1} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">الحكم المساعد 2</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' options={state.assistant_2} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">المراقب</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' options={state.delegue} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">المدينة</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' isDisabled options={state.centreVille} value={selectedSelect?.villeCentre ? { value: selectedSelect?.villeCentre?.value, label: selectedSelect?.villeCentre?.label } : null} onChange={handleSelectChange} placeholder="..." />
+
+                                <div className="row mt-4">
+                                    <div className="col-6">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-6">
+                                        <Skeleton height={40} />
+                                    </div>
+                                </div>
+
+
+                                <div className="row mt-4 mx-1">
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-3 ">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <div className="col-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                </div>
+                                <div className="row mt-4">
+                                    <Skeleton height={40} />
+                                </div>
+
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-4">
+                                        <div>
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">المدينة</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' isDisabled options={state.assistant_1_Ville} value={selectedSelect.villeAssistant_1 ? { value: selectedSelect.villeAssistant_1?.value, label: selectedSelect.villeAssistant_1?.label } : null} onChange={handleSelectChange} placeholder="..." />
-                                            {/* value={selectedAsisstent_1 ? { value: selectedAsisstent_1.ville.id, label: selectedAsisstent_1.ville.nom } : null} */}
+                                    <div className="col-4">
+                                        <div>
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">المدينة</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' isDisabled options={state.assistant_2_Ville} value={selectedSelect.villeAssistant_2 ? { value: selectedSelect.villeAssistant_2?.value, label: selectedSelect.villeAssistant_2?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                    <div className="col-4">
+                                        <div>
+                                            <Skeleton height={40} />
                                         </div>
                                     </div>
-                                    <div className="form-group col-md-3">
-                                        <label htmlFor="inputEmail4">المدينة</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' isDisabled options={state.delegueVille} value={selectedSelect.villeDelegue ? { value: selectedSelect?.villeDelegue?.value, label: selectedSelect?.villeDelegue?.label } : null} onChange={handleSelectChange} placeholder="..." />
+
+                                    <div className="col-6">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <Skeleton height={40} />
+                                </div>
+
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-12 ">
+                                        <div>
+                                            <Skeleton height={85} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </SkeletonTheme>
+                        </div>
+
+                        <div className="d-lg-none">
+                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-12 mt-3">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-12 mt-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-12 mt-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-12 mt-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4 mx-1">
+                                    <Skeleton height={40} />
+                                </div>
+
+                                <div className="row mt-4 mx-2">
+                                    {/* <div className="col-12 mt-3">
+                                        <Skeleton height={40} />
+                                    </div> */}
+                                    <div className="col-12 mt-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-12 mt-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                    <div className="col-12 mt-4">
+                                        <Skeleton height={40} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4 mx-1">
+                                    <Skeleton height={40} />
+                                </div>
+
+                                <div className="row mt-4 mx-2 pb-2">
+                                    <div className="col-12 ">
+                                        <div>
+                                            <Skeleton height={85} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </SkeletonTheme>
+                        </div>
+                    </>
+                    :
+                    <div >
+                        <div className="row my-2 mx-2">
+                            <div className="form-group col-md-3">
+                                <label className='text-white' htmlFor="inputEmail4">الموسم الرياضي</label>
+                                <div className='my-2'>
+                                    <CreatableSelect isClearable name={selectedSelect} onChange={handleSelectChange} options={state.saison} placeholder="أكتب..." required />
+                                </div>
+                            </div>
+                            <div className="form-group col-md-3">
+                                <label className='text-white' htmlFor="inputPassword4">التاريخ</label>
+                                <input type="date" name='date' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" required />
+                            </div>
+                            <div className="form-group col-md-3">
+                                <label className='text-white' htmlFor="inputPassword4">المنافسة</label>
+                                <div className='my-2'>
+                                    <CreatableSelect isClearable name={selectedSelect} onChange={handleSelectChange} options={state.competition} placeholder="أكتب..." required />
+                                </div>
+                            </div>
+                            <div className="form-group col-md-3 text-white">
+                                <label htmlFor="inputEmail4">الفئة</label>
+                                <div className='my-2'>
+                                    <CreatableSelect className='text-light' isClearable name={selectedSelect} onChange={handleSelectChange} options={state.category} placeholder="أكتب..." required />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row my-2">
+                            <div className="col-md-12">
+                                <div class=" card text-center bg-light text-white mx-1">
+                                    <div class="card-header bg-secondary">
+                                        طاقم تحكيمي
+                                    </div>
+                                    <div class="card-body">
+                                        <div className="row">
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">الحكم</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' options={state.centre} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                                    {/* onChange={(a) => setSelectedCentre(a)} */}
+                                                </div>
+                                            </div>
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">الحكم المساعد 1</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' options={state.assistant_1} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                                </div>
+                                            </div>
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">الحكم المساعد 2</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' options={state.assistant_2} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                                </div>
+                                            </div>
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">المراقب</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' options={state.delegue} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">المدينة</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' isDisabled options={state.centreVille} value={selectedSelect?.villeCentre ? { value: selectedSelect?.villeCentre?.value, label: selectedSelect?.villeCentre?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                </div>
+                                            </div>
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">المدينة</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' isDisabled options={state.assistant_1_Ville} value={selectedSelect.villeAssistant_1 ? { value: selectedSelect.villeAssistant_1?.value, label: selectedSelect.villeAssistant_1?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                    {/* value={selectedAsisstent_1 ? { value: selectedAsisstent_1.ville.id, label: selectedAsisstent_1.ville.nom } : null} */}
+                                                </div>
+                                            </div>
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">المدينة</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' isDisabled options={state.assistant_2_Ville} value={selectedSelect.villeAssistant_2 ? { value: selectedSelect.villeAssistant_2?.value, label: selectedSelect.villeAssistant_2?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                </div>
+                                            </div>
+                                            <div className="form-group col-md-3">
+                                                <label htmlFor="inputEmail4">المدينة</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' isDisabled options={state.delegueVille} value={selectedSelect.villeDelegue ? { value: selectedSelect?.villeDelegue?.value, label: selectedSelect?.villeDelegue?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div className="row my-2">
-                    <div className="col-md-6">
-                        <div class=" card text-center bg-light text-white">
-                            <div class="card-header bg-secondary">
-                                المقابلة
-                            </div>
-                            <div class="card-body">
-                                <div className="row">
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="inputEmail4">الفريق المستقبل</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' options={state.clubs_1} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                        <div className="row my-2">
+                            <div className="col-md-6">
+                                <div class=" card text-center bg-light text-white mx-1">
+                                    <div class="card-header bg-secondary">
+                                        المقابلة
+                                    </div>
+                                    <div class="card-body">
+                                        <div className="row">
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="inputEmail4">الفريق المستقبل</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' options={state.clubs_1} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                                </div>
+                                            </div>
+                                            <div className="form-group  col-md-6">
+                                                <label htmlFor="inputEmail4">الفريق الزائر</label>
+                                                <div className='my-2'>
+                                                    <Select className='text-light' options={state.clubs_2} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="form-group  col-md-6">
-                                        <label htmlFor="inputEmail4">الفريق الزائر</label>
-                                        <div className='my-2'>
-                                            <Select className='text-light' options={state.clubs_2} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div class=" card text-center bg-light text-white mx-1">
+                                    <div class="card-header bg-secondary">
+                                        النتيجة
+                                    </div>
+                                    <div class="card-body">
+                                        <div className="row">
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="inputEmail4">الفريق المستقبل</label>
+                                                <input type="namber" name='result_club_1' onChange={handleInputChange} className="form-control bg-white border-0 mt-2 mb-2" id="inputPassword4" placeholder='' />
+                                            </div>
+                                            <div className="form-group  col-md-6">
+                                                <label htmlFor="inputEmail4">الفريق الزائر</label>
+                                                <input type="namber" name='result_club_2' onChange={handleInputChange} className="form-control bg-white border-0 mt-2 mb-2" id="inputPassword4" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div class=" card text-center bg-light text-white">
-                            <div class="card-header bg-secondary">
-                                النتيجة
+                        <div className="row my-2 mx-2">
+                            <div className="form-group col-md-4">
+                                <label className='text-white' htmlFor="inputPassword4">التوقيت</label>
+                                <input type="time" name='temps' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
                             </div>
-                            <div class="card-body">
-                                <div className="row">
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="inputEmail4">الفريق المستقبل</label>
-                                        <input type="namber" name='result_club_1' onChange={handleInputChange} className="form-control bg-white border-0 mt-2 mb-2" id="inputPassword4" placeholder='' />
+                            <div className="form-group col-md-4">
+                                <label className='text-white' htmlFor="inputEmail4">الملعب</label>
+                                <div className="my-2">
+                                    <Select className='text-light' value={selectedSelect?.stadeClub_1 ? { value: selectedSelect?.stadeClub_1?.value, label: selectedSelect?.stadeClub_1?.label } : null} options={state.stades} name={selectedSelect} onChange={handleSelectChange} placeholder="اكتب" />
+                                </div>
+                            </div>
+                            <div className="form-group col-md-4">
+                                <label className='text-white' htmlFor="inputEmail4">المدينة</label>
+                                <div className="my-2">
+                                    <CreatableSelect className='text-light' php isDisabled value={selectedSelect?.stadeClub_1?.ville ? { value: selectedSelect?.stadeClub_1?.ville?.id, label: selectedSelect?.stadeClub_1?.ville?.nom } : null} options={state.villes} name={selectedSelect} onChange={handleSelectChange} placeholder="اكتب" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row my-2">
+                            <div className="col-md-12">
+                                <div class="card text-center bg-light text-white mx-1">
+                                    <div class="card-header bg-secondary">
+                                        الأحداث المسجلة قبل, أثناء و بعد المباراة :
                                     </div>
-                                    <div className="form-group  col-md-6">
-                                        <label htmlFor="inputEmail4">الفريق الزائر</label>
-                                        <input type="namber" name='result_club_2' onChange={handleInputChange} className="form-control bg-white border-0 mt-2 mb-2" id="inputPassword4" />
+                                    <div class="card-body">
+                                        <div className="row">
+                                            <div className="form-group col-md-4">
+                                                <label htmlFor="inputPassword4">1.	توقيت حضور مراقب المباراة : </label>
+                                                <input type="time" name='temp_presence_delegue' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                            </div>
+                                            <div className="form-group col-md-4">
+                                                <label htmlFor="inputPassword4">2.  توقيت حضور رجال الأمن :</label>
+                                                <input type="time" name='temp_presence_agents_sécurité' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                            </div>
+                                            <div className="form-group col-md-4">
+                                                <label htmlFor="inputPassword4">3.	عدد رجال الامن</label>
+                                                <input type="nember" name='nombre_agents_sécurité' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                            </div>
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="inputPassword4">4.	ارضية الملعب</label>
+                                                <input type="text" name='etat_stade' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                            </div>
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="inputPassword4">5.	مستودع ملابس الحكام </label>
+                                                <input type="text" name='etat_vestiaire' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div className="row my-2">
-                    <div className="form-group col-md-4">
-                        <label className='text-white' htmlFor="inputPassword4">التوقيت</label>
-                        <input type="time" name='temps' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
-                    </div>
-                    <div className="form-group col-md-4">
-                        <label className='text-white' htmlFor="inputEmail4">الملعب</label>
-                        <div className="my-2">
-                            <Select className='text-light' value={selectedSelect?.stadeClub_1 ? { value: selectedSelect?.stadeClub_1?.value, label: selectedSelect?.stadeClub_1?.label } : null} options={state.stades} name={selectedSelect} onChange={handleSelectChange} placeholder="اكتب" />
-                        </div>
-                    </div>
-                    <div className="form-group col-md-4">
-                        <label className='text-white' htmlFor="inputEmail4">المدينة</label>
-                        <div className="my-2">
-                            <CreatableSelect className='text-light'php isDisabled value={selectedSelect?.stadeClub_1?.ville ? { value: selectedSelect?.stadeClub_1?.ville?.id, label: selectedSelect?.stadeClub_1?.ville?.nom } : null} options={state.villes} name={selectedSelect} onChange={handleSelectChange} placeholder="اكتب" />
-                        </div>
-                    </div>
-                </div>
-                <div className="row my-2">
-                    <div className="col-md-12">
-                        <div class="card text-center bg-light text-white">
-                            <div class="card-header bg-secondary">
-                                الأحداث المسجلة قبل, أثناء و بعد المباراة :
-                            </div>
-                            <div class="card-body">
-                                <div className="row">
-                                    <div className="form-group col-md-4">
-                                        <label htmlFor="inputPassword4">1.	توقيت حضور مراقب المباراة : </label>
-                                        <input type="time" name='temp_presence_delegue' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                        <div className="row my-2">
+                            <div className="col-md-12">
+                                <div class="card text-center bg-light text-white mx-1">
+                                    <div class="card-header bg-secondary">
+                                        التقرير الاضافي للحكم:
                                     </div>
-                                    <div className="form-group col-md-4">
-                                        <label htmlFor="inputPassword4">2.  توقيت حضور رجال الأمن :</label>
-                                        <input type="time" name='temp_presence_agents_sécurité' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
-                                    </div>
-                                    <div className="form-group col-md-4">
-                                        <label htmlFor="inputPassword4">3.	عدد رجال الامن</label>
-                                        <input type="nember" name='nombre_agents_sécurité' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
-                                    </div>
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="inputPassword4">4.	ارضية الملعب</label>
-                                        <input type="text" name='etat_stade' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
-                                    </div>
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="inputPassword4">5.	مستودع ملابس الحكام </label>
-                                        <input type="text" name='etat_vestiaire' onChange={handleInputChange} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                    <div class="card-body">
+                                        <div className="row">
+                                            <div class="md-form">
+                                                <textarea class="md-textarea form-control bg-white border-light" name='rapport_supp' onChange={handleInputChange} rows="3"></textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>
                     </div>
-                </div>
-                <div className="row my-2">
-                    <div className="col-md-12">
-                        <div class="card text-center bg-light text-white">
-                            <div class="card-header bg-secondary">
-                                التقرير الاضافي للحكم:
-                            </div>
-                            <div class="card-body">
-                                <div className="row">
-                                    <div class="md-form">
-                                        <textarea class="md-textarea form-control bg-white border-light" name='rapport_supp' onChange={handleInputChange} rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button className={`btn  ${ isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>Valider</button>
-            </div>
+            }
 
         </>
     )

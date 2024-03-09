@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Route, Link, NavLink, Outlet, Routes, useNavigate } from "react-router-dom";
 
 import Matches from './Component/Matche/MatchesListe';
@@ -27,7 +27,6 @@ import AddedRapport from './Component/Rapport/AddRapport/AddedRapport';
 import Home from './Component/Home';
 import './css/style.css'
 import './css/bootstrap.min.css'
-import $ from 'jquery';
 import ArbiTreListe from './Component/Arbitre/ArbitreListe';
 import AddArbitre from './Component/Arbitre/AddArbitre';
 import AddedArbitre from './Component/Arbitre/AddedArbitre';
@@ -55,53 +54,69 @@ import AddedVille from './Component/Villes/AddedVille';
 import UpdateVille from './Component/Villes/UpdateVille';
 import UpdatedVille from './Component/Villes/UpdatedVille';
 import DeletedVille from './Component/Villes/DeletedVille';
+import "./style/App.scss"
+
+import { Change_password } from './Component/change_password';
 import { axiosClinet } from './Api/axios';
+
+import { AuthUser } from './AuthContext';
+import ScrollToTop from 'react-scroll-to-top';
 
 
 function App() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [user, setUser] = useState();
-  const [authenticated, _setAuthenticated] = useState('true' === window.localStorage.getItem('AUTHENTICATED'))
+  const [loading, setLoading] = useState(false);
+  const [mobile, setMobile] = useState();
+  const navigate = useNavigate();
+  const pageRef = useRef();
+  // const [authenticated, _setAuthenticated] = useState('dtrue' === window.localStorage.getItem('AUTHENTICATED'))
 
+  const { user, userDataLogout } = AuthUser();
 
   useEffect(() => {
 
-    axiosClinet.get('/api/user').then(
-      (Response) => {setUser(Response.data)
-    })
+    // if (!window.localStorage.getItem('AUTHENTICATED')) {
+    //   navigate('/login')
+    // }
 
-    const spinner = () => {
-      setTimeout(() => {
-        const $spinner = $('#spinner');
-        if ($spinner.length > 0) {
-          $spinner.removeClass('show');
-        }
-      }, 10);
-    }
-    spinner();  // Call the spinner function when the component mounts
+    // if (user) {
+    //   setLoading(false)
+    // } else {
+    //   window.localStorage.setItem('AUTHENTICATED', '')
+    //   window.localStorage.setItem('token', '')
+    //   navigate('/login')
+    // }
+
+    setMobile(window.innerWidth <= 390)
+
+  }, [window.innerWidth])
 
 
-    return () => clearTimeout(spinner);
-  }, []);
-
-  const navigate = useNavigate(); 
-
-  const logout = async () =>{
-    await axiosClinet.post('/api/logout').then(() =>{
-      window.localStorage.setItem('ACCESS_TOKEN', '')
-      // setAuthenticated(false)
+  const logout = async () => {
+    await axiosClinet.post('/api/logout').then((Response) => {
+      console.log(Response)
+      window.localStorage.setItem('AUTHENTICATED', '')
+      window.localStorage.setItem('token', '')
       navigate('/login')
+      userDataLogout();
     })
   }
 
-  // const setAuthenticated = (isAuthenticated) => {
-  //   // _setAuthenticated(isAuthenticated)
-  //   window.localStorage.setItem('AUTHENTICATED', isAuthenticated)
-  // }
-
   const handleSidebarToggle = () => {
     setIsSidebarOpen(prevState => !prevState);
+  };
+
+  const handleSidebarClose = (e) => {
+    console.log(e.nativeEvent.srcElement.attributes.class.value)
+  
+    if (window.innerWidth <= 360) {
+        if (e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle fw-bold show" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle fw-bold" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle active Active fw-bold show" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle active Active fw-bold") {
+          setIsSidebarOpen(true);
+        }else{
+          setIsSidebarOpen(false);
+        }
+    }
   };
 
 
@@ -109,171 +124,205 @@ function App() {
   return (
 
     <>
-      <div class="container-fluid position-relative d-flex p-0" >
-        {/* <!-- Spinner Start --> */}
-        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-          <div class="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-        {/* <!-- Spinner End --> */}
-
-
-        {/* <!-- Sidebar Start --> */}
-        <div className={`sidebar ps-4 pb-3 ${isSidebarOpen ? 'open' : ''}`}>
-          <nav className="navbar bg-secondary navbar-dark" >
-            <Link to='/' className="navbar-brand mx-4 mb-3 mt-2">
-              <h3 className="logo">
-                <i class="fa-solid fa-flag-checkered ms-2 me-3"></i>
-                {/* <img style={{ width: php'40px', height: '40px', marginLeft: '10px'}} src="./img/user.svg" alt="" /> */}
-                ArbiTre</h3>
-            </Link>
-            <div class="d-flex align-items-center me-5 mb-4">
-              <div class="position-relative">
-                <img class="rounded-circle" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
-                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-              </div>
-              <div class="me-3 mt-2">
-                <h6 class="mb-0 text-center">{user?.name}</h6>
-                <span>الحكم</span>
+      <div class="container-fluid position-relative p-0" ref={pageRef} id='myDIV' >
+        {
+          loading ?
+            < div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+              <div class="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
+                <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <div class="navbar-nav w-100">
-              <div className='mb-2'>
-                <NavLink to='/' className={({ isActive }) =>
-                  isActive ? "nav-item nav-link Active" : "nav-item nav-link"
-                }><i class="fa-solid fa-house ms-3"></i>الصفحة الرئيسية</NavLink>
-                {/* <i class="fa fa-tachometer-alt me-2"></i> */}
+            :
+            <div>
+              {/* <!-- Sidebar Start --> */}
+              <div className={`sidebar ps-4 ${isSidebarOpen ? 'open' : ''}`} onClick={(e) => handleSidebarClose(e)}>
+                <nav className="navbar bg-secondary navbar-dark" >
+                  <div className='navbar-brand mt-1 me-0 brand d-flex justify-content-center align-items-center top-50 start-0 w-100'>
+                    <Link to='/' className="">
+                      <h3 className="logo">
+                        <i class="fa-solid fa-flag-checkered ms-2 me-3"></i>
+                        {/* <img style={{ width: php'40px', height: '40px', marginLeft: '10px'}} src="./img/user.svg" alt="" /> */}
+                        ArbiTre</h3>
+                    </Link>
+                  </div>
+                  <div class="me-4 w-100">
+                    <div class="position-relative me-2">
+                      <img class="rounded-circle" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
+                      <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                    <div class="me-4">
+                      <p class="mb-0 text-center fs-4 text-white d-flex justify-content-center">{user?.name}</p>
+                      <span className='d-flex justify-content-center'>{user?.email}</span>
+                    </div>
+                  </div>
+                  <div class="navbar-nav w-100 nav-part-3">
+                    <div className='mb-2'>
+                      <NavLink to='/' className={({ isActive }) =>
+                        isActive ? "nav-item nav-link Active pe-3 fw-bold" : "nav-item nav-link pe-3 fw-bold"
+                      }><i class="fa-solid fa-house ms-3"></i>الصفحة الرئيسية</NavLink>
+                      {/* <i class="fa fa-tachometer-alt me-2"></i> */}
+                    </div>
+                    <div className="me-2">
+                      <NavLink to='/matches' className={({ isActive }) =>
+                        isActive ? "nav-item nav-link Active fw-bold" : "nav-item nav-link fw-bold"
+                      }><i class="fa-solid fa-futbol ms-3 me-2"></i>المباريات</NavLink>
+                    </div>
+                    <div class="nav-item dropdown mt-1 me-2">
+                      <NavLink to={'/composants'} className={({ isActive }) => isActive ? "nav-link dropdown-toggle active show Active fw-bold" : "nav-link dropdown-toggle fw-bold"}
+                        data-bs-toggle="dropdown" ><i class="fa-solid fa-screwdriver-wrench me-2 ms-3"></i>المكونات</NavLink>
+                      <div class="dropdown-menu bg-transparent border-0"
+                      >
+                        <Link to="/composants/stades" className="dropdown-item" >الملاعب<i class="fa-solid fa-ring me-3 mt-1"></i></Link>
+                        <Link to="/composants/clubs" className="dropdown-item">الأندية<i class="fa-solid fa-shield me-4 mt-1"></i></Link>
+                        <Link to="/composants/arbitres" className="dropdown-item">الحكام <i class="fa-solid fa-clone me-4 mt-1"></i></Link>
+                        <Link to='/composants/delegue' className="dropdown-item">المناديب <i class="fa-solid fa-user-tie me-2 mt-1"></i></Link>
+                        <Link to='/composants/joueur' className="dropdown-item">الاعبون <i class="fa-solid fa-person-running me-3 mt-1"></i></Link>
+                        <Link to='/composants/villes' className="dropdown-item">المدن <i class="fa-solid fa-city me-4 mt-1"></i></Link>
+                      </div>
+                    </div>
+                    <div className='mt-1 me-2'>
+                      <NavLink to='/rapport' className={({ isActive }) =>
+                        isActive ? "nav-item nav-link Active fw-bold " : "nav-item nav-link fw-bold"
+                      }><i class="fa-solid fa-book ms-3 me-2"></i> التقارير</NavLink>
+                    </div>
+                  </div>
+                </nav>
               </div>
-              <div className="me-2">
-                <NavLink to='/matches' className={({ isActive }) =>
-                  isActive ? "nav-item nav-link Active" : "nav-item nav-link"
-                }><i class="fa-solid fa-futbol ms-3 me-2"></i>المباريات</NavLink>
-              </div>
-              <div class="nav-item dropdown mt-1 me-2">
-                <NavLink to={'/composants'} className={({ isActive }) => isActive ? "nav-link dropdown-toggle active show Active" : "nav-link dropdown-toggle"}
-                  data-bs-toggle="dropdown" ><i class="fa-solid fa-screwdriver-wrench me-2 ms-3"></i>المكونات</NavLink>
-                <div class="dropdown-menu bg-transparent border-0"
-                >
-                  <Link to="/composants/stades" className="dropdown-item" >الملاعب<i class="fa-solid fa-ring me-3 mt-1"></i></Link>
-                  <Link to="/composants/clubs" className="dropdown-item">الأندية<i class="fa-solid fa-shield me-4 mt-1"></i></Link>
-                  <Link to="/composants/arbitres" className="dropdown-item">الحكام <i class="fa-solid fa-clone me-4 mt-1"></i></Link>
-                  <Link to='/composants/delegue' className="dropdown-item">المناديب <i class="fa-solid fa-user-tie me-2 mt-1"></i></Link>
-                  <Link to='/composants/joueur' className="dropdown-item">الاعبون <i class="fa-solid fa-person-running me-3 mt-1"></i></Link>
-                  <Link to='/composants/villes' className="dropdown-item">المدن <i class="fa-solid fa-city me-4 mt-1"></i></Link>
-                </div>
-              </div>
-              <div className='mt-1 me-2'>
-                <NavLink to='/rapport' className={({ isActive }) =>
-                  isActive ? "nav-item nav-link Active" : "nav-item nav-link"
-                }><i class="fa-solid fa-book ms-3 me-2"></i> التقارير</NavLink>
-              </div>
-            </div>
-          </nav>
-        </div>
-        <Outlet />
-        {/* <!-- Sidebar End --> */}
+              {/* <Outlet /> */}
+              {/* <!-- Sidebar End --> */}
 
-        {/* <!-- Content Start --> */}
+              {/* <!-- Content Start --> */}
 
-        <div className={`content bg-dark ${isSidebarOpen ? 'open' : ''}`}>
-          {/* <!-- Navbar Start --> */}
-          <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
-            <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
-              <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
-            </a>
-            <a href="#" class="sidebar-toggler flex-shrink-0 me-4" onClick={handleSidebarToggle}>
-              <i class="fa fa-bars"></i>
-            </a>
-            <form class="d-none d-md-flex me-5">
+              <div className={`content bg-dark ${isSidebarOpen ? 'open' : ''}`} >
+                {/* <!-- Navbar Start --> */}
+                <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0 navbar-top">
+
+                  <a href="#" class="sidebar-toggler flex-shrink-0 me-4 d-none d-lg-block justify-cotent-center" onClick={handleSidebarToggle}>
+                    {isSidebarOpen ? <i class="fa fa-bars d-flex justify-content-center align-items-center h-100"></i> : <i class="fa-solid fa-right-long fs-4 d-flex justify-content-center align-items-center h-100"></i>}
+                  </a>
+                  <a href="#" class="sidebar-toggler flex-shrink-0 me-4 d-block d-lg-none justify-cotent-center" onClick={handleSidebarToggle}>
+                    {isSidebarOpen ? <i class="fa-solid fa-right-long fs-4 d-flex justify-content-center align-items-center h-100"></i> : <i class="fa fa-bars d-flex justify-content-center align-items-center h-100"></i>}
+                  </a>
+
+                  <Link to={'/'} class="navbar-brand d-flex d-lg-none">
+                    <h2 class="text-primary mb-0"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i>ArbiTre</h2>
+                  </Link>
+
+                  <div class="navbar-nav align-items-center me-auto">
+                    <div class="nav-item dropdown ms-lg-4">
+                      <Link href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <img class="rounded-circle me-lg-2 ms-2" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
+                        <span class="d-none d-lg-inline-flex fw-bold ms-2 me-2">{user?.name}</span>
+                      </Link>
+                      <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0 w-20 select-menu me-4 me-lg-5">
+                        <Link to={"/change_password"} class="dropdown-item d-flex justify-content-around"><span className='d-none d-lg-block'>الاعدادات</span> <i class={`fa-solid fa-gears ${mobile ? 'fs-1' : 'fs-5'}`}></i></Link>
+                        <Link class="dropdown-item d-flex justify-content-around" onClick={logout}><span className='d-none d-lg-block'>تسجيل الخروج</span> <i class={`fa-solid fa-right-from-bracket ${mobile ? 'fs-1' : 'fs-5'}`}></i></Link>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <form class="d-none d-md-flex me-5">
               <input class="form-control bg-dark border-0" type="search" placeholder="بحت" />
-            </form>
-            <div class="navbar-nav align-items-center me-auto">
-              <div class="nav-item dropdown ms-4">
-                <Link href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                  <img class="rounded-circle me-lg-2 ms-2" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
-                  <span class="d-none d-lg-inline-flex ms-2 me-2">{user?.name}</span>
-                </Link>
-                <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                  <Link href="#" class="dropdown-item">My Profile</Link>
-                  <Link href="#" class="dropdown-item">Settings</Link>
-                  <Link href="#" class="dropdown-item"><button onClick={logout}>Log Out</button></Link>
+            </form> */}
+                </nav>
+                {/* <!-- Navbar End --> */}
+
+                <div onClick={handleSidebarClose}>
+                  <Routes>
+                    <Route path="/" >
+                      <Route index element={<Home />} />
+                      <Route path="/rapport" element={<RapportListe />} />
+                      <Route path="/detailleRapport/:id" element={<DetailleRapport />} />
+                      <Route path='/addRapport' element={<AddRapport />} />
+                      <Route path='/addedRapport' element={<AddedRapport />} />
+
+                      <Route path="/matches" element={<Matches />} />
+                      <Route path="/addMatche" element={<AddRapport />} />
+                      <Route path='/updateMatche/:id' element={<UpdateMatche />} />
+                      <Route path='/DeletedMatche' element={<DeletedMatche />} />
+                      <Route path='/updatedMatche' element={<UpdatedMatche />} />
+
+
+                      <Route path="/composants/stades" element={<Stades />} />
+                      <Route path="/composants/addStade" element={<AddStade />} />
+                      <Route path='/composants/DeletedStade' element={<DeletedStade />} />
+                      <Route path='/composants/updateStade/:id' element={<UpdateStade />} />
+                      <Route path='/composants/AddedStade' element={<AddedStade />} />
+                      <Route path='/composants/updatedStade' element={<UpdatedStade />} />
+
+                      <Route path="/composants/clubs" element={<ClubListe />} />
+                      <Route path="/composants/addClub" element={<AddClub />} />
+                      <Route path='/composants/addedClub' element={<AddedClub />} />
+                      <Route path='/composants/deletedClub' element={<DeletedClub />} />
+                      <Route path='/composants/updateClub/:id' element={<UpdateClub />} />
+                      <Route path='/composants/updatedClub' element={<UpdatedClub />} />
+
+                      <Route path='/composants/arbitres' element={<ArbiTreListe />} />
+                      <Route path='/composants/addArbitre' element={<AddArbitre />} />
+                      <Route path='/composants/updateArbitre/:id' element={<UpdateArbitre />} />
+                      <Route path='/composants/addedArbitre' element={<AddedArbitre />} />
+                      <Route path='/composants/deletedArbitre' element={<DeletedArbitre />} />
+                      <Route path='/composants/updatedArbitre' element={<UpdatedArbitre />} />
+
+                      <Route path='/composants/delegue' element={<DelegueListe />} />
+                      <Route path='/composants/addDelegue' element={<AddDelegue />} />
+                      <Route path='/composants/updateDelegue/:id' element={<UpdateDelegue />} />
+                      <Route path='/composants/addedDelegue' element={<AddedDelegue />} />
+                      <Route path='/composants/deletedDelegue' element={<DeletedDelegue />} />
+                      <Route path='/composants/updatedDelegue' element={<UpdatedDelegue />} />
+
+                      <Route path='/composants/joueur' element={<JoueurListe />} />
+                      <Route path='/composants/addJoueur' element={<AddJoueur />} />
+                      <Route path='/composants/updateJoueur/:id' element={<UpdateJoueur />} />
+                      <Route path='/composants/addedJoueur' element={<AddedJoueur />} />
+                      <Route path='/composants/deletedJoueur' element={<DeletedJoueur />} />
+                      <Route path='/composants/updatedJoueur' element={<UpdatedJoueur />} />
+
+                      <Route path='/composants/villes' element={<VillesListe />} />
+                      <Route path='/composants/addVille' element={<AddVille />} />
+                      <Route path='/composants/updateVille/:id' element={<UpdateVille />} />
+                      <Route path='/composants/addedVille' element={<AddedVille />} />
+                      <Route path='/composants/deletedVille' element={<DeletedVille />} />
+                      <Route path='/composants/updatedVille' element={<UpdatedVille />} />
+
+                      <Route path='/change_password' element={<Change_password />} />
+                    </ Route>
+                  </Routes>
+                  {/* <RouterProvider router={router}/> */}
                 </div>
+                {/* Footer Start */}
+                <div className="footer">
+                  <div class="container-fluid pt-4 px-4">
+                    <div class="bg-secondary rounded-top p-3">
+                      <div class="row d-flex justify-content-around align-items-center">
+                        <div dir="ltr" class="col-md-4 text-center">
+                          &copy; <a className='text-warning' href="#">Arbitrage</a>, All Right Reserved.
+                        </div>
+                        <div class="col-md-4 text-center">
+                          Created By <a target="_blank" className='text-warning' href="https://www.linkedin.com/in/abde-ssamad-ait-bella-92481a249/">AbdeSsamad Ait-bella</a>
+                          <br />
+                          {/* Distributed By: <a href="https://themewagon.com" target="_blank">ThemeWagon</a> */}
+                        </div>
+                        <div className="col-md-4 d-none d-lg-block">
+                          <Link to='/' className="navbar-brand mt-1 me-0 brand d-flex justify-content-center w-100">
+                            <h3 className="logo mb-0">
+                              <i class="fa-solid fa-flag-checkered ms-2 me-3"></i>
+                              ArbiTre</h3>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Footer End */}
               </div>
             </div>
-          </nav>
-          {/* <!-- Navbar End --> */}
-
-          <div>
-            <Routes>
-              <Route path="/" >
-                <Route index element={<Home />} />
-                <Route path="/rapport" element={<RapportListe />} />
-                <Route path="/detailleRapport/:id" element={<DetailleRapport />} />
-                <Route path='/addRapport' element={<AddRapport />} />
-                <Route path='/addedRapport' element={<AddedRapport />} />
-
-                <Route path="/matches" element={<Matches />} />
-                <Route path="/addMatche" element={<AddRapport />} />
-                <Route path='/updateMatche/:id' element={<UpdateMatche />} />
-                <Route path='/DeletedMatche' element={<DeletedMatche />} />
-                <Route path='/updatedMatche' element={<UpdatedMatche />} />
-
-
-                <Route path="/composants/stades" element={<Stades />} />
-                <Route path="/composants/addStade" element={<AddStade />} />
-                <Route path='/composants/DeletedStade' element={<DeletedStade />} />
-                <Route path='/composants/updateStade/:id' element={<UpdateStade />} />
-                <Route path='/composants/AddedStade' element={<AddedStade />} />
-                <Route path='/composants/updatedStade' element={<UpdatedStade />} />
-
-                <Route path="/composants/clubs" element={<ClubListe />} />
-                <Route path="/composants/addClub" element={<AddClub />} />
-                <Route path='/composants/addedClub' element={<AddedClub />} />
-                <Route path='/composants/deletedClub' element={<DeletedClub />} />
-                <Route path='/composants/updateClub/:id' element={<UpdateClub />} />
-                <Route path='/composants/updatedClub' element={<UpdatedClub />} />
-
-                <Route path='/composants/arbitres' element={<ArbiTreListe />} />
-                <Route path='/composants/addArbitre' element={<AddArbitre />} />
-                <Route path='/composants/updateArbitre/:id' element={<UpdateArbitre />} />
-                <Route path='/composants/addedArbitre' element={<AddedArbitre />} />
-                <Route path='/composants/deletedArbitre' element={<DeletedArbitre />} />
-                <Route path='/composants/updatedArbitre' element={<UpdatedArbitre />} />
-
-                <Route path='/composants/delegue' element={<DelegueListe />} />
-                <Route path='/composants/addDelegue' element={<AddDelegue />} />
-                <Route path='/composants/updateDelegue/:id' element={<UpdateDelegue />} />
-                <Route path='/composants/addedDelegue' element={<AddedDelegue />} />
-                <Route path='/composants/deletedDelegue' element={<DeletedDelegue />} />
-                <Route path='/composants/updatedDelegue' element={<UpdatedDelegue />} />
-
-                <Route path='/composants/joueur' element={<JoueurListe />} />
-                <Route path='/composants/addJoueur' element={<AddJoueur />} />
-                <Route path='/composants/updateJoueur/:id' element={<UpdateJoueur />} />
-                <Route path='/composants/addedJoueur' element={<AddedJoueur />} />
-                <Route path='/composants/deletedJoueur' element={<DeletedJoueur />} />
-                <Route path='/composants/updatedJoueur' element={<UpdatedJoueur />} />
-
-                <Route path='/composants/villes' element={<VillesListe />} />
-                <Route path='/composants/addVille' element={<AddVille />} />
-                <Route path='/composants/updateVille/:id' element={<UpdateVille />} />
-                <Route path='/composants/addedVille' element={<AddedVille />} />
-                <Route path='/composants/deletedVille' element={<DeletedVille />} />
-                <Route path='/composants/updatedVille' element={<UpdatedVille />} />
-              </ Route>
-            </Routes>
-            {/* <RouterProvider router={router}/> */}
-          </div>
+        }
+        {/* // Back to Top */}
+        <div>
+          <ScrollToTop smooth top="100" id={`${isSidebarOpen ? 'back-up_to_right' : 'back-up_to_lft'}`} className='fa-solid fa-arrow-up text-white back-to-top ' style={{ backgroundColor: '#fbab00' }} svgPath />
         </div>
-
-
+        {/* // Content End */}
       </div >
-
-      {/* Back to Top  */}
-      <a href="#" class="btn btn-lg btn-warning back-to-top"><i class="fa-solid fa-arrow-up text-dark"></i></a>
-      {/* <!-- Content End --> */}
-
     </>
   );
 }

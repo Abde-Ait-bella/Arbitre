@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { axiosClinet } from "../../Api/axios";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { AuthUser } from "../../AuthContext";
 
 function Matches() {
 
@@ -9,31 +12,49 @@ function Matches() {
     const [villes, setVilles] = useState();
     const [competition, setCompetition] = useState();
     const [categories, setCategories] = useState();
+    const [loading, setLoading] = useState(true);
+    const [loadingDelete, setLoadingDelete] = useState(false);
+    const [idRapport, setIdRapport] = useState();
+    const { user } = AuthUser();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/matche')
-            .then((res) => { setMatches(res.data) })
-        axios.get('http://localhost:8000/api/club')
-            .then((res) => { setClub(res.data) })
-        axios.get('http://localhost:8000/api/ville')
-            .then((res) => setVilles(res.data))
-        axios.get('http://localhost:8000/api/competition')
+        axiosClinet.get('api/matche')
+            .then((res) => {
+                setMatches(res.data.filter((m) => m.user_id === user?.id || m.user_id === null)),
+                    setLoading(false)
+            })
+        axiosClinet.get('api/club')
+            .then((res) => { setClub(res.data.filter((m) => m.user_id === user?.id || m.user_id === null)) })
+        axiosClinet.get('api/ville')
+            .then((res) => setVilles(res.data.filter((m) => m.user_id === user?.id || m.user_id === null)))
+        axiosClinet.get('api/competition')
             .then((res) => setCompetition(res.data))
-        axios.get('http://localhost:8000/api/category')
-            .then((res) => setCategories(res.data))
+        axiosClinet.get('api/category')
+            .then((res) => {
+                setCategories(res.data)
+            })
     }, [])
 
     const handleDelete = (id) => {
-
-        axios.delete(`http://localhost:8000/api/matche/${id}`)
-            .then((response) => {
-                console.log(`Matche with id ${id} deleted successfully`);
-            })
-            .catch((error) => {
-                console.error(`Error deleting Matche with id ${id}:`, error);
-            });
+        setLoadingDelete(true)
+        setIdRapport(id)
+        axiosClinet.delete(`api/matche/${id}`)
+            .then(
+                (response) => {
+                    const { status } = response;
+                    console.log(response)
+                    if (status === 200) {
+                        navigate('/DeletedMatche');
+                        setLoadingDelete(false)
+                    }
+                }).catch((error) => {
+                    setLoadingDelete(false)
+                    console.error(`Error deleting stade with id ${id}:`, error);
+                });
     };
 
+    
     return (
         <>
             {/* <!-- Table matches --> */}
@@ -43,7 +64,7 @@ function Matches() {
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         {/* <h6 class="mb-0">Recent Salse</h6> */}
                         {/* <a href="">Show All</a> */}
-                        <Link to="/addRapport" class="btn btn-warning pe-3">إضافة تقرير <i class="fa-solid fa-circle-plus me-2"></i></Link>
+                        <Link to="/addRapport" class="btn btn-warning px-4">إضافة تقرير <i class="fa-solid fa-circle-plus me-2 pt-1"></i></Link>
                     </div>
                     <div class="table-responsive">
                         {/* {matches.map((m) => ( */}
@@ -57,25 +78,61 @@ function Matches() {
                                     <th scope="col" className="text-center">الفئة</th>
                                     <th scope="col" className="text-center">النتيجة</th>
                                     <th scope="col" className="text-center">المدينة</th>
-                                    {/* <th scope="col" className="text-center">Action</th> */}
+                                    <th scope="col" className="text-center col-2">ت / و.ر.ق التقرير / ح</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {matches?.map((m) => (
-                                    <tr className="text-center" key={m.id}>
-                                        <td>{m.date}</td>
-                                        <td>{club?.find(club => club.id === m.club_id_1)?.nom} ({club?.find(club => club.id === m.club_id_1)?.abbr})</td>
-                                        <td>{club?.find(club => club.id === m.club_id_2)?.nom} ({club?.find(club => club.id === m.club_id_1)?.abbr})</td>
-                                        <td>{competition?.find(c => c.id === m.competition_id)?.nom}</td>
-                                        <td>{categories?.find(c => c.id === m.categorie_id)?.nom}</td>
-                                        <td>{m.result_club_1}-{m.result_club_2}</td>
-                                        <td>{villes?.find(ville => ville.id === m.ville_id)?.nom}</td>
-                                        <td><Link to={`/updateMatche/${m.id}`}><i class="fa-solid fa-wrench"></i></Link> <Link to='/DeletedMatche' onClick={() => handleDelete(m.id)} ><i class="fa-solid fa-trash me-2"></i></Link><Link to={`/detailleRapport/${m.id}`} class="btn btn-sm btn-warning me-2">التفاصيل</Link></td>
-                                    </tr>
-                                ))}
+                                {
+                                    loading ?
+
+                                        <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                            <tr className="text-center">
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                            </tr>
+                                            <tr className="text-center">
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                                <th><Skeleton height={30} /></th>
+                                            </tr>
+                                        </SkeletonTheme>
+
+                                        :
+
+                                        matches?.map((m) => (
+                                            <tr className="text-center" key={m.id}>
+                                                <td>{m.date}</td>
+                                                <td>{club?.find(club => club.id === m.club_id_1)?.nom} ({club?.find(club => club.id === m.club_id_1)?.abbr})</td>
+                                                <td>{club?.find(club => club.id === m.club_id_2)?.nom} ({club?.find(club => club.id === m.club_id_1)?.abbr})</td>
+                                                <td>{competition?.find(c => c.id === m.competition_id)?.nom}</td>
+                                                <td>{categories?.find(c => c.id === m.categorie_id)?.nom}</td>
+                                                <td>{m.result_club_1}-{m.result_club_2}</td>
+                                                <td>{villes?.find(ville => ville.id === m.ville_id)?.nom}</td>
+                                                <td><Link to={`/updateMatche/${m.id}`}><i class="fa-solid fa-wrench pt-2 me-lg-2 me-3"></i></Link> <Link to={`/detailleRapport/${m.id}`} class="btn btn-sm btn-warning me-2 pt-2 px-3">التفاصيل</Link>
+                                                    <Link onClick={() => handleDelete(m.id)} >
+                                                        {
+                                                            loadingDelete & idRapport === m.id ? (
+                                                                <div className="spinner-border spinner-border-sm me-3 mb-1 fs-2 mt-lg-0 mt-2" role="status">
+                                                                    <span className="sr-only">Loading...</span>
+                                                                </div>) : <i className="fa-solid fa-trash me-3 mt-lg-0 mt-2"></i>
+                                                        }
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
                             </tbody>
                         </table>
-                        {/* ))} */}
                     </div>
                 </div>
             </div>

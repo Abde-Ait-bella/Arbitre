@@ -1,8 +1,11 @@
 /********** Template CSS **********/
-body::-webkit-scrollbar{
-        display:none;
+body::-webkit-scrollbar {
+    display: none;
 }
 
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
 
 :root {
     --primary: #EB1616;
@@ -12,11 +15,18 @@ body::-webkit-scrollbar{
 }
 
 .back-to-top {
-    position: fixed;
-    display: none;
-    right: 45px;
-    bottom: 45px;
-    z-index: 99;
+
+    /* text-decoration: none; */
+    padding: 10px;
+    border-radius: 100px;
+    /* font-family: sans-serif; */
+    /* color: #fff;
+    background: #000; */
+    /* white-space: nowrap; */
+    /* display: none; */
+    /* right: 40px; */
+    /* bottom: 45px; */
+    /* z-index: 99; */
 }
 
 
@@ -51,11 +61,17 @@ body::-webkit-scrollbar{
     margin-left: -130px;
 }
 
-.logo{
-    color: red;  
+#back-up_to_lft {
+    right: 289px;
+    transition: 2s;
 }
-.logo:hover{
-    color: #ffc107;  
+
+#back-up_to_right {
+    transition: 2s;
+}
+
+.logo:hover {
+    color: #ffc107;
     transition: 1.5s;
 }
 
@@ -98,7 +114,7 @@ body::-webkit-scrollbar{
     right: 0;
     bottom: 0;
     width: 250px;
-    height: 100vh;
+    /* height: 100vh; */
     overflow-y: auto;
     background: var(--secondary);
     transition: 0.5s;
@@ -106,12 +122,13 @@ body::-webkit-scrollbar{
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin-right: 250px;
     min-height: 100vh;
-    /* background: var(--dark); */
     background-color: rgb(187, 187, 187);
     transition: 0.5s;
-    /* color: #000000; */
 }
 
 
@@ -201,7 +218,7 @@ body::-webkit-scrollbar{
 
 .sidebar .navbar .dropdown-item {
     /* padding-right: 0px; */
-    border-radius: 30px 0 0 30px ;
+    border-radius: 30px 0 0 30px;
     color: var(--light);
     display: flex;
     padding-right: 55px;
@@ -236,7 +253,7 @@ body::-webkit-scrollbar{
     border-radius: 40px;
 }
 
-.dropdown-item{
+.dropdown-item {
     /* padding: 0.2rem 8rem; */
     font-weight: 700;
     display: flex;
@@ -329,4 +346,16 @@ body::-webkit-scrollbar{
 .testimonial-carousel .owl-dot.Active {
     background: var(--dark);
     border-color: var(--primary);
+}
+
+
+
+@media (max-width: 950px) {
+    #back-up_to_lft {
+        right: 24px;
+        transition: 2s;
+    }
+    .polarArea{
+        height: 100px;
+    }
 }

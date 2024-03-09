@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import "../../style/Rapport/DetailleRapport.css";
-import axios from "axios";
 import { useState } from "react";
-// import ReactToPrint from "react-to-print";
 import { useReactToPrint } from "react-to-print";
 import { Header } from "./AddRapport/HeaderRapport";
+import { axiosClinet } from "../../Api/axios";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 
 
@@ -21,39 +22,40 @@ function DetailleRapport() {
     const [loading, setLoading] = useState(true);
     const [skypTable, setSkypTable] = useState(false);
     const [marginB, setMarginB] = useState(false);
+    const { id } = useParams();
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/matche')
+        axiosClinet.get('/api/matche')
             .then((respense) => {
-                setRapports(respense.data)
+                setRapports(respense.data.find((r) => r.id === parseInt(id)))
             })
 
-        axios.get('http://localhost:8000/api/arbitre')
+        axiosClinet.get('/api/arbitre')
             .then((respense) => {
                 setArbitre(respense.data)
             })
 
-        axios.get('http://localhost:8000/api/club')
+        axiosClinet.get('/api/club')
             .then((respense) => {
                 setClub(respense.data)
             })
 
-        axios.get('http://localhost:8000/api/category')
+        axiosClinet.get('/api/category')
             .then((respense) => {
                 setCategories(respense.data)
             })
 
-        axios.get('http://localhost:8000/api/avertissement')
+        axiosClinet.get('/api/avertissement')
             .then((respense) => {
                 setAvertissemets(respense.data)
             })
 
-        axios.get('http://localhost:8000/api/changement')
+        axiosClinet.get('/api/changement')
             .then((respense) => {
                 setChangements(respense.data)
             })
 
-        axios.get('http://localhost:8000/api/but')
+        axiosClinet.get('/api/but')
             .then((respense) => {
                 setButs(respense.data)
                 setLoading(false)
@@ -113,22 +115,18 @@ function DetailleRapport() {
         `,
     });
 
-    const { id } = useParams();
-
-    const rapport = rapports?.find((r) => r.id === parseInt(id))
 
     const avertissemetG = avertissemets?.filter((a) => a.matche_id === parseInt(id) && a.type === "G");
     const avertissemetR = avertissemets?.filter((a) => a.matche_id === parseInt(id) && a.type === "R");
-    const changementClub1 = changements?.filter((ch) => ch.matche_id === parseInt(id) && ch.club_id === rapport?.club_id_1);
-    const changementClub2 = changements?.filter((ch) => ch.matche_id === parseInt(id) && ch.club_id === rapport?.club_id_2);
-    const But_1 = buts?.filter((b) => b.matche_id === parseInt(id) && b.club_id === rapport?.club_id_1);
-    const But_2 = buts?.filter((b) => b.matche_id === parseInt(id) && b.club_id === rapport?.club_id_2);
+    const changementClub1 = changements?.filter((ch) => ch.matche_id === parseInt(id) && ch.club_id === rapports?.club_id_1);
+    const changementClub2 = changements?.filter((ch) => ch.matche_id === parseInt(id) && ch.club_id === rapports?.club_id_2);
+    const But_1 = buts?.filter((b) => b.matche_id === parseInt(id) && b.club_id === rapports?.club_id_1);
+    const But_2 = buts?.filter((b) => b.matche_id === parseInt(id) && b.club_id === rapports?.club_id_2);
 
     useEffect(() => {
         if (But_1?.length > 5 || But_2?.length > 5 || changementClub1?.length > 5 || changementClub2?.length > 5) {
             setSkypTable(true);
         } else {
-            // If needed, reset the skyp state to false in the else block
             setSkypTable(false);
         }
     }, [But_1, But_2]);
@@ -138,7 +136,6 @@ function DetailleRapport() {
         if (avertissemetG?.length + avertissemetR?.length > 16) {
             setMarginB(true);
         } else {
-            // If needed, reset the skyp state to false in the else block
             setMarginB(false);
         }
     }, [But_1, But_2]);
@@ -187,18 +184,99 @@ function DetailleRapport() {
     const restCH_2 = Array.from({ length: RestCH2 }, (_, index) => index + 1);
     const restCH_1 = Array.from({ length: RestCH1 }, (_, index) => index + 1);
 
-    
+
     return (
         <>
             {
                 loading ?
-                    /* <!-- Spinner Start --> */
-                    < div id="spinner_component" class="show bg-dark position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
-                        <div class="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
-                            <span class="sr-only">Loading...</span>
+                    
+                    <div className="bg-white m-4 rounded">
+                        <div className="row container-none container-lg-block mb-4 px-lg-4 py-4 d-flex justify-content-center">
+                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                <div className="row">
+                                    <div className="col-1">
+                                        <Skeleton height={45} width={53} />
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-4 mt-4">
+                                        <Skeleton height={60} />
+                                    </div>
+                                    <div className="col-4 mt-4">
+                                        <Skeleton height={60} />
+                                    </div>
+                                    <div className="col-4 mt-4">
+                                        <Skeleton height={60} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <div className="col-3 ps-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 px-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 px-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 pe-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 ps-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 px-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 px-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                    <div className="col-3 pe-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <div className="col-6">
+                                        <Skeleton height={80} />
+                                    </div>
+                                    <div className="col-3 ">
+                                        <Skeleton height={80} />
+                                    </div>
+                                    <div className="col-3">
+                                        <Skeleton height={80} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <div className="col-6">
+                                        <Skeleton height={150} />
+                                    </div>
+                                    <div className="col-6">
+                                        <Skeleton height={150} />
+                                    </div>
+                                </div>
+
+                                <div className="row mt-4">
+                                    <div className="col-2 ps-1">
+                                        <Skeleton height={35} />
+                                        <Skeleton height={35} />
+                                    </div>
+                                </div>
+                            </SkeletonTheme>
                         </div>
                     </div >
-                    /* <!-- Spinner End --> */
+
                     :
                     < div >
                         <div dir="rtl" className="detailleRapport bg-white m-4 rounded" ref={componentRef}>
@@ -209,28 +287,28 @@ function DetailleRapport() {
                                     <table className="table table-bordered text-dark">
                                         <thead>
                                             <tr>
-                                                <th class="p-1 px-3">الموسم الرياضي : {rapport?.saison?.nom}</th>
-                                                <th class="p-1 px-3">التاريخ : {rapport?.date}</th>
-                                                <th class="p-1 px-3">الحكم : {arbitre?.find((a) => a.id === rapport?.arbitre_c_id)?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapport?.arbitre_c_id)?.ville.nom}</th>
+                                                <th class="p-1 px-3">الموسم الرياضي : {rapports?.saison?.nom}</th>
+                                                <th class="p-1 px-3">التاريخ : {rapports?.date}</th>
+                                                <th class="p-1 px-3">الحكم : {arbitre?.find((a) => a.id === rapports?.arbitre_c_id)?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapports?.arbitre_c_id)?.ville.nom}</th>
                                             </tr>
                                             <tr>
-                                                <th class="p-1 px-3">المقابلة: {club?.find((c) => c.id === rapport?.club_id_1)?.abbr} # {club?.find((c) => c.id === rapport?.club_id_2)?.abbr}</th>
-                                                <th class="p-1 px-3">التوقيت : {rapport?.temps}</th>
-                                                <th class="p-1 px-3">المساعد 1 : {arbitre?.find((a) => a.id === rapport?.arbitre_a1_id)?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapport?.arbitre_a1_id)?.ville.nom}</th>
+                                                <th class="p-1 px-3">المقابلة: {club?.find((c) => c.id === rapports?.club_id_1)?.abbr} # {club?.find((c) => c.id === rapports?.club_id_2)?.abbr}</th>
+                                                <th class="p-1 px-3">التوقيت : {rapports?.temps}</th>
+                                                <th class="p-1 px-3">المساعد 1 : {arbitre?.find((a) => a.id === rapports?.arbitre_a1_id)?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapports?.arbitre_a1_id)?.ville.nom}</th>
                                             </tr>
                                             <tr>
-                                                <th class="p-1 px-3">النتيجة : {rapport?.result_club_1} - {rapport?.result_club_2}</th>
-                                                <th class="p-1 px-3">الملعب : {rapport?.stade?.nom}</th>
-                                                <th class="p-1 px-3" >المساعد 2 : {arbitre?.find((a) => a.id === rapport?.arbitre_a2_id)?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapport?.arbitre_a2_id)?.ville.nom}</th>
+                                                <th class="p-1 px-3">النتيجة : {rapports?.result_club_1} - {rapports?.result_club_2}</th>
+                                                <th class="p-1 px-3">الملعب : {rapports?.stade?.nom}</th>
+                                                <th class="p-1 px-3" >المساعد 2 : {arbitre?.find((a) => a.id === rapports?.arbitre_a2_id)?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapports?.arbitre_a2_id)?.ville.nom}</th>
                                             </tr>
                                             <tr>
-                                                <th class="p-1 px-3">المنافسة : {rapport?.competition?.nom} <span className="me-5">الفئة : {categories?.find((a) => a.id === rapport?.categorie_id)?.nom}</span></th>
-                                                <th class="p-1 px-3">المدينة : {rapport?.stade?.ville?.nom}</th>
-                                                <th class="p-1 px-3">المراقب : {rapport?.delegue?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {rapport?.delegue?.ville?.nom}</th>
+                                                <th class="p-1 px-3">المنافسة : {rapports?.competition?.nom} <span className="me-5">الفئة : {categories?.find((a) => a.id === rapports?.categorie_id)?.nom}</span></th>
+                                                <th class="p-1 px-3">المدينة : {rapports?.stade?.ville?.nom}</th>
+                                                <th class="p-1 px-3">المراقب : {rapports?.delegue?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {rapports?.delegue?.ville?.nom}</th>
                                             </tr>
                                         </thead>
                                     </table>
@@ -327,7 +405,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-white">التغييرات :</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === rapport?.club_id_1)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === rapports?.club_id_1)?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">خ : </th>
@@ -371,7 +449,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-dark">-</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === rapport?.club_id_2)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === rapports?.club_id_2)?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">خ : </th>
@@ -424,7 +502,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-white">الأهداف :</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === rapport?.club_id_1)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === rapports?.club_id_1)?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">الرقم : </th>
@@ -465,7 +543,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-dark">-</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === rapport?.club_id_2)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === rapports?.club_id_2)?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">الرقم : </th>
@@ -513,16 +591,16 @@ function DetailleRapport() {
                                                         </thead>
                                                         <tbody>
                                                             <tr className="text-dark">
-                                                                <th scope="row">1.	توقيت حضور مراقب المباراة : <p className="text-center mb-0">{rapport?.temp_presence_delegue}</p></th>
+                                                                <th scope="row">1.	توقيت حضور مراقب المباراة : <p className="text-center mb-0">{rapports?.temp_presence_delegue}</p></th>
                                                             </tr>
                                                             <tr className="text-dark">
-                                                                <th>2. توقيت حضور رجال الأمن مع الاشاؤة الى العدد : <p className="text-center mb-0 mt-2"><span>التوقيت : {rapport?.temp_presence_agents_sécurité}</span> <span className="me-2">العدد : {rapport?.nombre_agents_sécurité}</span></p></th>
+                                                                <th>2. توقيت حضور رجال الأمن مع الاشاؤة الى العدد : <p className="text-center mb-0 mt-2"><span>التوقيت : {rapports?.temp_presence_agents_sécurité}</span> <span className="me-2">العدد : {rapports?.nombre_agents_sécurité}</span></p></th>
                                                             </tr>
                                                             <tr className="text-dark">
-                                                                <th>.3 ارضية الملعب : <p className="text-center mb-0">{rapport?.etat_stade}</p></th>
+                                                                <th>.3 ارضية الملعب : <p className="text-center mb-0">{rapports?.etat_stade}</p></th>
                                                             </tr>
                                                             <tr className="text-dark">
-                                                                <th>.4 مستودع  ملابس الحكام : <p className="text-center mb-0">{rapport?.etat_vestiaire}</p></th>
+                                                                <th>.4 مستودع  ملابس الحكام : <p className="text-center mb-0">{rapports?.etat_vestiaire}</p></th>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -533,17 +611,11 @@ function DetailleRapport() {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* <div className="row">
-                            <div>
-                                <label htmlFor="" className="fw-bold fs-5 text-dark text-center">التقرير الاضافي :
-                                    <p className="me-3 mt-3 text-dark fs-5">{rapport?.rapport_supp}</p></label>
-                            </div>
-                        </div> */}
                                 </div>
-                                <div className={`${skypTable ? "" : "page-break contentP2"}`}>
+                                <div className={` container ${skypTable ? "" : "page-break contentP2"}`}>
                                     <div>
                                         <label htmlFor="" className="fw-bold fs-5 text-dark text-center mb-5">التقرير الاضافي :
-                                            <p className="me-3 mt-3 text-dark fs-5">{rapport?.rapport_supp}</p></label>
+                                            <p className="mt-3 text-dark fs-5">{rapports?.rapport_supp}</p></label>
                                     </div>
                                     <div className="signature">
                                         <label htmlFor="" className="fw-bold fs-5 text-dark">توقيع الحكم : </label>

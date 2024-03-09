@@ -2,6 +2,11 @@ import { React, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { axiosClinet } from '../../../Api/axios';
+import { AuthUser } from '../../../AuthContext';
+import '../../../style/Matche/updateMatche.scss'
 
 
 export function Changement(props) {
@@ -16,10 +21,9 @@ export function Changement(props) {
         clubs: [],
     });
 
-    const [selectedSelect, setSelectedSelect] = useState({});
-
     const [changeUpdate, setChangeUpdate] = useState([]);
-    const [changements, setChangements] = useState();
+    const [loading, setLoading] = useState(true);
+    const { user } = AuthUser();
 
     const { id } = useParams();
 
@@ -27,12 +31,14 @@ export function Changement(props) {
         const fetchData = async () => {
             try {
                 const [joueurResponse, clubResponse, changeResponse] = await Promise.all([
-                    axios.get('http://localhost:8000/api/joueur'),
-                    axios.get('http://localhost:8000/api/club'),
-                    axios.get('http://localhost:8000/api/changement')
+                    axiosClinet.get('api/joueur'),
+                    axiosClinet.get('api/club'),
+                    axiosClinet.get('api/changement'),
                 ]);
 
-                const dataJoueurs = joueurResponse.data;
+                const dataJoueurs = joueurResponse.data.filter((j) => j.user_id === user?.id);
+                console.log('dataJoueurs', dataJoueurs)
+
                 const optionJoueursEntr = dataJoueurs?.map(item => ({
                     value: item.nom,
                     label: item.nom.toUpperCase(),
@@ -45,6 +51,7 @@ export function Changement(props) {
                     name: "joueur_nom_sort",
                     licence: item.joueur_numero_licence
                 }))
+
                 const optionJoueursLicenceE = dataJoueurs?.map(item => ({
                     value: item.joueur_numero_licence,
                     label: item.joueur_numero_licence.toUpperCase(),
@@ -57,14 +64,19 @@ export function Changement(props) {
                     name: "joueur_licence_sort"
                 }))
 
-                const dataClubs = clubResponse.data;
+                setOptionsLicenceE(optionJoueursLicenceE);
+                setOptionsJEntr(optionJoueursEntr);
+                setOptionsJSort(optionJoueursSort);
+                setOptionsLicenceS(optionJoueursLicenceS);
+
+                const dataClubs = clubResponse.data.filter((c) => c.user_id === user?.id || c.user_id === null);
                 const optionClubs = dataClubs?.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + " " + item.abbr,
-                    name: "club_id"
+                    name: "club_id",
                 }))
 
-                setChangements(changeResponse.data)
+                setChangeUpdate([...changeResponse.data?.filter((ch) => ch.matche_id === parseInt(id))])
 
                 setState(prevData => ({
                     ...prevData,
@@ -75,34 +87,13 @@ export function Changement(props) {
                     JoueursLicenceS: optionJoueursLicenceS,
                 }))
 
-                setOptionsJEntr(optionJoueursEntr)
-                setOptionsJSort(optionJoueursSort)
-                setOptionsLicenceE(optionJoueursLicenceE)
-                setOptionsLicenceS(optionJoueursLicenceS)
+                setLoading(false)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
         fetchData();
     }, []);
-
-    const changementData = changements?.filter((ch) => ch.matche_id === parseInt(id));
-
-
-    const addState = () => {
-        const newObjects = Array.from({ length: changementData?.length }, (_, index) => (
-            {}
-        ));
-        if (changementData) {
-            setSelectedSelect([...newObjects]);
-            setChangeUpdate([...changementData]);
-        }
-    }
-
-    useEffect(() => {
-        addState();
-    }, [changementData?.length])
-
 
     //--------Sélection joueur entrant
 
@@ -126,23 +117,18 @@ export function Changement(props) {
 
     const handleChangeSelectJEntr = (event, index) => {
         console.log(event);
-        let valeur = event
-        if (valeur === null) {
-            valeur = {
+        // let valeur = event
+        if (event === null) {
+            var valeur = {
                 value: "",
                 name: "joueur_nom_entr"
             }
         }
-        const { name, value } = valeur;
+        const { name, value } = valeur ? valeur : event;
         const newChnageUpdate = [...changeUpdate];
         newChnageUpdate[index][name] = value;
         setChangeUpdate(newChnageUpdate);
-
-        const newSelect = [...selectedSelect];
-        newSelect[index][name] = valeur;
-        setSelectedSelect(newSelect)
     }
-
 
     /////////--------Sélection du joueur sortant
 
@@ -176,10 +162,6 @@ export function Changement(props) {
         const newChange = [...changeUpdate];
         newChange[index][name] = value;
         setChangeUpdate(newChange)
-
-        const newSelect = [...selectedSelect];
-        newSelect[index][name] = valeur;
-        setSelectedSelect(newSelect)
     }
 
     //-----Sélection licence de joueur entrant
@@ -218,8 +200,6 @@ export function Changement(props) {
         setChangeUpdate(newChange);
 
     };
-
-
 
     //-----Sélection licence de joueur sortant
 
@@ -295,126 +275,220 @@ export function Changement(props) {
 
     return (
         <>
-            <div className="row my-2">
-                <div className="col-md-12">
-                    <div class=" card text-center bg-light text-white">
-                        <div class="card-header bg-secondary">
-                            التغييرات
-                        </div>
-                        <div class="card-body">
-                            {changeUpdate ?
-                                (
-                                    <div>
-                                        {changeUpdate?.map((item, index) =>
-                                            <div className="row  border border-secondary border-4 rounded py-3 px-2 my-1 mt-3" key={index}>
-                                                <div className="form-group col-md-3">
-                                                    <label>الفريق</label>
-                                                    <div className='my-2'>
-                                                        <CreatableSelect className='text-light' value={state?.clubs.find((c) => c.value === item?.club_id)} options={state.clubs} onChange={(event) => handleChangeSelect(event, index)} placeholder="اكتب" />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-4">
-                                                    <label>اسم الاعب الداخل</label>
-                                                    <div className='my-2'>
-                                                        <CreatableSelect className='text-light'
-                                                            isClearable
-                                                            isDisabled={isLoadingJEntr}
-                                                            isLoading={isLoadingJEntr}
-                                                            onChange={(event) => handleChangeSelectJEntr(event, index)}
-                                                            onCreateOption={handleCreateJEntr}
-                                                            options={optionsJEntr}
-                                                            value={selectedSelect[index]?.joueur_nom_entr ? selectedSelect[index]?.joueur_nom_entr : state?.joueursEntre.find((j) => j.licence === changementData[index]?.joueur_licence_entr)}
-                                                            placeholder="أكتب او اختر"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-2">
-                                                    <label >رقم الاعب الداخل</label>
-                                                    <div className='my-2'>
-                                                        {/* <input type="text" name='joueur_num_entr' value={selectedSelect[index]?.joueur_num_sort ? selectedSelect[index]?.joueur_num_sort : item?.joueur_num_sort} onChange={(event) => handleChangeInput(event, index)} className="form-control bg-white border-light my-2" id="inputPassword4" /> */}
-                                                        <input type="text" name='joueur_num_entr' value={item?.joueur_num_entr} className="form-control bg-white border-light my-2" onChange={(event) => handleChangeInput(event, index)} id="inputPassword4" />
-
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-3">
-                                                    <label >رقم رخصة الداخل</label>
-                                                    <div className='my-2'>
-                                                        <CreatableSelect className='text-light'
-                                                            isClearable
-                                                            isDisabled={isLoadingLicenceE}
-                                                            isLoading={isLoadingLicenceE}
-                                                            onChange={(event) => handleChangeSelectLicenceE(event, index)}
-                                                            onCreateOption={handleCreateLicenceE}
-                                                            options={optionsLicenceE}
-                                                            value={state?.JoueursLicenceE.find((j) => j.value === item?.joueur_licence_entr)}
-                                                            placeholder='أكتب واختر'
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-4">
-                                                    <label >اسم الاعب الخارج</label>
-                                                    <div className='my-2'>
-                                                        <CreatableSelect className='text-light'
-                                                            isClearable
-                                                            isDisabled={isLoadingJSort}
-                                                            isLoading={isLoadingJSort}
-                                                            onChange={(event) => handleChangeSelectJSort(event, index)}
-                                                            onCreateOption={handleCreateJSort}
-                                                            options={optionsJSort}
-                                                            value={selectedSelect[index]?.joueur_nom_sort ? selectedSelect[index]?.joueur_nom_sort : state?.joueursSort.find((c) => c.licence === changementData[index]?.joueur_licence_sort)}
-                                                            placeholder="أكتب او اختر"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-3">
-                                                    <label >رقم رخصة الخارج</label>
-                                                    <div className='my-2'>
-                                                        <CreatableSelect className='text-light'
-                                                            isClearable
-                                                            isDisabled={isLoadingLicenceS}
-                                                            isLoading={isLoadingLicenceS}
-                                                            onChange={(event) => handleChangeSelectLicenceS(event, index)}
-                                                            onCreateOption={handleCreateLicenceS}
-                                                            options={optionsLicenceS}
-                                                            value={state?.JoueursLicenceE.find((j) => j.value === item?.joueur_licence_sort)}
-                                                            placeholder='أكتب واختر'
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-2">
-                                                    <label >رقم الاعب الخارج</label>
-                                                    <div className='my-2'>
-                                                        <input type="text" name='joueur_num_sort' value={item?.joueur_num_sort} onChange={(event) => handleChangeInput(event, index)} className="form-control bg-white border-light my-2" id="inputPassword4" />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group col-md-2">
-                                                    <label >الدقيقة</label>
-                                                    <div className='my-2'>
-                                                        <input type="text" name='minute' value={item?.minute} onChange={(event) => handleChangeInput(event, index)} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
-                                                    </div>
-                                                </div>
-                                                <div className='mt-2'>
-                                                    <button className='btn btn-danger moin rounded-pill' onClick={() => SuppRow(index)}><i class="fa-solid fa-xmark"></i></button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )
-                                :
-                                (<h1>...</h1>)
-                            }
-                            <div className='d-flex justify-content-center mt-3'>
-                                <div>
-                                    <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus"></i></button>
+            {
+                loading ?
+                    <>
+                        <div className='mt-4 mb-3 d-none d-lg-block'>
+                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                <div className="row mt-4">
+                                    <Skeleton height={40} />
                                 </div>
-                            </div>
-                            <div className='d-flex justify-content-right pt-2'>
-                                <button className={`btn  ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>Valider</button>
+
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-3">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-4">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-2">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-3">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-4">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-4">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-2">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-2">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </SkeletonTheme>
+                        </div>
+                 
+                        <div className='mt-4 mb-3 d-lg-none'>
+                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                <div className="row mt-5 mx-1">
+                                    <Skeleton height={40} />
+                                </div>
+
+                                <div className="row mt-3 mx-2">
+                                    <div className="col-12">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-12 mt-3">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-12 mt-3">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-12 mt-3">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-12 mt-3">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </SkeletonTheme>
+                        </div>
+                    </>
+
+                    :
+                    <div className="row my-2 changement-update">
+                        <div className="col-md-12">
+                            <div class=" card text-center bg-light text-white mx-1">
+                                <div class="card-header bg-secondary fw-bold">
+                                    التغييــرات
+                                </div>
+                                <div class="card-body">
+                                    {changeUpdate ?
+                                        (
+                                            <div>
+                                                {changeUpdate?.map((item, index) =>
+                                                    <div className="row  border border-secondary border-4 rounded py-3 px-2 my-1 mt-3" key={index}>
+                                                        <div className="form-group col-md-3">
+                                                            <label>الفريق</label>
+                                                            <div className='my-2'>
+                                                                <CreatableSelect className='text-light' value={state?.clubs.find((c) => c.value === item?.club_id)} options={state.clubs} onChange={(event) => handleChangeSelect(event, index)} placeholder="اكتب" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-4">
+                                                            <label>اسم الاعب الداخل</label>
+                                                            <div className='my-2'>
+                                                                <CreatableSelect className='text-light'
+                                                                    isClearable
+                                                                    isDisabled={isLoadingJEntr}
+                                                                    isLoading={isLoadingJEntr}
+                                                                    onChange={(event) => handleChangeSelectJEntr(event, index)}
+                                                                    onCreateOption={handleCreateJEntr}
+                                                                    options={optionsJEntr}
+                                                                    value={state?.joueursEntre.find((j) => (j.value === item?.joueur_nom_entr))}
+                                                                    placeholder="أكتب او اختر"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-2">
+                                                            <label >رقم الاعب الداخل</label>
+                                                            <div className='my-2'>
+                                                                <input type="text" name='joueur_num_entr' value={item?.joueur_num_entr} className="form-control bg-white border-light my-2" onChange={(event) => handleChangeInput(event, index)} id="inputPassword4" />
+
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-3">
+                                                            <label >رقم رخصة الداخل</label>
+                                                            <div className='my-2'>
+                                                                <CreatableSelect className='text-light'
+                                                                    isClearable
+                                                                    isDisabled={isLoadingLicenceE}
+                                                                    isLoading={isLoadingLicenceE}
+                                                                    onChange={(event) => handleChangeSelectLicenceE(event, index)}
+                                                                    onCreateOption={handleCreateLicenceE}
+                                                                    options={optionsLicenceE}
+                                                                    value={state?.JoueursLicenceE.find((j) => j.value === item?.joueur_licence_entr)}
+                                                                    placeholder='أكتب واختر'
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-4">
+                                                            <label >اسم الاعب الخارج</label>
+                                                            <div className='my-2'>
+                                                                <CreatableSelect className='text-light'
+                                                                    isClearable
+                                                                    isDisabled={isLoadingJSort}
+                                                                    isLoading={isLoadingJSort}
+                                                                    onChange={(event) => handleChangeSelectJSort(event, index)}
+                                                                    onCreateOption={handleCreateJSort}
+                                                                    options={optionsJSort}
+                                                                    value={state?.joueursSort.find((j) => (j.value === item?.joueur_nom_sort))}
+                                                                    placeholder="أكتب او اختر"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-4">
+                                                            <label >رقم رخصة الخارج</label>
+                                                            <div className='my-2'>
+                                                                <CreatableSelect className='text-light'
+                                                                    isClearable
+                                                                    isDisabled={isLoadingLicenceS}
+                                                                    isLoading={isLoadingLicenceS}
+                                                                    onChange={(event) => handleChangeSelectLicenceS(event, index)}
+                                                                    onCreateOption={handleCreateLicenceS}
+                                                                    options={optionsLicenceS}
+                                                                    value={state?.JoueursLicenceS.find((j) => j.value === item?.joueur_licence_sort)}
+                                                                    placeholder='أكتب واختر'
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-2">
+                                                            <label >رقم الاعب الخارج</label>
+                                                            <div className='my-2'>
+                                                                <input type="text" name='joueur_num_sort' value={item?.joueur_num_sort} onChange={(event) => handleChangeInput(event, index)} className="form-control bg-white border-light my-2" id="inputPassword4" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group col-md-2">
+                                                            <label >الدقيقة</label>
+                                                            <div className='my-2'>
+                                                                <input type="text" name='minute' value={item?.minute} onChange={(event) => handleChangeInput(event, index)} className="form-control bg-white border-light mt-2 mb-2" id="inputPassword4" />
+                                                            </div>
+                                                        </div>
+                                                        <div className='mt-2'>
+                                                            <button className='btn btn-danger moin rounded-pill' onClick={() => SuppRow(index)}><i class="fa-solid fa-xmark mt-1 px-3"></i></button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                        :
+                                        (<h1>...</h1>)
+                                    }
+                                    <div className='d-flex justify-content-center mt-3'>
+                                        <div>
+                                            <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div className='d-flex justify-content-right pt-2'>
+                                        <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+            }
         </>
     )
 }

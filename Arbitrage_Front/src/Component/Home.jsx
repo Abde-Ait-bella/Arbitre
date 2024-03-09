@@ -1,12 +1,12 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useRef, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, Filler, ArcElement, RadialLinearScale } from 'chart.js';
 import { Bar, Pie, PolarArea } from "react-chartjs-2";
 import { axiosClinet } from "../Api/axios";
-import axios from "axios";
-
 import { Line } from 'react-chartjs-2';
-import { useNavigate } from "react-router-dom";
-// import faker from 'faker';
+import { Link, useNavigate } from "react-router-dom";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { AuthUser } from "../AuthContext";
 
 ChartJS.register(
     ArcElement,
@@ -24,7 +24,6 @@ ChartJS.register(
 
 function Home() {
 
-    const [matcheData, setMatcheData] = useState();
     const [matche_01, setMatche_01] = useState();
     const [matche_02, setMatche_02] = useState();
     const [matche_03, setMatche_03] = useState();
@@ -33,48 +32,57 @@ function Home() {
     const [matche_06, setMatche_06] = useState();
     const [matche_07, setMatche_07] = useState();
     const [avertData, setAvertData] = useState();
-    const [user, setUser] = useState();
-    const navigate = useNavigate();
+    const [season, setSeason] = useState(new Date().getFullYear());
+    const [matcheSeason, setMatcheSeason] = useState();
+    const [loading, setLoading] = useState(true);
+    const { user } = AuthUser();
+    console.log('userdata', user);
+
+    const pageRef = useRef();
+
 
     useEffect(() => {
-        if (!window.localStorage.getItem('ACCESS_TOKEN')) {
-            navigate('/login')
-        }
-        axiosClinet.get('/api/user').then(
-            (Response) => {setUser(Response.data)
-          })
-        axios.get('http://localhost:8000/api/matche')
+        // if (!window.localStorage.getItem('AUTHENTICATED')) {
+        //     navigate('/login')
+        // }
+        axiosClinet.get('api/matche')
             .then((res) => {
-                setMatcheData(res.data);
-                const filteredMatches_01 = res.data.filter(match => {
+                const dataMatche = res.data.filter((m) => m.user_id === user?.id)
+
+                const filterMatch_season = dataMatche?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 0 && matchDate.getFullYear() === 2024;
+                    return matchDate.getFullYear() === parseInt(season);
                 });
 
-                const filteredMatches_02 = res.data.filter(match => {
+                const filteredMatches_01 = filterMatch_season?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 1 && matchDate.getFullYear() === 2024;
+                    return matchDate.getMonth() === 0;
                 });
 
-                const filteredMatches_03 = res.data.filter(match => {
+                const filteredMatches_02 = filterMatch_season?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 2 && matchDate.getFullYear() === 2024;
+                    return matchDate.getMonth() === 1;
                 });
-                const filteredMatches_04 = res.data.filter(match => {
+
+                const filteredMatches_03 = filterMatch_season?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 3 && matchDate.getFullYear() === 2024;
+                    return matchDate.getMonth() === 2;
                 });
-                const filteredMatches_05 = res.data.filter(match => {
+                const filteredMatches_04 = filterMatch_season?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 4 && matchDate.getFullYear() === 2024;
+                    return matchDate.getMonth() === 3;
                 });
-                const filteredMatches_06 = res.data.filter(match => {
+                const filteredMatches_05 = filterMatch_season?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 5 && matchDate.getFullYear() === 2024;
+                    return matchDate.getMonth() === 4;
                 });
-                const filteredMatches_07 = res.data.filter(match => {
+                const filteredMatches_06 = filterMatch_season?.filter(match => {
                     const matchDate = new Date(match.date);
-                    return matchDate.getMonth() === 6 && matchDate.getFullYear() === 2024;
+                    return matchDate.getMonth() === 5;
+                });
+                const filteredMatches_07 = filterMatch_season?.filter(match => {
+                    const matchDate = new Date(match.date);
+                    return matchDate.getMonth() === 6;
                 });
                 setMatche_01(filteredMatches_01?.map((m) => m?.id))
                 setMatche_02(filteredMatches_02?.map((m) => m?.id))
@@ -84,67 +92,88 @@ function Home() {
                 setMatche_06(filteredMatches_06?.map((m) => m?.id))
                 setMatche_07(filteredMatches_07?.map((m) => m?.id))
 
+                setMatcheSeason(filterMatch_season)
+                setLoading(false)
             })
-        axios.get('http://localhost:8000/api/avertissement')
-            .then((res) => { setAvertData(res.data) });
-    }, [])
-    const avert_01 = avertData?.filter((a) => matche_01?.some((m) => m === a?.matche?.id))
+
+        axiosClinet.get('api/avertissement')
+            .then((res) => {
+                setAvertData(res.data.filter((a) => a.matche.user_id === user?.id))
+            });
+
+
+
+    }, [user, season])
+
+    const avertSeason = avertData?.filter((a) => matcheSeason?.some((m) => m.id === a?.matche_id))
+    console.log('avertSeason', avertData?.filter((a) => matcheSeason?.some((m) => m.id === a?.matche_id)));
+    const avert_G = avertSeason?.filter((a) => a.type === 'G')
+    const avert_R = avertSeason?.filter((a) => a.type === 'R')
+
+
+    const avert_01 = avertData?.filter((a) => matche_01?.some((m) => m === a?.matche_id))
     const avert_01_G = avert_01?.filter((a) => a.type === 'G')
     const avert_01_R = avert_01?.filter((a) => a.type === 'R')
 
-    const avert_02 = avertData?.filter((a) => matche_02?.some((m) => m === a?.matche?.id))
+    const avert_02 = avertData?.filter((a) => matche_02?.some((m) => m === a?.matche_id))
     const avert_02_G = avert_02?.filter((a) => a.type === 'G')
     const avert_02_R = avert_02?.filter((a) => a.type === 'R')
 
-    const avert_03 = avertData?.filter((a) => matche_03?.some((m) => m === a?.matche?.id))
+    const avert_03 = avertData?.filter((a) => matche_03?.some((m) => m === a?.matche_id))
     const avert_03_G = avert_03?.filter((a) => a.type === 'G')
     const avert_03_R = avert_03?.filter((a) => a.type === 'R')
 
-    const avert_04 = avertData?.filter((a) => matche_04?.some((m) => m === a?.matche?.id))
+    const avert_04 = avertData?.filter((a) => matche_04?.some((m) => m === a?.matche_id))
     const avert_04_G = avert_04?.filter((a) => a.type === 'G')
     const avert_04_R = avert_04?.filter((a) => a.type === 'R')
 
-    const avert_05 = avertData?.filter((a) => matche_05?.some((m) => m === a?.matche?.id))
+    const avert_05 = avertData?.filter((a) => matche_05?.some((m) => m === a?.matche_id))
     const avert_05_G = avert_05?.filter((a) => a.type === 'G')
     const avert_05_R = avert_05?.filter((a) => a.type === 'R')
 
-    const avert_06 = avertData?.filter((a) => matche_06?.some((m) => m === a?.matche?.id))
+    const avert_06 = avertData?.filter((a) => matche_06?.some((m) => m === a?.matche_id))
     const avert_06_G = avert_06?.filter((a) => a.type === 'G')
     const avert_06_R = avert_06?.filter((a) => a.type === 'R')
 
-    const avert_07 = avertData?.filter((a) => matche_07?.some((m) => m === a?.matche?.id))
+    const avert_07 = avertData?.filter((a) => matche_07?.some((m) => m === a?.matche_id))
     const avert_07_G = avert_07?.filter((a) => a.type === 'G')
     const avert_07_R = avert_07?.filter((a) => a.type === 'R')
 
-    const minim = matcheData?.filter((m) => m.categorie_id === 1)
-    const cade = matcheData?.filter((m) => m.categorie_id === 2)
-    const jenior = matcheData?.filter((m) => m.categorie_id === 3)
-    const senior_1 = matcheData?.filter((m) => m.categorie_id === 4)
-    const senior_2 = matcheData?.filter((m) => m.categorie_id === 5)
-    const senior_3 = matcheData?.filter((m) => m.categorie_id === 6)
+    const minim = matcheSeason?.filter((m) => m.categorie_id === 1)
+    const cade = matcheSeason?.filter((m) => m.categorie_id === 2)
+    const jenior = matcheSeason?.filter((m) => m.categorie_id === 3)
+    const senior_1 = matcheSeason?.filter((m) => m.categorie_id === 4)
+    const senior_2 = matcheSeason?.filter((m) => m.categorie_id === 5)
+    const senior_3 = matcheSeason?.filter((m) => m.categorie_id === 6)
 
-    const compBotola = matcheData?.filter((m) => m.competition_id === 1)
-    const compKaas = matcheData?.filter((m) => m.competition_id === 2)
+    const compBotola = matcheSeason?.filter((m) => m.competition_id === 1)
+    const compKaas = matcheSeason?.filter((m) => m.competition_id === 2)
 
     const options_Line = {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: {
                 beginAtZero: true,
                 ticks: {
-                    color: '#6C7293', // Change x-axis label color
+                    color: 'white', // Change x-axis label color
                     font: {
+                        family: 'El Messiri',
                         size: 14,
                     }
                 },
-            },  
+            },
             y: {
                 beginAtZero: true,
                 ticks: {
                     color: '#6C7293', // Change x-axis label color
                     callback: function (value) {
                         return value.toLocaleString(); // Format the value as needed
-                      },
+                    },
+                    font: {
+                        family: 'El Messiri',
+                        size: 14,
+                    }
                 },
             },
         },
@@ -154,7 +183,8 @@ function Home() {
                 text: 'المبـاريــــــــات',
                 color: 'white',
                 font: {
-                    size: 20,
+                    family: 'El Messiri',
+                    size: 25,
                     weight: 'bold',
                 }
             },
@@ -162,6 +192,7 @@ function Home() {
                 labels: {
                     color: '#6C7293', // Change legend text color
                     font: {
+                        family: 'El Messiri',
                         size: 16,
                         weight: 'bold',
                     }
@@ -171,7 +202,7 @@ function Home() {
     };
 
     const data_Line = {
-        labels : ['يوليوز', 'يونيو', 'ماي', 'ابريل', 'مارس', 'فبراير', 'يناير'],
+        labels: ['يوليوز', 'يونيو', 'ماي', 'ابريل', 'مارس', 'فبراير', 'يناير'],
         datasets: [
             {
                 fill: true,
@@ -203,13 +234,15 @@ function Home() {
     };
 
     const options_Pie = {
-        maintainAspectRatio : false ,
-        plugins : {
+        maintainAspectRatio: false,
+        plugins: {
             title: {
                 display: true,
                 text: 'المنافسات',
-                color: '#6C7293',
+                // color: '#6C7293',
+                color: 'white',
                 font: {
+                    family: 'El Messiri',
                     size: 35,
                     weight: 'bold',
                 }
@@ -218,6 +251,7 @@ function Home() {
                 labels: {
                     color: '#6C7293', // Change legend text color
                     font: {
+                        family: 'El Messiri',
                         size: 16,
                         weight: 'bold',
                     }
@@ -226,14 +260,16 @@ function Home() {
         }
     }
 
-    const optionsBar = {    
-        // responsive: true,
+    const optionsBar = {
+        responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: {
                 beginAtZero: true,
                 ticks: {
                     color: 'white', // Change x-axis label color
                     font: {
+                        family: 'El Messiri',
                         size: 14,
                     }
                 },
@@ -242,10 +278,11 @@ function Home() {
                 beginAtZero: true,
                 precision: 0,
                 ticks: {
-                    color : '#6C7293',
-                    // font: {
-                    //     size: 1,
-                    // } // Change y-axis label color
+                    color: '#6C7293',
+                    font: {
+                        family: 'El Messiri',
+                        size: 14,
+                    }
                 },
             },
         },
@@ -256,7 +293,8 @@ function Home() {
                 text: 'البطـاقـــــــــات',
                 color: 'white',
                 font: {
-                    size: 19,
+                    family: 'El Messiri',
+                    size: 25,
                     weight: 'bold',
                 }
             },
@@ -264,6 +302,7 @@ function Home() {
                 labels: {
                     color: '#6C7293', // Change legend text color
                     font: {
+                        family: 'El Messiri',
                         size: 16,
                         weight: 'bold',
                     }
@@ -279,11 +318,13 @@ function Home() {
                 label: 'البطاقات الصفراء',
                 data: [avert_07_G?.length, avert_06_G?.length, avert_05_G?.length, avert_04_G?.length, avert_03_G?.length, avert_02_G?.length, avert_01_G?.length],
                 backgroundColor: '#ffb007',
+                borderRadius: 3,
             },
             {
                 label: 'البطاقات الحمراء',
                 data: [avert_07_R?.length, avert_06_R?.length, avert_05_R?.length, avert_04_R?.length, avert_03_R?.length, avert_02_R?.length, avert_01_R?.length],
                 backgroundColor: '#EB1616',
+                borderRadius: 3,
             },
         ],
     };
@@ -291,30 +332,32 @@ function Home() {
     const dataPolarAria = {
         labels: ['الصغار', 'الفتيان', 'الشبان', 'الشرفي التاني', 'الشرفي التاني', 'الشرفي الممتاز'],
         datasets: [
-          {
-            label: 'عدد المباريات',
-            data: [minim?.length, cade?.length, jenior?.length, senior_1?.length, senior_2?.length, senior_3?.length],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.5)',
-              'rgba(54, 162, 235, 0.5)',
-              'rgba(255, 206, 86, 0.5)',
-              'rgba(75, 192, 192, 0.5)',
-              'rgba(153, 102, 255, 0.5)',
-              'rgba(255, 159, 64, 0.5)',
-            ],
-            borderWidth: 1,
-          },
+            {
+                label: 'عدد المباريات',
+                data: [minim?.length, cade?.length, jenior?.length, senior_1?.length, senior_2?.length, senior_3?.length],
+                backgroundColor: [
+                    '#d9e802',
+                    '#e8ba02',
+                    '#e86d02',
+                    '#e83b02',
+                    '#e31b05',
+                    '#bd0808',
+                ],
+                borderWidth: 1,
+            },
         ],
-      };
+    };
 
-      const optionsPolarAria = {
-        // responsive: true,
+    const optionsPolarAria = {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             title: {
                 display: true,
-                text: 'الفئات',
-                color: '#6C7293',
+                text: 'الفئــــــــات',
+                color: 'white',
                 font: {
+                    family: 'El Messiri',
                     size: 35,
                     weight: 'bold',
                 }
@@ -323,6 +366,7 @@ function Home() {
                 labels: {
                     color: '#6C7293', // Change legend text color
                     font: {
+                        family: 'El Messiri',
                         size: 16,
                         weight: 'bold',
                     }
@@ -330,50 +374,486 @@ function Home() {
             },
         },
     }
+
+    const handelSelect = (e) => {
+        setSeason(e.target.value)
+        setLoading(true)
+    }
+
+
     return (
         <>
             {/* <!-- Sale & Revenue Start --> */}
-            < div class="container-fluid pt-4 px-4" >
+            < div class="container-fluid pt-4 px-4" ref={pageRef} id="myDIV">
+                <select class="form-select text-center" aria-label="Default select example" onChange={handelSelect}>
+                    <option value={parseInt(new Date().getFullYear())} selected >{new Date().getFullYear()}</option>
+                    <option value={parseInt(new Date().getFullYear()) - 1} >{parseInt(new Date().getFullYear()) - 1}</option>
+                    <option value={parseInt(new Date().getFullYear()) - 2} >{parseInt(new Date().getFullYear()) - 2}</option>
+                    <option value={parseInt(new Date().getFullYear()) - 3} >{parseInt(new Date().getFullYear()) - 3}</option>
+                </select>
                 <div class="row">
-                    {/* <div class="col-sm-6 col-xl-3">
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                        <i class="fa fa-chart-line fa-3x text-primary"></i>
-                        <div class="ms-3">
-                        <p class="mb-2">عدد البطاقات الصفراء</p>
-                        <h6 class="mb-0">$1234</h6>
-                        </div>
-                        </div>
-                    </div> */}
-                    <h1>هاده احصاءياتك سيدي الحكم {user?.name}</h1>
-                    <div class="col-sm-6 col-xl-6">
+                    {
+                        loading ?
+                            <div className="col-sm-6 col-xl-4 mt-4">
+                                <div class="bg-secondary rounded p-4">
+                                    <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                        <div className="row mx-2">
+                                            <div className="col-3">
+                                                <Skeleton height={70} />
+                                            </div>
+                                            <div className="col-9">
+                                                <Skeleton height={33} />
+                                                <Skeleton height={33} width={33} />
+                                            </div>
+                                        </div>
+
+                                    </SkeletonTheme>
+                                </div>
+                            </div>
+                            :
+                            <div className="col-sm-6 col-xl-4 mt-4">
+                                <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4">
+                                    <img src="../../public/img/yellow-card.png" style={{ height: '75px' }} alt="" />
+                                    <div class="ms-lg-3">
+                                        <p class="mb-2 fs-5 fw-bold">عدد البطاقات الصفراء</p>
+                                        <h6 class="mb-0">{avert_G?.length}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                    {
+                        loading ?
+                            <div className="col-sm-6 col-xl-4 mt-4">
+                                <div class="bg-secondary rounded p-4">
+                                    <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                        <div className="row mx-2">
+                                            <div className="col-3">
+                                                <Skeleton height={70} />
+                                            </div>
+                                            <div className="col-9">
+                                                <Skeleton height={33} />
+                                                <Skeleton height={33} width={33} />
+                                            </div>
+                                        </div>
+
+                                    </SkeletonTheme>
+                                </div>
+                            </div>
+                            :
+                            <div className="col-sm-6 col-xl-4 mt-4">
+                                <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4">
+                                    <img src="../../public/img/red-card.png" style={{ height: '75px' }} alt="" />
+                                    <div class="ms-lg-3">
+                                        <p class="mb-2 fs-5 text-center fw-bold">عدد البطاقات الحمراء</p>
+                                        <h6 class="mb-0">{avert_R?.length}</h6>
+                                    </div>
+                                </div>
+                            </div>}
+                    {
+                        loading ?
+
+                            <div className="col-sm-6 col-md-12 col-xl-4 mt-4">
+                                <div class="bg-secondary rounded p-4">
+                                    <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                        <div className="row mx-2">
+                                            <div className="col-3">
+                                                <Skeleton height={70} />
+                                            </div>
+                                            <div className="col-9">
+                                                <Skeleton height={33} />
+                                                <Skeleton height={33} width={33} />
+                                            </div>
+                                        </div>
+
+                                    </SkeletonTheme>
+                                </div>
+                            </div>
+                            :
+                            <div className="col-sm-6 col-xl-4 mt-4">
+                                <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4">
+                                    <img src="../../public/img/matche.png" style={{ height: '75px' }} alt="" />
+                                    <div class="ms-lg-3">
+                                        <p class="mb-2 fs-5 text-center fw-bold">عدد  المباريات</p>
+                                        <h6 class="mb-0">{matcheSeason?.length}</h6>
+                                    </div>
+                                </div>
+                            </div>}
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xl-6 mt-4"  >
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Bar data={dataBar} options={optionsBar} />
+                            {
+                                loading ?
+                                    <>
+                                        <div className="d-none d-lg-block">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="">
+                                                    <div className="mt-2 col-12 d-flex justify-content-center mb-3">
+                                                        <Skeleton height={23} width={95} />
+                                                    </div>
+                                                </div>
+                                                <div className="row d-flex justidy-content-center">
+                                                    <div className="col-1 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-1 pe-0">
+                                                        <Skeleton height={150} width={25} />
+                                                    </div>
+                                                    <div className="col-1 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-1 pe-0 mt-2">
+                                                        <Skeleton height={142} width={25} />
+                                                    </div>
+                                                    <div className="col-1">
+                                                        <Skeleton height={150} width={25} />
+                                                    </div>
+                                                    <div className="col-1 pe-0 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-1 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-1 pe-0 mt-4">
+                                                        <Skeleton height={126} width={25} />
+                                                    </div>
+                                                    <div className="col-1 mt-3">
+                                                        <Skeleton height={134} width={25} />
+                                                    </div>
+                                                    <div className="col-1 pe-0">
+                                                        <Skeleton height={150} width={25} />
+                                                    </div>
+                                                    <div className="col-1 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-1 pe-0">
+                                                        <Skeleton height={150} width={25} />
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+
+                                        {/* Skeleton Loading Mobile */}
+                                        <div className="d-lg-none">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+
+                                                <div className="mt-2 col-12 d-flex justify-content-center mb-3">
+                                                    <Skeleton height={23} width={95} />
+                                                </div>
+
+                                                <div className="row col-12 d-flex justify-content-center me-1">
+                                                    <div className="col-2 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-2 pe-0">
+                                                        <Skeleton height={150} width={25} />
+                                                    </div>
+                                                    <div className="col-2 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                    <div className="col-2 pe-0 mt-2">
+                                                        <Skeleton height={142} width={25} />
+                                                    </div>
+                                                    <div className="col-2">
+                                                        <Skeleton height={150} width={25} />
+                                                    </div>
+                                                    <div className="col-2 pe-0 mt-5">
+                                                        <Skeleton height={102} width={25} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="row">
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={51} />
+                                                    </div>
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={51} />
+                                                    </div>
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={51} />
+                                                    </div>
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={51} />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+                                    </>
+
+                                    :
+
+                                    <Bar data={dataBar} options={optionsBar} height={237}/>
+                            }
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-6">
+                    <div class="col-sm-6 col-xl-6 mt-4" >
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Line options={options_Line} data={data_Line} />
+                            {
+                                loading ?
+                                    <>
+                                        <div className="d-none d-lg-block">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-3 mt-2">
+                                                        <Skeleton height={23} width={95} />
+                                                    </div>
+                                                </div>
+                                                <div className="row d-flex justify-content-center mt-2 me-1">
+                                                    <div className="col-3 mt-2 ">
+                                                        <Skeleton height={23} width={85} />
+                                                    </div>
+                                                    <div className="col-3 mt-2">
+                                                        <Skeleton height={23} width={85} />
+                                                    </div>
+                                                </div>
+                                                <div className="row mt-3">
+                                                    <Skeleton height={107} width={450} />
+                                                </div>
+                                                <div className="row">
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                    <div className="mt-2 col-2">
+                                                        <Skeleton height={20} width={54} />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+
+                                        {/* Skeleton Loading Mobile */}
+                                        <div className="d-lg-none">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="col-12 mt-2 d-flex justify-content-center">
+                                                    <Skeleton height={23} width={95} />
+                                                </div>
+
+                                                <div className="d-flex justify-content-around mt-2">
+                                                    <div className="col-4 mt-2 ">
+                                                        <Skeleton height={23} width={85} />
+                                                    </div>
+                                                    <div className="col-4 mt-2">
+                                                        <Skeleton height={23} width={85} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-3">
+                                                    <Skeleton height={107} width="100%" />
+                                                </div>
+                                                <div className="row col-12 me-0">
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={43} />
+                                                    </div>
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={43} />
+                                                    </div>
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={43} />
+                                                    </div>
+                                                    <div className="mt-2 col-3">
+                                                        <Skeleton height={20} width={43} />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+                                    </>
+
+                                    :
+
+                                    <Line options={options_Line} data={data_Line} height={237} />
+                            }
                         </div>
                     </div>
-                    <div className="col-sm-12 col-xl-12 pt-4" >
+                    <div className="col-sm-12 col-xl-5 mt-4" >
                         <div className="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <Pie data={data_Pie} options={options_Pie} style={{ height: '500px' }}/>
+                            {
+                                loading ?
+                                    <>
+                                        <div className="d-none d-lg-block">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={33} width={150} />
+                                                    </div>
+                                                </div>
+                                                <div className="row d-flex justify-content-around mt-3">
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={23} width={100} />
+                                                    </div>
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={23} width={100} />
+                                                    </div>
+                                                </div>
+                                                <div className="row m-1">
+                                                    <div className="d-flex justify-content-center">
+                                                        <Skeleton height={343} width={343} circle />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+
+                                        {/* Skeleton Loading Mobile */}
+                                        <div className="d-lg-none">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={33} width={150} />
+                                                    </div>
+                                                </div>
+                                                <div className="row d-flex justify-content-around mt-3">
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={23} width={95} />
+                                                    </div>
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={23} width={95} />
+                                                    </div>
+                                                </div>
+                                                <div className="row m-1">
+                                                    <div className="d-flex justify-content-center">
+                                                        <Skeleton height={250} width={250} circle />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+                                    </>
+
+
+                                    :
+                                    <Pie data={data_Pie} options={options_Pie} style={{ height: '450px' }} />
+                            }
                         </div>
-                    </div>
-                    <div className="col-sm-12 col-xl-12 pt-4" >
-                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
-                            <PolarArea data={dataPolarAria} options={optionsPolarAria}/>
-                        </div>
-                    </div>
-                    {/* <div class="col-sm-6 col-xl-3">
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-area fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
+
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4 mt-4" style={{ fontFamily: 'Amiri Quran' }}>
+                            <img src="../../public/img/balance.png" style={{ height: '42px' }} alt="" />
+                            <div class="">
+                                <p class="mb-0 text-white text-center fs-5">"وَإِذَا حَكَمْتُم بَيْنَ النَّاسِ أَن تَحْكُمُوا بِالْعَدْلِ"</p>
                             </div>
                         </div>
-                    </div> */}
+                    </div>
+
+                    <div className="col-sm-12 col-xl-7 mt-4" >
+                        <div className="bg-secondary rounded d-flex align-items-center justify-content-center p-4">
+                            {
+                                loading ?
+
+                                    <>
+                                        <div className="d-none d-lg-block">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={33} width={150} />
+                                                    </div>
+                                                </div>
+                                                <div className="container ms-4 d-flex justify-content-center">
+                                                    <div className="row d-flex justify-content-around mt-3">
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={100} />
+                                                        </div>
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={100} />
+                                                        </div>
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={100} />
+                                                        </div>
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={100} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-3 mt-2 ">
+                                                        <Skeleton height={23} width={120} />
+                                                    </div>
+                                                    <div className="col-3 mt-2">
+                                                        <Skeleton height={23} width={120} />
+                                                    </div>
+                                                </div>
+                                                <div className="row m-1">
+                                                    <div className="d-flex justify-content-center">
+                                                        <Skeleton height={422} width={422} circle />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+
+                                        {/* Skeleton Loading Mobile */}
+                                        <div className="d-lg-none">
+                                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-3 mt-2 d-flex justify-content-center">
+                                                        <Skeleton height={33} width={150} />
+                                                    </div>
+                                                </div>
+                                                <div className="col-12 d-flex justify-content-around">
+                                                    <div className="row col-12 d-flex justify-content-between mt-3">
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={55} />
+                                                        </div>
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={55} />
+                                                        </div>
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={55} />
+                                                        </div>
+                                                        <div className="col-3 mt-2 d-flex justify-content-center">
+                                                            <Skeleton height={23} width={55} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="row d-flex justify-content-center">
+                                                    <div className="col-5 mt-2 ">
+                                                        <Skeleton height={23} width={100} />
+                                                    </div>
+                                                    <div className="col-5 mt-2">
+                                                        <Skeleton height={23} width={100} />
+                                                    </div>
+                                                </div>
+                                                <div className="row m-1">
+                                                    <div className="d-flex justify-content-center">
+                                                        <Skeleton height={250} width={250} circle />
+                                                    </div>
+                                                </div>
+                                            </SkeletonTheme>
+                                        </div>
+                                    </>
+
+                                    :
+
+                                    <PolarArea data={dataPolarAria} options={optionsPolarAria}  height={565} />
+                            }
+                        </div>
+                    </div>
                 </div>
             </div >
             {/* <!-- Sale & Revenue End --> */}
