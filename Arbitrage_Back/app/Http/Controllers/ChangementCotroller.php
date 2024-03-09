@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Avertissement;
 use App\Models\Changement;
 use App\Models\Joueur;
 // use App\Models\joueur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChangementCotroller extends Controller
 {
@@ -26,9 +26,10 @@ class ChangementCotroller extends Controller
     public function store(Request $request)
     {
 
+        $user = 11;
         $changements = $request->all();
 
-        foreach ($changements as $chang){
+        foreach ($changements as $chang) {
             Changement::create($chang);
 
             if (isset($chang['joueur_licence_entr'])) {
@@ -38,27 +39,28 @@ class ChangementCotroller extends Controller
                     $joueur_1->joueur_numero_licence = $chang['joueur_licence_entr'];
                     $joueur_1->joueur_numero = $chang['joueur_num_entr'];
                     $joueur_1->save();
-                }elseif (!$joueur_1){
+                } elseif (!$joueur_1) {
                     $j = new Joueur();
                     $j->nom = $chang['joueur_nom_entr'];
                     $j->joueur_numero_licence = $chang['joueur_licence_entr'];
                     $j->joueur_numero = $chang['joueur_num_entr'];
+                    $j->user_id = $user;
                     $j->save();
                 }
             }
             if (isset($chang['joueur_licence_sort'])) {
                 $joueur_2 = Joueur::where('joueur_numero_licence', $chang['joueur_licence_sort'])->first();
-
                 if ($joueur_2) {
                     $joueur_2->nom = $chang['joueur_nom_sort'];
                     $joueur_2->joueur_numero_licence = $chang['joueur_licence_sort'];
                     $joueur_2->joueur_numero = $chang['joueur_num_sort'];
                     $joueur_2->save();
-                }elseif (!$joueur_2) {
+                } elseif (!$joueur_2) {
                     $j = new Joueur();
                     $j->nom = $chang['joueur_nom_sort'];
                     $j->joueur_numero_licence = $chang['joueur_licence_sort'];
                     $j->joueur_numero = $chang['joueur_num_sort'];
+                    $j->user_id = 11;
                     $j->save();
                 }
             }
@@ -66,7 +68,9 @@ class ChangementCotroller extends Controller
 
         return [
             "satus" => true,
-            "data" => $changements
+            "data" => $changements,
+            'joueur1' => $joueur_1,
+            'joueur2' => $joueur_2,
         ];
     }
 
@@ -74,73 +78,76 @@ class ChangementCotroller extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-{
-    $updatedChangements = $request->all();
-    $ids = collect($updatedChangements)->pluck('id');
+    {
+        $user = Auth::user()->id;
+        $updatedChangements = $request->all();
+        $ids = collect($updatedChangements)->pluck('id');
 
-    $chang = Changement::where('matche_id', $id);
+        $chang = Changement::where('matche_id', $id);
 
-    if ($ids) {
-        $chang->whereNotIn('id', $ids)->delete();
-    }
+        if ($ids) {
+            $chang->whereNotIn('id', $ids)->delete();
+        }
 
-    $changement = [];
+        $changement = [];
 
-    foreach ($updatedChangements as $updatedChangement) {
-        if (isset($updatedChangement['id'])) {
+        foreach ($updatedChangements as $updatedChangement) {
+            if (isset($updatedChangement['id'])) {
 
-            $changementModel = Changement::find($updatedChangement['id']);
+                $changementModel = Changement::find($updatedChangement['id']);
 
-            if ($changementModel) {
-                $changementModel->update($updatedChangement);
+                if ($changementModel) {
+                    $changementModel->update($updatedChangement);
+                } else {
+                    Changement::create($updatedChangement);
+                }
+
+                $changement[] = $changementModel;
             } else {
-                Changement::create($updatedChangement);
+                $createdChangement = Changement::create($updatedChangement);
+                $changement[] = $createdChangement;
             }
 
-            $changement[] = $changementModel;
-        } else {
-            $createdChangement = Changement::create($updatedChangement);
-            $changement[] = $createdChangement;
-        }
+            if (isset($updatedChangement['joueur_licence_entr'])) {
+                $joueur_1 = Joueur::where('joueur_numero_licence', $updatedChangement['joueur_licence_entr'])->first();
+                if ($joueur_1) {
+                    $joueur_1->nom = $updatedChangement['joueur_nom_entr'];
+                    $joueur_1->joueur_numero_licence = $updatedChangement['joueur_licence_entr'];
+                    $joueur_1->joueur_numero = $updatedChangement['joueur_num_entr'];
+                    $joueur_1->save();
+                } elseif (!$joueur_1) {
+                    $j = new Joueur();
+                    $j->nom = $updatedChangement['joueur_nom_entr'];
+                    $j->joueur_numero_licence = $updatedChangement['joueur_licence_entr'];
+                    $j->joueur_numero = $updatedChangement['joueur_num_entr'];
+                    $j->user_id = $user;
+                    $j->save();
+                }
+            }
+            if (isset($updatedChangement['joueur_licence_sort'])) {
+                $joueur_2 = Joueur::where('joueur_numero_licence', $updatedChangement['joueur_licence_sort'])->first();
 
-        if (isset($updatedChangement['joueur_licence_entr'])) {
-            $joueur_1 = Joueur::where('joueur_numero_licence', $updatedChangement['joueur_licence_entr'])->first();
-            if ($joueur_1) {
-                $joueur_1->nom = $updatedChangement['joueur_nom_entr'];
-                $joueur_1->joueur_numero_licence = $updatedChangement['joueur_licence_entr'];
-                $joueur_1->joueur_numero = $updatedChangement['joueur_num_entr'];
-                $joueur_1->save();
-            }elseif (!$joueur_1){
-                $j = new Joueur();
-                $j->nom = $updatedChangement['joueur_nom_entr'];
-                $j->joueur_numero_licence = $updatedChangement['joueur_licence_entr'];
-                $j->joueur_numero = $updatedChangement['joueur_num_entr'];
-                $j->save();
+                if ($joueur_2) {
+                    $joueur_2->nom = $updatedChangement['joueur_nom_sort'];
+                    $joueur_2->joueur_numero_licence = $updatedChangement['joueur_licence_sort'];
+                    $joueur_2->joueur_numero = $updatedChangement['joueur_num_sort'];
+                    $joueur_2->save();
+                } elseif (!$joueur_2) {
+                    $j = new Joueur();
+                    $j->nom = $updatedChangement['joueur_nom_sort'];
+                    $j->joueur_numero_licence = $updatedChangement['joueur_licence_sort'];
+                    $j->joueur_numero = $updatedChangement['joueur_num_sort'];
+                    $j->user_id = $user;
+                    $j->save();
+                }
             }
         }
-        if (isset($updatedChangement['joueur_licence_sort'])) {
-            $joueur_2 = Joueur::where('joueur_numero_licence', $updatedChangement['joueur_licence_sort'])->first();
 
-            if ($joueur_2) {
-                $joueur_2->nom = $updatedChangement['joueur_nom_sort'];
-                $joueur_2->joueur_numero_licence = $updatedChangement['joueur_licence_sort'];
-                $joueur_2->joueur_numero = $updatedChangement['joueur_num_sort'];
-                $joueur_2->save();
-            }elseif (!$joueur_2) {
-                $j = new Joueur();
-                $j->nom = $updatedChangement['joueur_nom_sort'];
-                $j->joueur_numero_licence = $updatedChangement['joueur_licence_sort'];
-                $j->joueur_numero = $updatedChangement['joueur_num_sort'];
-                $j->save();
-            }
-        }
+        return [
+            "status" => true,
+            "data" => $changement,
+        ];
     }
-
-    return [
-        "status" => true,
-        "data" => $changement,
-    ];
-}
 
     /**
      * Remove the specified resource from storage.

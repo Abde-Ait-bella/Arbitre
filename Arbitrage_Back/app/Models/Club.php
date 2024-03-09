@@ -13,7 +13,8 @@ class Club extends Model
         'nom',
         'ville_id',
         'abbr',
-        'stade_id'
+        'stade_id',
+        'user_id'
     ];
 
     public function ville(){

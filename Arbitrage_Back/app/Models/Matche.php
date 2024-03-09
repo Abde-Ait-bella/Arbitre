@@ -10,6 +10,7 @@ class Matche extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'saison_id',
         'club_id_1',
         'club_id_2',
@@ -30,7 +31,8 @@ class Matche extends Model
         'nombre_agents_sécurité',
         'etat_stade',
         'etat_vestiaire',
-        'rapport_supp'
+        'rapport_supp',
+        'user_id',
     ];
 
     public function saison()

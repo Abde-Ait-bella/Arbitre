@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Ville;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Auth;
 
 class VilleController extends Controller
 {
@@ -18,10 +19,20 @@ class VilleController extends Controller
      */
     public function store(Request $request)
     {
-        $ville = Ville::create($request->all());
+        // $user = auth()->user();
+        // echo($user);
+
+        $ville = new Ville;
+
+        $ville->nom = $request->nom;
+        $ville->user_id = $request->user_id;
+        $ville->save();
+        // $ville = Ville::create($request->all());
+
         return [
             "status" => true,
-            "data" => $ville
+            "data" => $ville,
+            // '$request->user_id' => $request->user_id,
         ];
     }
 
@@ -36,7 +47,6 @@ class VilleController extends Controller
             "status" => true,
             "data" => $ville
         ];
-
     }
 
     /**
@@ -44,8 +54,7 @@ class VilleController extends Controller
      */
     public function destroy(string $id)
     {
-         $ville = Ville::find($id);
-         $ville->delete();
-
+        $ville = Ville::find($id);
+        $ville->delete();
     }
 }

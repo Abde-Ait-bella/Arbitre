@@ -20,6 +20,7 @@ class matcheController extends Controller
     public function store(Request $request)
     {
         $matche = matche::create($request->all());
+
         return [
             "status" => true,
             "data" => $matche

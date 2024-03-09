@@ -11,6 +11,7 @@ class Joueur extends Model
     protected $fillable = [
         'nom',
         'joueur_numero_licence',
-        'joueur_numero'
+        'joueur_numero',
+        'user_id'
     ];
 }

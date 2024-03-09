@@ -13,7 +13,8 @@ class Arbitre extends Model
         'nom',
         'prenom',
         'ville_id',
-        'type'
+        'type',
+        'user_id'
     ];
 
     public function ville(){

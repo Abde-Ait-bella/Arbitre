@@ -12,7 +12,8 @@ class Delegue extends Model
     protected $fillable = [
         'nom',
         'prenom',
-        'ville_id'
+        'ville_id',
+        'user_id'
     ];
 
     public function Ville(){
