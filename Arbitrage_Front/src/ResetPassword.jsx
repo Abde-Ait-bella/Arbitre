@@ -90,7 +90,7 @@ function ResetPassword() {
                                     <p className="mb-0"> الان قم <a className="text-warning" href="/login">بتسجيل الدخول</a></p>
                                 </div>}
                                 {errorBack && <div dir="ltr" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
-                                <div className="d-flex align-items-center justify-content-between mb-3">
+                                <div className="d-flex align-items-center justify-content-between mb-lg-4">
                                     <a href="index.html" className="">
                                         <h3 className="text-primary"><i className="fa fa-user-edit me-2"></i>DarkPan</h3>
                                     </a>

@@ -17,9 +17,10 @@ export function Buts(props) {
         clubs: [],
     });
 
-    
+
     const [butUpdate, setButUpdate] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState();
     const { user } = AuthUser();
     const { id } = useParams()
 
@@ -160,11 +161,21 @@ export function Buts(props) {
 
 
     const addRow = () => {
-        setButUpdate([...butUpdate, {},]);
-
+        let numberOfAttributes;
+        butUpdate.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 6 || numberOfAttributes === 9) {
+            setError("")
+            setButUpdate([...butUpdate, {},]);
+            setValueLicence()
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     const SuppRow = (index) => {
+        setError("")
         const newBut = [...butUpdate];
         newBut.splice(index, 1);
         setButUpdate(newBut);
@@ -173,8 +184,19 @@ export function Buts(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataButs(butUpdate);
-        setIsValide(prev => !prev)
+        let numberOfAttributes;
+        butUpdate.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        console.log(numberOfAttributes)
+        if (numberOfAttributes === 6 || numberOfAttributes === 9) {
+            setError("")
+            props.dataButs(butUpdate);
+            setIsValide(prev => !prev)
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
+
     };
     console.log('butUpdate', butUpdate)
 
@@ -184,45 +206,45 @@ export function Buts(props) {
             {
                 loading ?
                     <>
-                    <div className='mt-4 mb-3 d-none d-lg-block'>
-                        <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
-                            <div className="row mt-4">
-                                <Skeleton height={40} />
-                            </div>
-
-                            <div className="row mt-4 mx-2">
-                                <div className="col-4">
-                                    <div>
-                                        <Skeleton height={40} />
-                                    </div>
-                                </div>
-                                <div className="col-3">
-                                    <div>
-                                        <Skeleton height={40} />
-                                    </div>
-                                </div>
-                                <div className="col-3">
-                                    <div>
-                                        <Skeleton height={40} />
-                                    </div>
+                        <div className='mt-4 mb-3 d-none d-lg-block'>
+                            <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
+                                <div className="row mt-4">
+                                    <Skeleton height={40} />
                                 </div>
 
-                                <div className="col-2">
-                                    <div>
-                                        <Skeleton height={40} />
+                                <div className="row mt-4 mx-2">
+                                    <div className="col-4">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
                                     </div>
-                                </div>
+                                    <div className="col-3">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+                                    <div className="col-3">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
 
-                                <div className="col-2">
-                                    <div className="mt-2">
-                                        <Skeleton height={40} />
+                                    <div className="col-2">
+                                        <div>
+                                            <Skeleton height={40} />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-2">
+                                        <div className="mt-2">
+                                            <Skeleton height={40} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </SkeletonTheme>
-                    </div>
-        
-                    <div className='mt-4 mb-3 d-lg-none'>
+                            </SkeletonTheme>
+                        </div>
+
+                        <div className='mt-4 mb-3 d-lg-none'>
                             <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
                                 <div className="row mt-5 mx-1">
                                     <Skeleton height={40} />
@@ -326,6 +348,9 @@ export function Buts(props) {
                                         <div>
                                             <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
                                         </div>
+                                    </div>
+                                    <div className='mt-3'>
+                                        {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
                                     </div>
                                     <div className='d-flex justify-content-right pt-2'>
                                         <button className={`btn px-4 fw-bold ${isValide ? 'bg-warning text-danger' : 'bg-secondary text-white'}`} onClick={sendData}>حفـــــظ</button>

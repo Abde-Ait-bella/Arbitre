@@ -87,7 +87,7 @@ function ForgotPassword() {
                 <form action="" onSubmit={handleSubmit}>
                     <div className="container-fluid">
                         <div className="row h-100 align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-                            <div className="col-md-6">
+                            <div className="col-md-5">
                                 <div className="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
                                     {responce && <div class="p-3 mb-4 bg-success text-white text-center rounded">{responce}</div>}
                                     {errorBack && <div dir="ltr" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}

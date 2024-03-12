@@ -56,7 +56,6 @@ function AddRapport() {
                         const { status } = response;
                         if (status === 200) {
                             setLoading(false)
-                            // navigate('/addedRapport')
                         }
                     }
                 ).catch((response) => {
@@ -113,7 +112,6 @@ function AddRapport() {
                     <Avert dataAvert={handleAvertData} />
                     <Changement dataChangement={handleChangementData} />
                     <Buts dataButs={handleButsData} />
-
                     <form onSubmit={handleSubmit}>
                         <div className="d-flex justify-content-center">
                             <div>

@@ -318,13 +318,21 @@ export function Matche(props) {
         console.log("matche :", inputValue)
     };
 
-    const [isValide, setIsValide] = useState();
+    const [isValideData, setIsValideData] = useState();
+    const [errors, setErrors] = useState();
 
     const sendData = () => {
-        props.dataMatche(inputValue);
-        setIsValide(prev => !prev)
+        const numberKey = Object.keys(inputValue).length;
+        console.log('numberKey', numberKey)
+        if (numberKey === 23) {
+            props.dataMatche(inputValue);
+            setIsValideData(prev => !prev)
+            setErrors("")
+        }else{
+            setErrors("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     }
-
+    
     return (
         <>
             {
@@ -713,7 +721,7 @@ export function Matche(props) {
                                 </div>
                             </div>
                         </div>
-                        <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>
+                        <button className={`btn me-3 my-2 px-4 fw-bold ${isValideData ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>{errors && <span className='text-warning me-5'>{errors}<span className='text-warning me-2'>!!</span></span>}
                     </div>
             }
 

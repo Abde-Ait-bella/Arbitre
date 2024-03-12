@@ -17,6 +17,7 @@ export function Changement(props) {
 
     const [change, setChange] = useState([{}]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState()
     const { user } = AuthUser();
 
 
@@ -225,7 +226,6 @@ export function Changement(props) {
 
     const [isLoadingLicenceS, setIsLoadingLicenceS] = useState(false);
     const [optionsLicenceS, setOptionsLicenceS] = useState();
-    const [valueLicenceS, setValueLicenceS] = useState();
 
 
     const handleCreateLicenceS = (inputValue) => {
@@ -249,13 +249,11 @@ export function Changement(props) {
             newChange[index][name] = value;
             setChange(newChange)
         } else {
-            setValueLicenceS(valeur)
             const { name, value } = valeur;
             const newChange = [...change];
             newChange[index][name] = value;
             setChange(newChange)
         }
-        setValueLicenceS(event);
     }
 
 
@@ -277,10 +275,20 @@ export function Changement(props) {
     }
 
     const addRow = () => {
-        setChange([...change, {}])
+        let numberOfAttributes;
+        change.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 9) {
+            setChange([...change, {}])
+            setError("")
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     const SuppRow = (index) => {
+        setError("");
         const newChnage = [...change];
         newChnage.splice(index, 1);
         setChange(newChnage);
@@ -289,8 +297,18 @@ export function Changement(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataChangement(change);
-        setIsValide(prev => !prev);
+        let numberOfAttributes;
+        change.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        console.log(numberOfAttributes)
+        if (numberOfAttributes === 9) {
+            setError("")
+            props.dataChangement(change);
+            setIsValide(prev => !prev);
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     return (
@@ -491,6 +509,9 @@ export function Changement(props) {
                                         <div>
                                             <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
                                         </div>
+                                    </div>
+                                    <div className='mt-3'>
+                                        {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
                                     </div>
                                     <div className='d-flex justify-content-right pt-2'>
                                         <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>

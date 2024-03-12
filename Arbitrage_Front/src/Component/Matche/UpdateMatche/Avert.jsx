@@ -20,7 +20,7 @@ export function Avert(props) {
 
 
     const [avertUpdate, setAvertUpdate] = useState([]);
-    const [averts, setAverts] = useState()
+    const [error, setError] = useState();
     const [loading, setLoading] = useState(true)
     const { user } = AuthUser();
     const { id } = useParams();
@@ -178,10 +178,21 @@ export function Avert(props) {
     }
 
     const addRow = () => {
-        setAvertUpdate([...avertUpdate, {}])
+        let numberOfAttributes;
+        avertUpdate.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 8 || numberOfAttributes === 12) {
+            setAvertUpdate([...avertUpdate, {}])
+            setError("")
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
+
     };
 
     const SuppRow = (index) => {
+        setError("");
         const newAverts = [...avertUpdate];
         newAverts.splice(index, 1);
         setAvertUpdate(newAverts);
@@ -190,8 +201,18 @@ export function Avert(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataAvert(avertUpdate);
-        setIsValide(prev => !prev);
+        let numberOfAttributes;
+        avertUpdate.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+            console.log('numberOfAttributes', numberOfAttributes)
+        });
+        if (numberOfAttributes === 8 || numberOfAttributes === 12) {
+            setError("")
+            props.dataAvert(avertUpdate);
+            setIsValide(prev => !prev);
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     return (
@@ -404,6 +425,9 @@ export function Avert(props) {
                                         <div>
                                             <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
                                         </div>
+                                    </div>
+                                    <div className='mt-3'>
+                                        {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
                                     </div>
                                     <div className='d-flex justify-content-right pt-2'>
                                         <button className={`btn px-4 fw-bold ${isValide ? 'bg-warning text-danger' : 'bg-secondary text-white'}`} onClick={sendData}>حفـــــظ</button>

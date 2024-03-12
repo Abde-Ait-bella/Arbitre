@@ -23,6 +23,7 @@ export function Changement(props) {
 
     const [changeUpdate, setChangeUpdate] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState();
     const { user } = AuthUser();
 
     const { id } = useParams();
@@ -255,11 +256,20 @@ export function Changement(props) {
 
 
     const addRow = () => {
-        setChangeUpdate([...changeUpdate, {}])
+        let numberOfAttributes;
+        changeUpdate.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 9 || numberOfAttributes === 12) {
+            setChangeUpdate([...changeUpdate, {}])
+            setError("")
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     const SuppRow = (index) => {
-
+        setError("");
         const newChange = [...changeUpdate];
         newChange.splice(index, 1);
         setChangeUpdate(newChange);
@@ -268,9 +278,21 @@ export function Changement(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataChangement(changeUpdate);
-        setIsValide(prev => !prev);
+
+        let numberOfAttributes;
+        changeUpdate.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        console.log(numberOfAttributes)
+        if (numberOfAttributes === 9 || numberOfAttributes === 12) {
+            setError("")
+            props.dataChangement(changeUpdate);
+            setIsValide(prev => !prev);
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
+
 
 
     return (
@@ -330,7 +352,7 @@ export function Changement(props) {
                                 </div>
                             </SkeletonTheme>
                         </div>
-                 
+
                         <div className='mt-4 mb-3 d-lg-none'>
                             <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
                                 <div className="row mt-5 mx-1">
@@ -480,6 +502,9 @@ export function Changement(props) {
                                         <div>
                                             <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
                                         </div>
+                                    </div>
+                                    <div className='mt-3'>
+                                        {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
                                     </div>
                                     <div className='d-flex justify-content-right pt-2'>
                                         <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>

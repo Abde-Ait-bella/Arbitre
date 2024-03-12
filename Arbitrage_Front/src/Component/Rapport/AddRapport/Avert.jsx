@@ -23,6 +23,7 @@ export function Avert(props) {
     const [avert, setAvert] = useState([{}]);
     const { user } = AuthUser();
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState()
 
 
     useEffect(() => {
@@ -171,8 +172,6 @@ export function Avert(props) {
 
     }
 
-    console.log("state.matchNamber", state.matchNamber)
-
     const handleAvertInputChange = (event, index) => {
         let TypeEvent = event.target;
         const type_update = TypeEvent.name === `type${index}` ? TypeEvent.value : '';
@@ -193,10 +192,20 @@ export function Avert(props) {
 
 
     const addRow = () => {
-        setAvert([...avert, {}])
+        let numberOfAttributes;
+        avert.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 8) {
+            setAvert([...avert, {}])
+            setError("")
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     const SuppRow = (index) => {
+        setError("")
         const newAverts = [...avert];
         newAverts.splice(index, 1);
         setAvert(newAverts);
@@ -205,11 +214,19 @@ export function Avert(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataAvert(avert);
-        setIsValide(prev => !prev);
+        let numberOfAttributes;
+        avert.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 8) {
+            setError("")
+            props.dataAvert(avert);
+            setIsValide(prev => !prev);
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
-    console.log('avert', avert, 'avert.nom', avert[0]?.nom)
     return (
         <>
             {
@@ -320,7 +337,7 @@ export function Avert(props) {
                                             <div className="form-group col-md-4">
                                                 <label>الفريق</label>
                                                 <div className="my-2">
-                                                    <CreatableSelect className='text-light' options={state?.clubs} onChange={(event) => handleAvertSelectChange(event, index)} placeholder="اكتب و اختر" />
+                                                    <CreatableSelect className='text-light' options={state?.clubs} onChange={(event) => handleAvertSelectChange(event, index)} placeholder="اكتب و اختر" required />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-2">
@@ -397,6 +414,9 @@ export function Avert(props) {
                                         <div>
                                             <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
                                         </div>
+                                    </div>
+                                    <div className='mt-3'>
+                                        {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
                                     </div>
                                     <div className='d-flex justify-content-right pt-2'>
                                         <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'bg-warning text-danger' : 'bg-secondary text-white'}`} onClick={sendData}>حفـــــظ</button>

@@ -1,6 +1,5 @@
 import { React, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
-import axios from 'axios';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { axiosClinet } from '../../../Api/axios';
@@ -18,6 +17,7 @@ export function Buts(props) {
 
     const [buts, setButs] = useState([{}]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState()
     const { user } = AuthUser();
 
 
@@ -83,7 +83,6 @@ export function Buts(props) {
 
     const [isLoadingJ, setIsLoadingJ] = useState(false);
     const [optionsJ, setOptionsJ] = useState();
-    const [valueJ, setValueJ] = useState();
 
     const handleCreateJ = (inputValue) => {
         setIsLoadingJ(true);
@@ -108,13 +107,11 @@ export function Buts(props) {
 
 
         } else {
-            setValueJ(event)
             const { name, value } = valeur;
             const newBut = [...buts];
             newBut[index][name] = value;
             setButs(newBut);
         }
-        setValueJ()
     }
 
 
@@ -185,12 +182,21 @@ export function Buts(props) {
 
 
     const addRow = () => {
-        setButs([...buts, {},]);
-        setValueLicence()
-
+        let numberOfAttributes;
+        buts.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 6) {
+            setError("")
+            setButs([...buts, {},]);
+            setValueLicence()
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     const SuppRow = (index) => {
+        setError("")
         const newBut = [...buts];
         newBut.splice(index, 1);
         setButs(newBut);
@@ -199,8 +205,17 @@ export function Buts(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataButs(buts);
-        setIsValide(prev => !prev)
+        let numberOfAttributes;
+        buts.forEach(obj => {
+            numberOfAttributes = Object.keys(obj).length;
+        });
+        if (numberOfAttributes === 6) {
+            setError("")
+            props.dataButs(buts);
+            setIsValide(prev => !prev)
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+        }
     };
 
     return (
@@ -309,7 +324,6 @@ export function Buts(props) {
                                                         onChange={(event) => handleChangeSelectJ(event, index)}
                                                         onCreateOption={handleCreateJ}
                                                         options={optionsJ}
-                                                        value={valueJ}
                                                         placeholder="أكتب و اختر"
                                                     />
                                                 </div>
@@ -350,6 +364,9 @@ export function Buts(props) {
                                         <div>
                                             <button className='btn btn-warning rounded-pill' onClick={addRow}><i class="fa-solid fa-plus mt-1 px-4"></i></button>
                                         </div>
+                                    </div>
+                                    <div className='mt-3'>
+                                        {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
                                     </div>
                                     <div className='d-flex justify-content-right pt-2'>
                                         <button className={`btn me-3 my-2 px-4 fw-bold  ${isValide ? 'bg-warning text-danger' : 'bg-secondary text-white'}`} onClick={sendData}>حفـــــظ</button>

@@ -85,12 +85,7 @@ function Register() {
                     const {status, data} = response;
 
                     if (status === 204) {
-                        console.log(data.token)
-                        
-                        window.localStorage.setItem('token', data.token)
-                        window.localStorage.setItem('AUTHENTICATED', true)
-                        
-                        navigate('/');
+                        navigate('/login');
                     }
                 }
             ).catch(({ response }) => {
