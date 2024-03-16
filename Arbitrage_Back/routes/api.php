@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArbitreController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AvertissementCotroller;
 use App\Http\Controllers\ButsController;
 use App\Http\Controllers\CategoryController;
@@ -103,6 +104,7 @@ Route::delete('/joueur/{id}' , [JoueurController::class, 'destroy']);
 //change_password
 Route::post('/change_password' , [change_passwordController::class, 'update']);
 
+Route::get('/check-auth', [AuthController::class, 'checkAuth']);
 
 // Route::get('/csrf-token', function () {
 //     return response()->json(['token' => csrf_token()]);
