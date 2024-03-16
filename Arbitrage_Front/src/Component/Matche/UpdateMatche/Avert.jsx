@@ -30,12 +30,12 @@ export function Avert(props) {
         const fetchData = async () => {
             try {
                 const [joueurResponse, clubResponse, avertResponse] = await Promise.all([
-                    axiosClinet.get('api/joueur'),
-                    axiosClinet.get('api/club'),
-                    axiosClinet.get('api/avertissement'),
+                    axiosClinet.get('/joueur'),
+                    axiosClinet.get('/club'),
+                    axiosClinet.get('/avertissement'),
                 ]);
 
-                const dataJoueurs = joueurResponse.data.filter((j) => j.user_id === user?.id);
+                const dataJoueurs = joueurResponse.data.filter((j) => parseInt(j.user_id) === user?.id);
                 const optionJoueurs = dataJoueurs?.map(item => ({
                     value: item.nom,
                     label: item.nom.toUpperCase(),
@@ -48,14 +48,14 @@ export function Avert(props) {
                     name: "joueur_numero_licence"
                 }))
 
-                const dataClubs = clubResponse.data?.filter((c) => c.user_id === user?.id || c.user_id === null);
+                const dataClubs = clubResponse.data?.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null);
                 const optionClubs = dataClubs?.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr,
                     name: "club_id",
                 }))
 
-                setAvertUpdate([...avertResponse.data.filter((a) => a.matche_id === parseInt(id))]);
+                setAvertUpdate([...avertResponse.data.filter((a) => parseInt(a.matche_id) === parseInt(id))]);
 
                 setState(prevData => ({
                     ...prevData,
@@ -182,12 +182,13 @@ export function Avert(props) {
         avertUpdate.forEach(obj => {
             numberOfAttributes = Object.keys(obj).length;
         });
-        if (numberOfAttributes === 8 || numberOfAttributes === 12) {
+        if (numberOfAttributes === 8 || numberOfAttributes === 12 || numberOfAttributes == null) {
             setAvertUpdate([...avertUpdate, {}])
             setError("")
-        } else {
+        }else {
             setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
         }
+        console.log('numberOfAttributes', numberOfAttributes == null)
 
     };
 
@@ -328,7 +329,7 @@ export function Avert(props) {
                                                         <div className="form-group col-md-4">
                                                             <label>الفريق</label>
                                                             <div className="my-2">
-                                                                <CreatableSelect className='text-light' value={state?.clubs.find((s) => (s.value === item?.club_id))}
+                                                                <CreatableSelect className='text-light' value={state?.clubs.find((s) => (s.value === parseInt(item?.club_id)))}
                                                                     options={state.clubs} onChange={(event) => handleAvertSelectChange(event, index)} placeholder="اكتب" />
                                                             </div>
                                                         </div>

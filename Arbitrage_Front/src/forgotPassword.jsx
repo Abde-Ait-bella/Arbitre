@@ -66,7 +66,7 @@ function ForgotPassword() {
         // alert(isValide)
         // if (isValide) {
         // axiosClinet.get('/sanctum/csrf-cookie')
-        await axiosClinet.post('/api/forgot-password', values).then(
+        await axiosClinet.post('/forgot-password', values).then(
             (response) => {
                 setLoading(false);
                 console.log('full response', response)

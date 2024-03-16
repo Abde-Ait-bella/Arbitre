@@ -36,11 +36,12 @@ export function Matche(props) {
 
     const { user } = AuthUser();
     const [loading, setLoanding] = useState(true);
+    const [error, setError] = useState();
 
     useEffect(() => {
-        axiosClinet.get('api/arbitre')
+        axiosClinet.get('/arbitre')
             .then((res) => {
-                const arbitreUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const arbitreUser = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
 
                 const transformedOption = arbitreUser.map(item => ({
                     value: item.id,
@@ -76,9 +77,9 @@ export function Matche(props) {
                     assistant_2: arbireAssistant_2,
                 }))
             })
-        axiosClinet.get('api/delegue')
+        axiosClinet.get('/delegue')
             .then((res) => {
-                const delegueUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const delegueUser = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const optionDelegue = delegueUser.map(item => ({
                     value: item.id,
                     label: item.nom.toUpperCase() + " " + item.prenom.toUpperCase(),
@@ -90,9 +91,9 @@ export function Matche(props) {
                     delegue: optionDelegue
                 }))
             })
-        axiosClinet.get('api/club')
+        axiosClinet.get('/club')
             .then((res) => {
-                const clubUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const clubUser = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const optionClubs = clubUser.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr.toUpperCase(),
@@ -118,9 +119,9 @@ export function Matche(props) {
                     clubs_2: optionClubs_2
                 }))
             })
-        axiosClinet.get('api/stade')
+        axiosClinet.get('/stade')
             .then((res) => {
-                const dataStades = res.data.filter(item => item.user_id === user?.id || item.user_id === null)
+                const dataStades = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null)
                 const optionStades = dataStades.map(item => ({
                     value: item.id,
                     label: item.nom,
@@ -132,9 +133,9 @@ export function Matche(props) {
                     stades: optionStades
                 }))
             })
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                const dataVilles = res.data.filter(item => item.user_id === user?.id || item.user_id === null)
+                const dataVilles = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null)
                 const optionVilles = dataVilles.map(item => ({
                     value: item.id,
                     label: item.nom,
@@ -169,7 +170,7 @@ export function Matche(props) {
                     delegueVille: optionDelegue_ville
                 }))
             })
-        axiosClinet.get('api/competition')
+        axiosClinet.get('/competition')
             .then((res) => {
                 const dataCompetition = res.data
                 const optionCompetition = dataCompetition.map(item => ({
@@ -182,7 +183,7 @@ export function Matche(props) {
                     competition: optionCompetition
                 }))
             })
-        axiosClinet.get('api/saison')
+        axiosClinet.get('/saison')
             .then((res) => {
                 const dataSaison = res.data
                 const optionSaison = dataSaison.map(item => ({
@@ -195,7 +196,7 @@ export function Matche(props) {
                     saison: optionSaison
                 }))
             })
-        axiosClinet.get('api/category')
+        axiosClinet.get('/category')
             .then((res) => {
                 const dataCategory = res.data
                 const optionCategory = dataCategory.map(item => ({
@@ -208,9 +209,9 @@ export function Matche(props) {
                     category: optionCategory
                 }))
             })
-        axiosClinet.get('api/joueur')
+        axiosClinet.get('/joueur')
             .then((res) => {
-                const dataJoueurs = res.data.filter(item => item.user_id === user?.id)
+                const dataJoueurs = res.data.filter(item => parseInt(item.user_id) === user?.id)
                 const optionJoueurs = dataJoueurs?.map(item => ({
                     value: item.joueur_nom,
                     label: item.joueur_nom,
@@ -227,7 +228,7 @@ export function Matche(props) {
                     joueursLicence: optionJoueursLicence
                 }))
             })
-        axiosClinet.get('api/matche')
+        axiosClinet.get('/matche')
             .then((res) => {
                 const dernierId = Math.max(...res.data.map(match => match.id), 0);
                 setState(prevData => ({
@@ -319,7 +320,6 @@ export function Matche(props) {
     };
 
     const [isValideData, setIsValideData] = useState();
-    const [errors, setErrors] = useState();
 
     const sendData = () => {
         const numberKey = Object.keys(inputValue).length;
@@ -327,12 +327,12 @@ export function Matche(props) {
         if (numberKey === 23) {
             props.dataMatche(inputValue);
             setIsValideData(prev => !prev)
-            setErrors("")
-        }else{
-            setErrors("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
+            setError("")
+        } else {
+            setError("هناك خطأ ما ، يجب عليك ملأ جميع الخانات يا هاد الحكم")
         }
     }
-    
+
     return (
         <>
             {
@@ -721,7 +721,10 @@ export function Matche(props) {
                                 </div>
                             </div>
                         </div>
-                        <button className={`btn me-3 my-2 px-4 fw-bold ${isValideData ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>{errors && <span className='text-warning me-5'>{errors}<span className='text-warning me-2'>!!</span></span>}
+                        <div className='text-center mx-4 mt-3'>
+                            {error && <span className='text-warning'>{error}<span className='text-warning me-2'>!!</span></span>}
+                        </div>
+                         <button className={`btn me-3 my-2 px-4 fw-bold ${isValideData ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>
                     </div>
             }
 

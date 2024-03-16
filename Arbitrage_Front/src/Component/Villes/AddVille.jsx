@@ -27,7 +27,7 @@ function AddVille() {
         e.preventDefault()
         setLoadingAdd(true)
         if (addVille) {
-            await axiosClinet.post('api/ville', addVille).then(
+            await axiosClinet.post('/ville', addVille).then(
                 (response) => {
                     const { data } = response;
                     if (data.status === true) {

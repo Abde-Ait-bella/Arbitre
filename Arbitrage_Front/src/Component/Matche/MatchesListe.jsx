@@ -19,17 +19,17 @@ function Matches() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axiosClinet.get('api/matche')
+        axiosClinet.get('/matche')
             .then((res) => {
-                setMatches(res.data?.filter((m) => m.user_id === user?.id))
+                setMatches(res.data?.filter((m) => parseInt(m.user_id) === user?.id))
             })
-        axiosClinet.get('api/club')
-            .then((res) => { setClub(res.data?.filter((c) => c.user_id === user?.id || c.user_id === null)) })
-        axiosClinet.get('api/ville')
-            .then((res) => setVilles(res.data.filter((c) => c.user_id === user?.id || c.user_id === null)))
-        axiosClinet.get('api/competition')
+        axiosClinet.get('/club')
+            .then((res) => { setClub(res.data?.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null)) })
+        axiosClinet.get('/ville')
+            .then((res) => setVilles(res.data.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null)))
+        axiosClinet.get('/competition')
             .then((res) => setCompetition(res.data))
-        axiosClinet.get('api/category')
+        axiosClinet.get('/category')
             .then((res) => {
                 setCategories(res.data)
                 setLoading(false)
@@ -39,7 +39,7 @@ function Matches() {
     const handleDelete = (id) => {
         setIdMatche(id)
         setLoadingDelete(true)
-        axiosClinet.delete(`api/matche/${id}`)
+        axiosClinet.delete(`/matche/${id}`)
             .then(
                 (response) => {
                     const { status } = response;
@@ -59,8 +59,6 @@ function Matches() {
             <div className="container-fluid pt-4 px-4">
                 < div className="bg-secondary text-center rounded p-4">
                     <div className="d-flex align-items-center justify-content-between mb-3">
-                        {/* <h6 className="mb-0">Recent Salse</h6> */}
-                        {/* <a href="">Show All</a> */}
                         <Link to="/addMatche" className="btn btn-warning px-4">إضافة مباراة <i className="fa-solid fa-circle-plus me-2 pt-1"></i></Link>
                     </div>
                     <div className="table-responsive">
@@ -108,12 +106,12 @@ function Matches() {
                                         matches?.map((m) => (
                                             <tr className="text-center" key={m.id}>
                                                 <td>{m.date}</td>
-                                                <td>{club?.find(club => club.id === m.club_id_1)?.nom} ({club?.find(club => club.id === m.club_id_1)?.abbr})</td>
-                                                <td>{club?.find(club => club.id === m.club_id_2)?.nom} ({club?.find(club => club.id === m.club_id_1)?.abbr})</td>
-                                                <td>{competition?.find(c => c.id === m.competition_id)?.nom}</td>
-                                                <td>{categories?.find(c => c.id === m.categorie_id)?.nom}</td>
+                                                <td>{club?.find(club => club.id === parseInt(m.club_id_1))?.nom} ({club?.find(club => club.id === parseInt(m.club_id_1))?.abbr})</td>
+                                                <td>{club?.find(club => club.id === parseInt(m.club_id_2))?.nom} ({club?.find(club => club.id === parseInt(m.club_id_2))?.abbr})</td>
+                                                <td>{competition?.find(c => c.id === parseInt(m.competition_id))?.nom}</td>
+                                                <td>{categories?.find(c => c.id === parseInt(m.categorie_id))?.nom}</td>
                                                 <td>{m.result_club_1}-{m.result_club_2}</td>
-                                                <td>{villes?.find(ville => ville.id === m.ville_id)?.nom}</td>
+                                                <td>{villes?.find(ville => ville.id === parseInt(m.ville_id))?.nom}</td>
                                                 <td>
                                                     <Link to={`/updateMatche/${m.id}`} ><i className="fa-solid fa-wrench pt-2"></i> </Link>
                                                     <Link onClick={() => handleDelete(m.id)} >

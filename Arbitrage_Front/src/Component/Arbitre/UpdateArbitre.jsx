@@ -18,11 +18,11 @@ function UpdateStade() {
     const { user } = AuthUser();
 
     useEffect(() => {
-        axiosClinet.get('api/arbitre')
+        axiosClinet.get('/arbitre')
             .then((res) => setArbitres(res.data.find((a) => a.id === parseInt(id))))
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter((d) => d.user_id === user?.id || d.user_id === null))
+                setVilles(res.data.filter((d) => parseInt(d.user_id) === user?.id || d.user_id === null))
                 setLoading(false)
             })
     }, [])
@@ -46,7 +46,7 @@ function UpdateStade() {
         e.preventDefault()
         setLoadingUpdate(true)
         if (updateArbitre) {
-            await axiosClinet.put(`api/arbitre/${id}`, updateArbitre).then(
+            await axiosClinet.put(`/arbitre/${id}`, updateArbitre).then(
                 (response) => {
                     const { status } = response;
                     if (status === 200) {
@@ -238,7 +238,7 @@ function UpdateStade() {
                                 <select name="ville_id" onChange={handleUpdateArbitreSelect} class="form-select mb-3" aria-label="Default select example">
                                     <option selected disabled>المدينة</option>
                                     {villes?.map((v) =>
-                                        <option selected={arbitres?.ville_id === v.id} key={v.id} value={v.id}>{v.nom}</option>
+                                        <option selected={parseInt(arbitres?.ville_id) === v.id} key={v.id} value={v.id}>{v.nom}</option>
                                     )}
                                 </select>
                                 <fieldset class="row mb-3">

@@ -25,37 +25,37 @@ function DetailleRapport() {
     const { id } = useParams();
 
     useEffect(() => {
-        axiosClinet.get('/api/matche')
+        axiosClinet.get('/matche')
             .then((respense) => {
                 setRapports(respense.data.find((r) => r.id === parseInt(id)))
             })
 
-        axiosClinet.get('/api/arbitre')
+        axiosClinet.get('/arbitre')
             .then((respense) => {
                 setArbitre(respense.data)
             })
 
-        axiosClinet.get('/api/club')
+        axiosClinet.get('/club')
             .then((respense) => {
                 setClub(respense.data)
             })
 
-        axiosClinet.get('/api/category')
+        axiosClinet.get('/category')
             .then((respense) => {
                 setCategories(respense.data)
             })
 
-        axiosClinet.get('/api/avertissement')
+        axiosClinet.get('/avertissement')
             .then((respense) => {
                 setAvertissemets(respense.data)
             })
 
-        axiosClinet.get('/api/changement')
+        axiosClinet.get('/changement')
             .then((respense) => {
                 setChangements(respense.data)
             })
 
-        axiosClinet.get('/api/but')
+        axiosClinet.get('/but')
             .then((respense) => {
                 setButs(respense.data)
                 setLoading(false)
@@ -116,12 +116,12 @@ function DetailleRapport() {
     });
 
 
-    const avertissemetG = avertissemets?.filter((a) => a.matche_id === parseInt(id) && a.type === "G");
-    const avertissemetR = avertissemets?.filter((a) => a.matche_id === parseInt(id) && a.type === "R");
-    const changementClub1 = changements?.filter((ch) => ch.matche_id === parseInt(id) && ch.club_id === rapports?.club_id_1);
-    const changementClub2 = changements?.filter((ch) => ch.matche_id === parseInt(id) && ch.club_id === rapports?.club_id_2);
-    const But_1 = buts?.filter((b) => b.matche_id === parseInt(id) && b.club_id === rapports?.club_id_1);
-    const But_2 = buts?.filter((b) => b.matche_id === parseInt(id) && b.club_id === rapports?.club_id_2);
+    const avertissemetG = avertissemets?.filter((a) => parseInt(a.matche_id) === parseInt(id) && a.type === "G");
+    const avertissemetR = avertissemets?.filter((a) => parseInt(a.matche_id) === parseInt(id) && a.type === "R");
+    const changementClub1 = changements?.filter((ch) => parseInt(ch.matche_id) === parseInt(id) && parseInt(ch.club_id) === parseInt(rapports?.club_id_1));
+    const changementClub2 = changements?.filter((ch) => parseInt(ch.matche_id) === parseInt(id) && parseInt(ch.club_id) === parseInt(rapports?.club_id_2));
+    const But_1 = buts?.filter((b) => parseInt(b.matche_id) === parseInt(id) && parseInt(b.club_id) === parseInt(rapports?.club_id_1));
+    const But_2 = buts?.filter((b) => parseInt(b.matche_id) === parseInt(id) && parseInt(b.club_id) === parseInt(rapports?.club_id_2));
 
     useEffect(() => {
         if (But_1?.length > 5 || But_2?.length > 5 || changementClub1?.length > 5 || changementClub2?.length > 5) {
@@ -289,20 +289,20 @@ function DetailleRapport() {
                                             <tr>
                                                 <th class="p-1 px-3">الموسم الرياضي : {rapports?.saison?.nom}</th>
                                                 <th class="p-1 px-3">التاريخ : {rapports?.date}</th>
-                                                <th class="p-1 px-3">الحكم : {arbitre?.find((a) => a.id === rapports?.arbitre_c_id)?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapports?.arbitre_c_id)?.ville.nom}</th>
+                                                <th class="p-1 px-3">الحكم : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_c_id))?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_c_id))?.ville.nom}</th>
                                             </tr>
                                             <tr>
-                                                <th class="p-1 px-3">المقابلة: {club?.find((c) => c.id === rapports?.club_id_1)?.abbr} # {club?.find((c) => c.id === rapports?.club_id_2)?.abbr}</th>
+                                                <th class="p-1 px-3">المقابلة: {club?.find((c) => c.id === parseInt(rapports?.club_id_1))?.abbr} # {club?.find((c) => c.id === parseInt(rapports?.club_id_2))?.abbr}</th>
                                                 <th class="p-1 px-3">التوقيت : {rapports?.temps}</th>
-                                                <th class="p-1 px-3">المساعد 1 : {arbitre?.find((a) => a.id === rapports?.arbitre_a1_id)?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapports?.arbitre_a1_id)?.ville.nom}</th>
+                                                <th class="p-1 px-3">المساعد 1 : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a1_id))?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a1_id))?.ville.nom}</th>
                                             </tr>
                                             <tr>
                                                 <th class="p-1 px-3">النتيجة : {rapports?.result_club_1} - {rapports?.result_club_2}</th>
                                                 <th class="p-1 px-3">الملعب : {rapports?.stade?.nom}</th>
-                                                <th class="p-1 px-3" >المساعد 2 : {arbitre?.find((a) => a.id === rapports?.arbitre_a2_id)?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === rapports?.arbitre_a2_id)?.ville.nom}</th>
+                                                <th class="p-1 px-3" >المساعد 2 : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a2_id))?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a2_id))?.ville.nom}</th>
                                             </tr>
                                             <tr>
                                                 <th class="p-1 px-3">المنافسة : {rapports?.competition?.nom} <span className="me-5">الفئة : {categories?.find((a) => a.id === rapports?.categorie_id)?.nom}</span></th>
@@ -343,7 +343,7 @@ function DetailleRapport() {
                                                                 </tr>
                                                                 : avertissemetG?.map((a) => (
                                                                     <tr>
-                                                                        <th className="p-1 px-3">{club?.find((c) => c.id === a.club_id)?.abbr}</th>
+                                                                        <th className="p-1 px-3">{club?.find((c) => c.id === parseInt(a.club_id))?.abbr}</th>
                                                                         <th className="p-1 px-3">{a?.nom.toUpperCase()}</th>
                                                                         <th className="p-1 px-3">{a.joueur_numero_licence}</th>
                                                                         <th className="p-1 px-3">{a.cause}</th>
@@ -378,7 +378,7 @@ function DetailleRapport() {
                                                                 </tr>
                                                                 : avertissemetR?.map((a) => (
                                                                     <tr>
-                                                                        <th className="p-1 px-3">{club?.find((c) => c.id === a.club_id)?.abbr}</th>
+                                                                        <th className="p-1 px-3">{club?.find((c) => c.id === parseInt(a.club_id))?.abbr}</th>
                                                                         <th className="p-1 px-3">{a?.nom.toUpperCase()}</th>
                                                                         <th className="p-1 px-3">{a.joueur_numero_licence}</th>
                                                                         <th className="p-1 px-3">{a.cause}</th>
@@ -405,7 +405,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-white">التغييرات :</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === rapports?.club_id_1)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === parseInt(rapports?.club_id_1))?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">خ : </th>
@@ -449,7 +449,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-dark">-</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === rapports?.club_id_2)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === parseInt(rapports?.club_id_2))?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">خ : </th>
@@ -502,7 +502,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-white">الأهداف :</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === rapports?.club_id_1)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.م : {club?.find((c) => c.id === parseInt(rapports?.club_id_1))?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">الرقم : </th>
@@ -543,7 +543,7 @@ function DetailleRapport() {
                                                                             <th colSpan={3} className="bg-dark p-1 px-3 text-dark">-</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === rapports?.club_id_2)?.abbr}</th>
+                                                                            <th className="p-1 px-0 text-center" colSpan={3}>ف.ز : {club?.find((c) => c.id === parseInt(rapports?.club_id_2))?.abbr}</th>
                                                                         </tr>
                                                                         <tr className="text-center border-top-0">
                                                                             <th className="p-1">الرقم : </th>

@@ -19,24 +19,25 @@ function StadesListe() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axiosClinet.get('api/stade')
+        axiosClinet.get('/stade')
             .then((res) => {
-                setStades(res.data.filter((v) => v.user_id === user?.id))
+                setStades(res.data.filter((v) => parseInt(v.user_id) === user?.id))
                 setStadesDefault(res.data.filter((v) => v.user_id === null))
             })
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter(item => item.user_id === user?.id || item.user_id === null))
+                setVilles(res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null))
                 setLoading(false)
             })
     }, [])
 
+    console.log(stadesDefault)
 
 
     const handleDelete = async (id) => {
         setIdStade(id);
         setLoadingDelete(true)
-        await axiosClinet.delete(`api/stade/${id}`).then(
+        await axiosClinet.delete(`/stade/${id}`).then(
             (response) => {
                 const { status } = response;
                 console.log(response)
@@ -94,7 +95,7 @@ function StadesListe() {
                                                 stadesDefault?.map((s) => (
                                                     <tr className="text-center" key={s.id}>
                                                         <td>{s.nom}</td>
-                                                        <td>{villes?.find(ville => ville.id === s.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(s.ville_id))?.nom}</td>
                                                         <td><i class="fa-solid fa-wrench text-dark"></i> <i class="fa-solid fa-trash text-dark me-3 pt-2"></i></td>
                                                     </tr>
                                                 ))}
@@ -103,7 +104,7 @@ function StadesListe() {
                                                 stades?.map((s) => (
                                                     <tr className="text-center" key={s.id}>
                                                         <td>{s.nom}</td>
-                                                        <td>{villes?.find(ville => ville.id === s.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(s.ville_id))?.nom}</td>
                                                         <td><Link to={`/composants/updateStade/${s.id}`}><i class="fa-solid fa-wrench"></i></Link> <Link onClick={() => handleDelete(s.id)} >
                                                                 {
                                                                     loadingDelete & idStade === s.id ? (

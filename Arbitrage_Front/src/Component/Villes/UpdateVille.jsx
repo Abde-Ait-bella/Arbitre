@@ -16,7 +16,7 @@ function UpdateVille() {
     const { id } = useParams();
 
     useEffect(() => {
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
                 setVille(res.data.find((v) => v.id === parseInt(id)))
                 setLoading(false)
@@ -35,7 +35,7 @@ function UpdateVille() {
         e.preventDefault()
         setLoadingUpdate(true)
         if (updateVille) {
-            await axiosClinet.put(`api/ville/${id}`, updateVille).then(
+            await axiosClinet.put(`/ville/${id}`, updateVille).then(
                 (response) => {
                     const { status } = response;
                     if (status === 200) {

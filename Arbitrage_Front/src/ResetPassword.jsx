@@ -65,7 +65,7 @@ function ResetPassword() {
 
             setLoading(false);
 
-            await axiosClinet.post('api/reset-password', { ...values, email, token }).then(
+            await axiosClinet.post('/reset-password', { ...values, email, token }).then(
                 (response) => {
                     setStatus(response.data.status === "Your password has been reset." ? "تم إعادة تعيين كلمة المرور الخاصة بك" : response.data.status)
                 }

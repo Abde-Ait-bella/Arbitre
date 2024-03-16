@@ -28,12 +28,12 @@ export function Buts(props) {
         const fetchData = async () => {
             try {
                 const [joueurResponse, clubResponse, butsResponse] = await Promise.all([
-                    axiosClinet.get('api/joueur'),
-                    axiosClinet.get('api/club'),
-                    axiosClinet.get('api/but'),
+                    axiosClinet.get('/joueur'),
+                    axiosClinet.get('/club'),
+                    axiosClinet.get('/but'),
                 ]);
 
-                const dataJoueurs = joueurResponse.data.filter((j) => j.user_id === user?.id);
+                const dataJoueurs = joueurResponse.data.filter((j) => parseInt(j.user_id) === user?.id);
                 const optionJoueurs = dataJoueurs?.map(item => ({
                     value: item.nom,
                     label: item.nom.toUpperCase(),
@@ -46,14 +46,14 @@ export function Buts(props) {
                     name: "joueur_numero_licence"
                 }))
 
-                const dataClubs = clubResponse.data.filter((c) => c.user_id === user?.id || c.user_id === null);
+                const dataClubs = clubResponse.data.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null);
                 const optionClubs = dataClubs?.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr,
                     name: "club_id",
                 }))
 
-                setButUpdate([...butsResponse.data?.filter((b) => b.matche_id === parseInt(id))]);
+                setButUpdate([...butsResponse.data?.filter((b) => parseInt(b.matche_id) === parseInt(id))]);
                 setOptionsJ(optionJoueurs)
                 setOptionsLicence(optionJoueursLicence)
                 setState(prevData => ({
@@ -165,7 +165,7 @@ export function Buts(props) {
         butUpdate.forEach(obj => {
             numberOfAttributes = Object.keys(obj).length;
         });
-        if (numberOfAttributes === 6 || numberOfAttributes === 9) {
+        if (numberOfAttributes === 6 || numberOfAttributes === 9 || numberOfAttributes == null) {
             setError("")
             setButUpdate([...butUpdate, {},]);
             setValueLicence()
@@ -294,7 +294,7 @@ export function Buts(props) {
                                             <div className="form-group col-md-4">
                                                 <label>الفريق</label>
                                                 <div className='my-2'>
-                                                    <CreatableSelect className='text-light' options={state.clubs} value={state?.clubs.find((s) => s.value === item?.club_id)} onChange={(event) => handleChangeSelect(event, index)} placeholder="اكتب" />
+                                                    <CreatableSelect className='text-light' options={state.clubs} value={state?.clubs.find((s) => s.value === parseInt(item?.club_id))} onChange={(event) => handleChangeSelect(event, index)} placeholder="اكتب" />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">

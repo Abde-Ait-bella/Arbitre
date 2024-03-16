@@ -30,12 +30,12 @@ export function Avert(props) {
         const fetchData = async () => {
             try {
                 const [joueurResponse, clubResponse, matcheRespose] = await Promise.all([
-                    axiosClinet.get('api/joueur'),
-                    axiosClinet.get('api/club'),
-                    axiosClinet.get('api/matche'),
+                    axiosClinet.get('/joueur'),
+                    axiosClinet.get('/club'),
+                    axiosClinet.get('/matche'),
                 ]);
 
-                const dataJoueurs = joueurResponse.data.filter((j) => j.user_id === user?.id);
+                const dataJoueurs = joueurResponse.data.filter((j) => parseInt(j.user_id) === user?.id);
                 const optionJoueurs = dataJoueurs?.map(item => ({
                     value: item.nom,
                     label: item.nom.toUpperCase(),
@@ -49,7 +49,7 @@ export function Avert(props) {
                     name: "joueur_numero_licence"
                 }))
 
-                const dataClubs = clubResponse.data.filter((c) => c.user_id === user?.id || c.user_id === null);
+                const dataClubs = clubResponse.data.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null);
                 const optionClubs = dataClubs?.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr,
@@ -196,7 +196,7 @@ export function Avert(props) {
         avert.forEach(obj => {
             numberOfAttributes = Object.keys(obj).length;
         });
-        if (numberOfAttributes === 8) {
+        if (numberOfAttributes === 8 || numberOfAttributes == null) {
             setAvert([...avert, {}])
             setError("")
         } else {

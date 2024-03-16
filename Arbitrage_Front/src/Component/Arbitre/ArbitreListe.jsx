@@ -19,12 +19,12 @@ function ArbiTreListe() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axiosClinet.get('api/arbitre')
+        axiosClinet.get('/arbitre')
             .then((res) => {
-                setArbitre(res.data.filter((a) => a.user_id === user?.id))
-                setArbitreDefault(res.dataarbitre?.filter((a) => a.user_id === null))
+                setArbitre(res.data.filter((a) => parseInt(a.user_id) === user?.id))
+                setArbitreDefault(res.data?.filter((a) => a.user_id === null))
             })
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
                 setVilles(res.data)
                 setLoading(false)
@@ -34,7 +34,7 @@ function ArbiTreListe() {
     const handleDelete = (id) => {
         setLoadingDelete(true)
         setIdArbitre(id)
-        axiosClinet.delete(`api/arbitre/${id}`).then(
+        axiosClinet.delete(`/arbitre/${id}`).then(
             (response) => {
                 const { status } = response;
                 console.log(response)
@@ -73,6 +73,7 @@ function ArbiTreListe() {
                             <tbody>
                                 {
                                     loading ?
+
                                         <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
                                             <tr className="text-center">
                                                 <th><Skeleton height={30} /></th>
@@ -96,6 +97,7 @@ function ArbiTreListe() {
                                                 <th><Skeleton height={30} /></th>
                                             </tr>
                                         </SkeletonTheme>
+
                                         :
                                         <>
                                             <>
@@ -104,7 +106,7 @@ function ArbiTreListe() {
                                                         <td>{a.prenom.toUpperCase()}</td>
                                                         <td>{a.nom.toUpperCase()}</td>
                                                         <td>{a.type.toUpperCase()}</td>
-                                                        <td>{villes?.find(ville => ville.id === a.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(a.ville_id))?.nom}</td>
                                                         <td><i class="fa-solid fa-wrench text-dark"></i> <i class="fa-solid fa-trash text-dark me-3"></i></td>
                                                     </tr>
                                                 ))}
@@ -115,7 +117,7 @@ function ArbiTreListe() {
                                                         <td>{a.prenom.toUpperCase()}</td>
                                                         <td>{a.nom.toUpperCase()}</td>
                                                         <td>{a.type.toUpperCase()}</td>
-                                                        <td>{villes?.find(ville => ville.id === a.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(a.ville_id))?.nom}</td>
                                                         <td><Link to={`/composants/updateArbitre/${a.id}`}><i class="fa-solid fa-wrench"></i></Link> <Link onClick={() => handleDelete(a.id)} >
                                                             {
                                                                 loadingDelete & idArbitre === a.id ? (

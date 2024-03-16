@@ -18,10 +18,10 @@ function AddStade() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axiosClinet.get('api/ville')
-            .then((res) => setVilles(res.data.filter((v) => v.user_id === user?.id || v.user_id === null)))
-        axiosClinet.get('api/stade')
-            .then((res) => setStades(res.data.filter((v) => v.user_id === user?.id || v.user_id === null)))
+        axiosClinet.get('/ville')
+            .then((res) => setVilles(res.data.filter((v) => parseInt(v.user_id) === user?.id || v.user_id === null)))
+        axiosClinet.get('/stade')
+            .then((res) => setStades(res.data.filter((v) => parseInt(v.user_id) === user?.id || v.user_id === null)))
         setLoading(false)
     }, [])
 
@@ -45,7 +45,7 @@ function AddStade() {
         e.preventDefault()
         setLoadingAdd(true)
         if (addClub) {
-            await axiosClinet.post('api/club', addClub).then(
+            await axiosClinet.post('/club', addClub).then(
                 (response) => {
                     const { data } = response;
                     if (data.status === true) {

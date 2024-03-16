@@ -19,13 +19,13 @@ function UpdateStade() {
     const { id } = useParams();
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/stade')
+        axiosClinet.get('/stade')
             .then((res) => {
                 setStades(res.data.find((s) => s.id === parseInt(id)))
             })
-        axios.get('http://localhost:8000/api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter((v) => v.user_id === user?.id || v.user_id === null))
+                setVilles(res.data.filter((v) => parseInt(v.user_id) === user?.id || v.user_id === null))
                 setLoading(false)
             })
     }, [])
@@ -51,7 +51,7 @@ function UpdateStade() {
         e.preventDefault()
         setLoadingUpdate(true)
         if (updateStade) {
-            await axiosClinet.put(`http://localhost:8000/api/stade/${id}`, updateStade).then(
+            await axiosClinet.put(`/stade/${id}`, updateStade).then(
                 (response) => {
                     const { status } = response;
                     if (status === 200) {
@@ -189,7 +189,7 @@ function UpdateStade() {
                                     <select name="ville_id" onChange={handleUpdateStadeSelect} class="form-select mb-3" aria-label="Default select example">
                                         <option selected disabled>المدينة</option>
                                         {villes?.map((v) =>
-                                            <option selected={stades.ville_id === v.id} key={v.id} value={(v.id)}>{v.nom}</option>
+                                            <option selected={parseInt(stades.ville_id) === v.id} key={v.id} value={(v.id)}>{v.nom}</option>
                                         )}
                                     </select>
                                     <div className="d-flex justify-content-between mt-4">

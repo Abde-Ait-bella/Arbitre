@@ -19,13 +19,13 @@ function UpdateStade() {
     const { id } = useParams();
 
     useEffect(() => {
-        axiosClinet.get('api/club')
+        axiosClinet.get('/club')
             .then((res) => setClubs(res.data.find((s) => s.id === parseInt(id))))
-        axiosClinet.get('api/stade')
-            .then((res) => setStades(res.data.filter((v) => v.user_id === user?.id || v.user_id === null)))
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/stade')
+            .then((res) => setStades(res.data.filter((v) => parseInt(v.user_id) === user?.id || v.user_id === null)))
+        axiosClinet.get('/ville')
             .then((res) => {
-            setVilles(res.data.filter((v) => v.user_id === user?.id || v.user_id === null))
+            setVilles(res.data.filter((v) => parseInt(v.user_id) === user?.id || v.user_id === null))
             setLoading(false)
             })
     }, [])
@@ -50,7 +50,7 @@ function UpdateStade() {
         e.preventDefault()
         setLoadingUpdate(true)
         if (updateClub) {
-            await axiosClinet.put(`api/club/${id}`, updateClub).then(
+            await axiosClinet.put(`/club/${id}`, updateClub).then(
                 (response) => {
                     const { status } = response;
                     if (status === 200) {
@@ -160,13 +160,13 @@ function UpdateStade() {
                                 <select name="ville_id" onChange={handleUpdateClubSelect} class="form-select mb-3" aria-label="Default select example">
                                     <option selected disabled>المدينة</option>
                                     {villes?.map((v) =>
-                                        <option selected={clubs?.ville_id === v.id} key={v.id} value={v.id}>{v.nom}</option>
+                                        <option selected={parseInt(clubs?.ville_id) === v.id} key={v.id} value={v.id}>{v.nom}</option>
                                     )}
                                 </select>
                                 <select name="stade_id" onChange={handleUpdateClubSelect} class="form-select mb-3" aria-label="Default select example">
                                     <option selected disabled>الملعب</option>
                                     {stades?.map((s) =>
-                                        <option selected={clubs?.stade_id === s.id} key={s.id} value={s.id}>{s.nom}</option>
+                                        <option selected={parseInt(clubs?.stade_id) === s.id} key={s.id} value={s.id}>{s.nom}</option>
                                     )}
                                 </select>
                                 <div className="d-flex justify-content-between">

@@ -15,9 +15,9 @@ function AddArbitre() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter((v) => v.user_id === user?.id || v.user_id === null))
+                setVilles(res.data.filter((v) => parseInt(v.user_id) === user?.id || v.user_id === null))
                 setLoading(false)
             })
     }, [])
@@ -43,7 +43,7 @@ function AddArbitre() {
         e.preventDefault()
         setLoadingAdd(true)
         if (addDelegue) {
-            await axiosClinet.post('api/delegue', addDelegue).then(
+            await axiosClinet.post('/delegue', addDelegue).then(
                 (response) => {
                     const { data } = response;
                     if (data.status === true) {

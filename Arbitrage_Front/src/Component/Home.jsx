@@ -45,9 +45,9 @@ function Home() {
         // if (!window.localStorage.getItem('AUTHENTICATED')) {
         //     navigate('/login')
         // }
-        axiosClinet.get('api/matche')
+        axiosClinet.get('/matche')
             .then((res) => {
-                const dataMatche = res.data.filter((m) => m.user_id === user?.id)
+                const dataMatche = res.data.filter((m) => parseInt(m.user_id) === user?.id)
 
                 const filterMatch_season = dataMatche?.filter(match => {
                     const matchDate = new Date(match.date);
@@ -96,58 +96,56 @@ function Home() {
                 setLoading(false)
             })
 
-        axiosClinet.get('api/avertissement')
+        axiosClinet.get('/avertissement')
             .then((res) => {
-                setAvertData(res.data.filter((a) => a.matche.user_id === user?.id))
+                setAvertData(res.data.filter((a) => parseInt(a.matche.user_id) === user?.id))
             });
-
-
 
     }, [user, season])
 
-    const avertSeason = avertData?.filter((a) => matcheSeason?.some((m) => m.id === a?.matche_id))
-    console.log('avertSeason', avertData?.filter((a) => matcheSeason?.some((m) => m.id === a?.matche_id)));
+    const avertSeason = avertData?.filter((a) => matcheSeason?.some((m) => m.id === parseInt(a?.matche_id)))
+    console.log('avertSeason', avertData?.filter((a) => matcheSeason?.some((m) => m.id === parseInt(a?.matche_id))));
     const avert_G = avertSeason?.filter((a) => a.type === 'G')
     const avert_R = avertSeason?.filter((a) => a.type === 'R')
 
 
-    const avert_01 = avertData?.filter((a) => matche_01?.some((m) => m === a?.matche_id))
+    const avert_01 = avertData?.filter((a) => matche_01?.some((m) => m === parseInt(a?.matche_id)))
     const avert_01_G = avert_01?.filter((a) => a.type === 'G')
     const avert_01_R = avert_01?.filter((a) => a.type === 'R')
 
-    const avert_02 = avertData?.filter((a) => matche_02?.some((m) => m === a?.matche_id))
+    const avert_02 = avertData?.filter((a) => matche_02?.some((m) => m === parseInt(a?.matche_id)))
     const avert_02_G = avert_02?.filter((a) => a.type === 'G')
     const avert_02_R = avert_02?.filter((a) => a.type === 'R')
 
-    const avert_03 = avertData?.filter((a) => matche_03?.some((m) => m === a?.matche_id))
+    const avert_03 = avertData?.filter((a) => matche_03?.some((m) => m === parseInt(a?.matche_id)))
     const avert_03_G = avert_03?.filter((a) => a.type === 'G')
     const avert_03_R = avert_03?.filter((a) => a.type === 'R')
 
-    const avert_04 = avertData?.filter((a) => matche_04?.some((m) => m === a?.matche_id))
+    const avert_04 = avertData?.filter((a) => matche_04?.some((m) => m === parseInt(a?.matche_id)))
     const avert_04_G = avert_04?.filter((a) => a.type === 'G')
     const avert_04_R = avert_04?.filter((a) => a.type === 'R')
 
-    const avert_05 = avertData?.filter((a) => matche_05?.some((m) => m === a?.matche_id))
+    const avert_05 = avertData?.filter((a) => matche_05?.some((m) => m === parseInt(a?.matche_id)))
     const avert_05_G = avert_05?.filter((a) => a.type === 'G')
     const avert_05_R = avert_05?.filter((a) => a.type === 'R')
 
-    const avert_06 = avertData?.filter((a) => matche_06?.some((m) => m === a?.matche_id))
+    const avert_06 = avertData?.filter((a) => matche_06?.some((m) => m === parseInt(a?.matche_id)))
     const avert_06_G = avert_06?.filter((a) => a.type === 'G')
     const avert_06_R = avert_06?.filter((a) => a.type === 'R')
 
-    const avert_07 = avertData?.filter((a) => matche_07?.some((m) => m === a?.matche_id))
+    const avert_07 = avertData?.filter((a) => matche_07?.some((m) => m === parseInt(a?.matche_id)))
     const avert_07_G = avert_07?.filter((a) => a.type === 'G')
     const avert_07_R = avert_07?.filter((a) => a.type === 'R')
 
-    const minim = matcheSeason?.filter((m) => m.categorie_id === 1)
-    const cade = matcheSeason?.filter((m) => m.categorie_id === 2)
-    const jenior = matcheSeason?.filter((m) => m.categorie_id === 3)
-    const senior_1 = matcheSeason?.filter((m) => m.categorie_id === 4)
-    const senior_2 = matcheSeason?.filter((m) => m.categorie_id === 5)
-    const senior_3 = matcheSeason?.filter((m) => m.categorie_id === 6)
+    const minim = matcheSeason?.filter((m) => parseInt(m.categorie_id) === 1)
+    const cade = matcheSeason?.filter((m) => parseInt(m.categorie_id) === 2)
+    const jenior = matcheSeason?.filter((m) => parseInt(m.categorie_id) === 3)
+    const senior_1 = matcheSeason?.filter((m) => parseInt(m.categorie_id) === 4)
+    const senior_2 = matcheSeason?.filter((m) => parseInt(m.categorie_id) === 5)
+    const senior_3 = matcheSeason?.filter((m) => parseInt(m.categorie_id) === 6)
 
-    const compBotola = matcheSeason?.filter((m) => m.competition_id === 1)
-    const compKaas = matcheSeason?.filter((m) => m.competition_id === 2)
+    const compBotola = matcheSeason?.filter((m) => parseInt(m.competition_id) === 1)
+    const compKaas = matcheSeason?.filter((m) => parseInt(m.competition_id) === 2)
 
     const options_Line = {
         responsive: true,

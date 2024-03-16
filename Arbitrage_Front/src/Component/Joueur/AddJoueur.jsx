@@ -24,7 +24,7 @@ function AddArbitre() {
         e.preventDefault()
         setLoadingAdd(true)
         if (addJoueur) {
-            await axiosClinet.post('api/joueur', addJoueur).then(
+            await axiosClinet.post('/joueur', addJoueur).then(
                 (response) => {
                     const { data } = response;
                     if (data.status === true) {

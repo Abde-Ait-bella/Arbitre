@@ -21,7 +21,7 @@ function AddRapport() {
         e.preventDefault()
         setLoading(true)
             if (dataMatche) {
-                await axiosClinet.post('api/matche', dataMatche).then(
+                await axiosClinet.post('/matche', dataMatche).then(
                     (response) => {
                         const { status } = response;
                         if (status === 200) {
@@ -37,12 +37,11 @@ function AddRapport() {
                 setLoading(false)
             }
             if (dataAvert) {
-                await axiosClinet.post('api/avertissement', dataAvert).then(
+                await axiosClinet.post('/avertissement', dataAvert).then(
                     (response) => {
                         const { status } = response;
                         if (status === 200) {
                             setLoading(false)
-                            // navigate('/addedRapport')
                         }
                     }
                 ).catch((response) => {
@@ -51,7 +50,7 @@ function AddRapport() {
                 })
             }
             if (dataChangement) {
-                await axiosClinet.post('api/changement', dataChangement).then(
+                await axiosClinet.post('/changement', dataChangement).then(
                     (response) => {
                         const { status } = response;
                         if (status === 200) {
@@ -64,12 +63,11 @@ function AddRapport() {
                 })
             }
             if (dataButs) {
-                await axiosClinet.post('api/but', dataButs).then(
+                await axiosClinet.post('/but', dataButs).then(
                     (response) => {
                         const { status } = response;
                         if (status === 200) {
                             setLoading(false)
-                            // navigate('/addedRapport')
                         }
                     }
                 ).catch((response) => {

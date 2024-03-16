@@ -18,21 +18,21 @@ function ClubListe() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axiosClinet.get('api/club')
+        axiosClinet.get('/club')
             .then((res) => {
-                setClubs(res.data.filter((c) => c.user_id === user?.id))
+                setClubs(res.data.filter((d) => parseInt(d.user_id) === user?.id))
                 setClubDefautlt(res.data.filter((c) => c.user_id === null))
                 setLoading(false)
             })
-        axiosClinet.get('api/ville')
-            .then((res) => setVilles(res.data))
+        axiosClinet.get('/ville')
+            .then((res) => setVilles(res.data.filter((d) => parseInt(d.user_id) === user?.id)))
     }, [])
 
 
     const handleDelete = (id) => {
         setLoadingDelete(true)
         setIdClub(id)
-        axiosClinet.delete(`api/club/${id}`).then(
+        axiosClinet.delete(`/club/${id}`).then(
             (response) => {
                 const { status } = response;
                 console.log(response)
@@ -88,7 +88,7 @@ function ClubListe() {
                                                 {clubsDefault?.map((c) => (
                                                     <tr className="text-center" key={c.id}>
                                                         <td>{c.nom} ({c.abbr})</td>
-                                                        <td>{villes?.find(ville => ville.id === c.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(c.ville_id))?.nom}</td>
                                                         <td><i class="fa-solid fa-wrench text-dark"></i> <i class="fa-solid fa-trash text-dark me-3 pt-2"></i></td>
                                                     </tr>
                                                 ))}
@@ -97,7 +97,7 @@ function ClubListe() {
                                                 {clubs?.map((c) => (
                                                     <tr className="text-center" key={c.id}>
                                                         <td>{c.nom} ({c.abbr})</td>
-                                                        <td>{villes?.find(ville => ville.id === c.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(c.ville_id))?.nom}</td>
                                                         <td>
                                                             <Link to={`/composants/updateClub/${c.id}`}><i class="fa-solid fa-wrench pt-2"></i></Link> <Link onClick={() => handleDelete(c.id)} >
                                                                 {

@@ -18,11 +18,11 @@ function UpdateStade() {
     const { id } = useParams();
 
     useEffect(() => {
-        axiosClinet.get('api/delegue')
+        axiosClinet.get('/delegue')
             .then((res) => setDelegue(res.data.find((d) => d.id === parseInt(id))))
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter((d) => d.user_id === user?.id || d.user_id === null))
+                setVilles(res.data.filter((d) => parseInt(d.user_id) === user?.id || d.user_id === null))
                 setLoading(false)
             })
     }, [])
@@ -46,7 +46,7 @@ function UpdateStade() {
         e.preventDefault()
         setLoadingUpdate(true)
         if (updateDelegue) {
-            await axiosClinet.put(`api/delegue/${id}`, updateDelegue).then(
+            await axiosClinet.put(`/delegue/${id}`, updateDelegue).then(
                 (response) => {
                     const { status } = response;
                     if (status === 200) {
@@ -204,7 +204,7 @@ function UpdateStade() {
                                 <select name="ville_id" onChange={handleUpdateDelegueSelect} class="form-select mb-3" aria-label="Default select example">
                                     <option selected disabled>المدينة</option>
                                     {villes?.map((v) =>
-                                        <option selected={delegues?.ville_id === v.id} key={v.id} value={v.id}>{v.nom}</option>
+                                        <option selected={parseInt(delegues?.ville_id) === v.id} key={v.id} value={v.id}>{v.nom}</option>
                                     )}
                                 </select>
                                 <div className="d-flex justify-content-between">

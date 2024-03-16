@@ -42,9 +42,9 @@ export function Matche(props) {
     const { id } = useParams();
 
     useEffect(() => {
-        axiosClinet.get('api/arbitre')
+        axiosClinet.get('/arbitre')
             .then((res) => {
-                const arbitreUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const arbitreUser = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const transformedOption = arbitreUser.map(item => ({
                     value: item.id,
                     label: item.nom.toUpperCase() + " " + item.prenom.toUpperCase(),
@@ -79,9 +79,9 @@ export function Matche(props) {
                     assistant_2: arbireAssistant_2,
                 }))
             })
-        axiosClinet.get('api/delegue')
+        axiosClinet.get('/delegue')
             .then((res) => {
-                const delegueUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const delegueUser = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const optionDelegue = delegueUser.map(item => ({
                     value: item.id,
                     label: item.nom.toUpperCase() + " " + item.prenom.toUpperCase(),
@@ -93,9 +93,9 @@ export function Matche(props) {
                     delegue: optionDelegue
                 }))
             })
-        axiosClinet.get('api/club')
+        axiosClinet.get('/club')
             .then((res) => {
-                const clubUser = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const clubUser = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const optionClubs = clubUser.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + item.abbr.toUpperCase(),
@@ -121,9 +121,9 @@ export function Matche(props) {
                     clubs_2: optionClubs_2
                 }))
             })
-        axiosClinet.get('api/stade')
+        axiosClinet.get('/stade')
             .then((res) => {
-                const dataStades = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const dataStades = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const optionStades = dataStades.map(item => ({
                     value: item.id,
                     label: item.nom,
@@ -135,9 +135,9 @@ export function Matche(props) {
                     stades: optionStades
                 }))
             })
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                const dataVilles = res.data.filter(item => item.user_id === user?.id || item.user_id === null);
+                const dataVilles = res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null);
                 const optionVilles = dataVilles.map(item => ({
                     value: item.id,
                     label: item.nom,
@@ -172,7 +172,7 @@ export function Matche(props) {
                     delegueVille: optionDelegue_ville
                 }))
             })
-        axiosClinet.get('api/competition')
+        axiosClinet.get('/competition')
             .then((res) => {
                 const dataCompetition = res.data
                 const optionCompetition = dataCompetition.map(item => ({
@@ -185,7 +185,7 @@ export function Matche(props) {
                     competition: optionCompetition
                 }))
             })
-        axiosClinet.get('api/saison')
+        axiosClinet.get('/saison')
             .then((res) => {
                 const dataSaison = res.data
                 const optionSaison = dataSaison.map(item => ({
@@ -198,7 +198,7 @@ export function Matche(props) {
                     saison: optionSaison
                 }))
             })
-        axiosClinet.get('api/category')
+        axiosClinet.get('/category')
             .then((res) => {
                 const dataCategory = res.data
                 const optionCategory = dataCategory.map(item => ({
@@ -211,12 +211,12 @@ export function Matche(props) {
                     category: optionCategory
                 }))
             })
-        axiosClinet.get('api/matche')
+        axiosClinet.get('/matche')
             .then((res) => {
-                const matcheUser = res.data?.filter((c) => c.user_id === user?.id)
+                const matcheUser = res.data?.filter((c) => parseInt(c.user_id) === user?.id)
                 const dernierId = Math.max(...matcheUser.map(match => match.id), 0);
                 setMatcheUpdate({ ...matcheUser?.find((m) => m.id === parseInt(id)) });
-
+            
                 setState(prevData => ({
                     ...prevData,
                     dernierIdMatche: dernierId + 1,
@@ -227,22 +227,22 @@ export function Matche(props) {
             .catch((error) => {
                 console.error("Une erreur s'est produite lors de la récupération des données de Matches : " + error);
             })
+            
+        }, [])
 
-    }, [])
 
 
+    const arbitreCentre = state.centre?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_c_id));
+    const villeArbCentre = state.villes?.find((v) => v.value === parseInt(arbitreCentre?.ville?.id));
 
-    const arbitreCentre = state.centre?.find((c) => c.value === matcheUpdate?.arbitre_c_id);
-    const villeArbCentre = state.villes?.find((v) => v.value === arbitreCentre?.ville?.id);
+    const arbitre_a1 = state.assistant_1?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a1_id));
+    const villeArb_a1 = state.villes?.find((v) => v.value === parseInt(arbitre_a1?.ville?.id));
 
-    const arbitre_a1 = state.assistant_1?.find((c) => c.value === matcheUpdate?.arbitre_a1_id);
-    const villeArb_a1 = state.villes?.find((v) => v.value === arbitre_a1?.ville?.id);
+    const arbitre_a2 = state.assistant_2?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a2_id));
+    const villeArb_a2 = state.villes?.find((v) => v.value === parseInt(arbitre_a2?.ville?.id));
 
-    const arbitre_a2 = state.assistant_2?.find((c) => c.value === matcheUpdate?.arbitre_a2_id);
-    const villeArb_a2 = state.villes?.find((v) => v.value === arbitre_a2?.ville?.id);
-
-    const delegue = state.delegue?.find((d) => d.value === matcheUpdate?.delegue_id);
-    const villeDelegue = state.villes?.find((d) => d.value === delegue?.ville?.id);
+    const delegue = state.delegue?.find((d) => d.value === parseInt(matcheUpdate?.delegue_id));
+    const villeDelegue = state.villes?.find((d) => d.value === parseInt(delegue?.ville?.id));
 
 
     const handleInputChange = (event) => {
@@ -259,18 +259,18 @@ export function Matche(props) {
 
         const { name, value } = event;
 
-        var stadeClub_1 = event?.name === "club_id_1" ? event?.stade : matcheUpdate?.stade_id;
+        var stadeClub_1 = event?.name === "club_id_1" ? event?.stade : parseInt(matcheUpdate?.stade_id);
         if (event?.name === "club_id_1") {
-            stadeClub_1 = state.stades.find((s) => stadeClub_1?.id === s.value)
+            stadeClub_1 = state.stades.find((s) => stadeClub_1?.id === parseInt(s.value))
         } else if (event?.name === "stade_id") {
             stadeClub_1 = event
         }
-        var villeStade = state?.villes?.find((v) => v.value === stadeClub_1?.ville?.id)
+        var villeStade = state?.villes?.find((v) => parseInt(v.value) === parseInt(stadeClub_1?.ville?.id))
 
         const newObject = { ...matcheUpdate };
         newObject[name] = value;
-        newObject.stade_id = stadeClub_1?.value ? stadeClub_1?.value : matcheUpdate?.stade_id;
-        newObject.ville_id = villeStade?.value ? villeStade?.value : matcheUpdate?.ville?.id;
+        newObject.stade_id = stadeClub_1?.value ? stadeClub_1?.value : parseInt(matcheUpdate?.stade_id);
+        newObject.ville_id = villeStade?.value ? villeStade?.value : parseInt(matcheUpdate?.ville?.id);
         setMatcheUpdate(newObject);
 
     };
@@ -278,7 +278,7 @@ export function Matche(props) {
     const [isValide, setIsValide] = useState();
 
     const sendData = () => {
-        props.dataMatche(matcheUpdate ? matcheUpdate : matcheData);
+        props.dataMatche(matcheUpdate);
         setIsValide((prev) => !prev);
     }
 
@@ -287,7 +287,7 @@ export function Matche(props) {
             {
                 loading ?
                     <>
-                        <div className='d-none d-lg-break'>
+                        <div className='d-none d-lg-block'>
                             <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
                                 <div className="row mx-2 mt-4">
                                     <div className="col-3">
@@ -472,7 +472,7 @@ export function Matche(props) {
                             <div className="form-group col-md-3">
                                 <label className='text-white' htmlFor="inputEmail4">الموسم الرياضي</label>
                                 <div className='my-2'>
-                                    <Select isClearable value={state.saison?.find((s) => s.value === matcheUpdate?.saison_id)} onChange={handleSelectChange} options={state.saison} placeholder="أكتب..." />
+                                    <Select isClearable className='text-light' value={state.saison?.find((s) => s.value === parseInt(matcheUpdate?.saison_id))} onChange={handleSelectChange} options={state.saison} placeholder="أكتب..." />
                                 </div>
                             </div>
                             <div className="form-group col-md-3">
@@ -482,13 +482,13 @@ export function Matche(props) {
                             <div className="form-group col-md-3">
                                 <label className='text-white' htmlFor="inputPassword4">المنافسة</label>
                                 <div className='my-2'>
-                                    <Select isClearable value={state.competition?.find((c) => c.value === matcheUpdate?.competition_id)} onChange={handleSelectChange} options={state.competition} placeholder="أكتب..." />
+                                    <Select isClearable className='text-light' value={state.competition?.find((c) => parseInt(c.value) === parseInt(matcheUpdate?.competition_id))} onChange={handleSelectChange} options={state.competition} placeholder="أكتب..." />
                                 </div>
                             </div>
                             <div className="form-group col-md-3 text-white">
                                 <label htmlFor="inputEmail4">الفئة</label>
                                 <div className='my-2'>
-                                    <Select className='text-light' value={state.category?.find((c) => c.value === matcheUpdate?.categorie_id)} isClearable onChange={handleSelectChange} options={state.category} placeholder="أكتب..." />
+                                    <Select className='text-light' value={state.category?.find((c) => c.value === parseInt(matcheUpdate?.categorie_id))} isClearable onChange={handleSelectChange} options={state.category} placeholder="أكتب..." />
                                 </div>
                             </div>
                         </div>
@@ -503,26 +503,25 @@ export function Matche(props) {
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">الحكم</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' value={state.centre?.find((c) => c.value === matcheUpdate?.arbitre_c_id)} options={state.centre} onChange={handleSelectChange} placeholder="اختر..." />
-                                                    {/* onChange={(a) => setSelectedCentre(a)} */}
+                                                    <Select className='text-light' value={state.centre?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_c_id))} options={state.centre} onChange={handleSelectChange} placeholder="اختر..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">الحكم المساعد 1</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' value={state.assistant_1?.find((c) => c.value === matcheUpdate?.arbitre_a1_id)} options={state.assistant_1} onChange={handleSelectChange} placeholder="اختر..." />
+                                                    <Select className='text-light' value={state.assistant_1?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a1_id))} options={state.assistant_1} onChange={handleSelectChange} placeholder="اختر..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">الحكم المساعد 2</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' value={state.assistant_2?.find((c) => c.value === matcheUpdate?.arbitre_a2_id)} options={state.assistant_2} onChange={handleSelectChange} placeholder="اختر..." />
+                                                    <Select className='text-light' value={state.assistant_2?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a2_id))} options={state.assistant_2} onChange={handleSelectChange} placeholder="اختر..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المراقب</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' value={state.delegue?.find((c) => c.value === matcheUpdate?.delegue_id)} options={state.delegue} onChange={handleSelectChange} placeholder="اختر..." />
+                                                    <Select className='text-light' value={state.delegue?.find((c) => c.value === parseInt(matcheUpdate?.delegue_id))} options={state.delegue} onChange={handleSelectChange} placeholder="اختر..." />
                                                 </div>
                                             </div>
                                         </div>
@@ -537,7 +536,6 @@ export function Matche(props) {
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
                                                     <Select className='text-light' isDisabled options={state.assistant_1_Ville} value={villeArb_a1} onChange={handleSelectChange} placeholder="..." />
-                                                    {/* value={selectedAsisstent_1 ? { value: selectedAsisstent_1.ville.id, label: selectedAsisstent_1.ville.nom } : null} */}
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
@@ -568,13 +566,13 @@ export function Matche(props) {
                                             <div className="form-group col-md-6">
                                                 <label htmlFor="inputEmail4">الفريق المستقبل</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' value={state.clubs?.find((c) => c.value === matcheUpdate?.club_id_1)} options={state.clubs_1} onChange={handleSelectChange} placeholder="اختر..." />
+                                                    <Select className='text-light' value={state.clubs?.find((c) => c.value === parseInt(matcheUpdate?.club_id_1))} options={state.clubs_1} onChange={handleSelectChange} placeholder="اختر..." />
                                                 </div>
                                             </div>
                                             <div className="form-group  col-md-6">
                                                 <label htmlFor="inputEmail4">الفريق الزائر</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' value={state.clubs?.find((c) => c.value === matcheUpdate?.club_id_2)} options={state.clubs_2} onChange={handleSelectChange} placeholder="اختر..." />
+                                                    <Select className='text-light' value={state.clubs?.find((c) => c.value === parseInt(matcheUpdate?.club_id_2))} options={state.clubs_2} onChange={handleSelectChange} placeholder="اختر..." />
                                                 </div>
                                             </div>
                                         </div>
@@ -609,13 +607,13 @@ export function Matche(props) {
                             <div className="form-group col-md-4">
                                 <label className='text-white' htmlFor="inputEmail4">الملعب</label>
                                 <div className="my-2">
-                                    <Select className='text-light' value={state?.stades?.find((s) => s.value === matcheUpdate?.stade_id)} options={state.stades} onChange={handleSelectChange} placeholder="اكتب" />
+                                    <Select className='text-light' value={state?.stades?.find((s) => s.value === parseInt(matcheUpdate?.stade_id))} options={state.stades} onChange={handleSelectChange} placeholder="اكتب" />
                                 </div>
                             </div>
                             <div className="form-group col-md-4">
                                 <label className='text-white' htmlFor="inputEmail4">المدينة</label>
                                 <div className="my-2">
-                                    <CreatableSelect className='text-light' php isDisabled value={state?.villes?.find((s) => s.value === matcheUpdate?.ville_id)} options={state.villes} onChange={handleSelectChange} placeholder="اكتب" />
+                                    <CreatableSelect className='text-light' php isDisabled value={state?.villes?.find((s) => s.value === parseInt(matcheUpdate?.ville_id))} options={state.villes} onChange={handleSelectChange} placeholder="اكتب" />
                                 </div>
                             </div>
                         </div>
@@ -671,7 +669,6 @@ export function Matche(props) {
                         <button className={`btn me-3 my-2 px-4 fw-bold ${isValide ? 'btn-warning text-danger' : 'btn-secondary'}`} onClick={sendData}>حفـــــظ</button>
                     </div>
             }
-
         </>
     )
 }

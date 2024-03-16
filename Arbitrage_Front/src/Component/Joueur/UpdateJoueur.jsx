@@ -15,7 +15,7 @@ function UpdateStade() {
     const { id } = useParams();
 
     useEffect(() => {
-        axiosClinet.get('api/joueur')
+        axiosClinet.get('/joueur')
             .then((res) => {
                 setJoueur(res.data.find((a) => a.id === parseInt(id)))
                 setLoading(false)
@@ -35,7 +35,7 @@ function UpdateStade() {
         e.preventDefault()
         setLoadingUpdate(true)
         if (updateJoueur) {
-            await axiosClinet.put(`api/joueur/${id}`, updateJoueur).then(
+            await axiosClinet.put(`/joueur/${id}`, updateJoueur).then(
                 (response) => {
                     const { status } = response;
                     if (status === 200) {

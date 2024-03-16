@@ -26,12 +26,12 @@ export function Changement(props) {
         const fetchData = async () => {
             try {
                 const [joueurResponse, clubResponse, matcheRespose] = await Promise.all([
-                    axiosClinet.get('api/joueur'),
-                    axiosClinet.get('api/club'),
-                    axiosClinet.get('api/matche'),
+                    axiosClinet.get('/joueur'),
+                    axiosClinet.get('/club'),
+                    axiosClinet.get('/matche'),
                 ]);
 
-                const dataJoueurs = joueurResponse.data.filter((j) => j.user_id === user?.id);
+                const dataJoueurs = joueurResponse.data.filter((j) => parseInt(j.user_id) === user?.id);
 
                 const optionJoueursEntr = dataJoueurs?.map(item => ({
                     value: item.nom,
@@ -56,7 +56,7 @@ export function Changement(props) {
                     name: "joueur_licence_sort"
                 }))
 
-                const dataClubs = clubResponse.data.filter((c) => c.user_id === user?.id || c.user_id === null);
+                const dataClubs = clubResponse.data.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null);
                 const optionClubs = dataClubs?.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + " " + item.abbr,
@@ -279,7 +279,7 @@ export function Changement(props) {
         change.forEach(obj => {
             numberOfAttributes = Object.keys(obj).length;
         });
-        if (numberOfAttributes === 9) {
+        if (numberOfAttributes === 9 || numberOfAttributes == null) {
             setChange([...change, {}])
             setError("")
         } else {

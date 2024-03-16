@@ -16,9 +16,9 @@ function JoueurListe() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axiosClinet.get('api/joueur')
+        axiosClinet.get('/joueur')
             .then((res) => {
-                setJoueurs(res.data.filter((j) => j.user_id === user?.id))
+                setJoueurs(res.data.filter((j) => parseInt(j.user_id) === user?.id))
                 setLoading(false)
             })
     }, [])
@@ -26,7 +26,7 @@ function JoueurListe() {
     const handleDelete = (id) => {
         setLoadingDelete(true)
         setIdJoueur(id)
-        axiosClinet.delete(`api/joueur/${id}`).then(
+        axiosClinet.delete(`/joueur/${id}`).then(
             (response) => {
                 const { status } = response;
                 console.log(response)

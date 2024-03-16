@@ -76,17 +76,21 @@ function App() {
 
   useEffect(() => {
 
-    // if (!window.localStorage.getItem('AUTHENTICATED')) {
-    //   navigate('/login')
-    // }
+    axiosClinet.get('/check-auth')
+      .then((res) => {
+        console.log(res.data.isAuthenticated)
+        if (res.data.isAuthenticated === null) {
+          navigate('/login')
+        }
+      });
 
-    // if (user) {
-    //   setLoading(false)
-    // } else {
-    //   window.localStorage.setItem('AUTHENTICATED', '')
-    //   window.localStorage.setItem('token', '')
-    //   navigate('/login')
-    // }
+    if (user) {
+      setLoading(false)
+    } else {
+      window.localStorage.setItem('AUTHENTICATED', '')
+      window.localStorage.setItem('token', '')
+      navigate('/login')
+    }
 
     setMobile(window.innerWidth <= 390)
 
@@ -94,7 +98,7 @@ function App() {
 
 
   const logout = async () => {
-    await axiosClinet.post('/api/logout').then((Response) => {
+    await axiosClinet.post('/logout').then((Response) => {
       console.log(Response)
       window.localStorage.setItem('AUTHENTICATED', '')
       window.localStorage.setItem('token', '')
@@ -109,13 +113,13 @@ function App() {
 
   const handleSidebarClose = (e) => {
     console.log(e.nativeEvent.srcElement.attributes.class.value)
-  
+
     if (window.innerWidth <= 360) {
-        if (e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle fw-bold show" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle fw-bold" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle active Active fw-bold show" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle active Active fw-bold") {
-          setIsSidebarOpen(true);
-        }else{
-          setIsSidebarOpen(false);
-        }
+      if (e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle fw-bold show" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle fw-bold" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle active Active fw-bold show" || e.nativeEvent.srcElement.attributes.class.value === "nav-link dropdown-toggle active Active fw-bold") {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
     }
   };
 

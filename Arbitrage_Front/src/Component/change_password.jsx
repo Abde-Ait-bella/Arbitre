@@ -56,7 +56,7 @@ export function Change_password() {
         {
             if (valide) {
                 setLoading(true)
-                await axiosClinet.post('api/change_password', password).then(
+                await axiosClinet.post('/change_password', password).then(
                     (response) => {
                         setLoading(false);
                         setErrorBack('')

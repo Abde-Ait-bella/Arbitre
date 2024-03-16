@@ -17,9 +17,9 @@ function VillesListe() {
     const { user } = AuthUser();
 
     useEffect(() => {
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter((v) => v.user_id === user?.id))
+                setVilles(res.data.filter((v) => parseInt(v.user_id) === user?.id))
                 setVillesDefault(res.data.filter((v) => v.user_id === null))
                 setLoading(false)
             })
@@ -28,7 +28,7 @@ function VillesListe() {
     const handleDelete = (id) => {
         setLoadingDelete(true)
         setIdJoueur(id)
-        axiosClinet.delete(`api/ville/${id}`).then(
+        axiosClinet.delete(`/ville/${id}`).then(
             (response) => {
                 const { status } = response;
                 console.log(response)

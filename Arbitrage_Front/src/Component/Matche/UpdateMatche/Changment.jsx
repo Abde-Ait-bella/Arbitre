@@ -32,12 +32,12 @@ export function Changement(props) {
         const fetchData = async () => {
             try {
                 const [joueurResponse, clubResponse, changeResponse] = await Promise.all([
-                    axiosClinet.get('api/joueur'),
-                    axiosClinet.get('api/club'),
-                    axiosClinet.get('api/changement'),
+                    axiosClinet.get('/joueur'),
+                    axiosClinet.get('/club'),
+                    axiosClinet.get('/changement'),
                 ]);
 
-                const dataJoueurs = joueurResponse.data.filter((j) => j.user_id === user?.id);
+                const dataJoueurs = joueurResponse.data.filter((j) => parseInt(j.user_id) === user?.id);
                 console.log('dataJoueurs', dataJoueurs)
 
                 const optionJoueursEntr = dataJoueurs?.map(item => ({
@@ -70,14 +70,14 @@ export function Changement(props) {
                 setOptionsJSort(optionJoueursSort);
                 setOptionsLicenceS(optionJoueursLicenceS);
 
-                const dataClubs = clubResponse.data.filter((c) => c.user_id === user?.id || c.user_id === null);
+                const dataClubs = clubResponse.data.filter((c) => parseInt(c.user_id) === user?.id || c.user_id === null);
                 const optionClubs = dataClubs?.map(item => ({
                     value: item.id,
                     label: "(" + item.nom + ")" + " " + item.abbr,
                     name: "club_id",
                 }))
 
-                setChangeUpdate([...changeResponse.data?.filter((ch) => ch.matche_id === parseInt(id))])
+                setChangeUpdate([...changeResponse.data?.filter((ch) => parseInt(ch.matche_id) === parseInt(id))])
 
                 setState(prevData => ({
                     ...prevData,
@@ -260,7 +260,7 @@ export function Changement(props) {
         changeUpdate.forEach(obj => {
             numberOfAttributes = Object.keys(obj).length;
         });
-        if (numberOfAttributes === 9 || numberOfAttributes === 12) {
+        if (numberOfAttributes === 9 || numberOfAttributes === 12 || numberOfAttributes == null) {
             setChangeUpdate([...changeUpdate, {}])
             setError("")
         } else {
@@ -406,7 +406,7 @@ export function Changement(props) {
                                                         <div className="form-group col-md-3">
                                                             <label>الفريق</label>
                                                             <div className='my-2'>
-                                                                <CreatableSelect className='text-light' value={state?.clubs.find((c) => c.value === item?.club_id)} options={state.clubs} onChange={(event) => handleChangeSelect(event, index)} placeholder="اكتب" />
+                                                                <CreatableSelect className='text-light' value={state?.clubs.find((c) => c.value === parseInt(item?.club_id))} options={state.clubs} onChange={(event) => handleChangeSelect(event, index)} placeholder="اكتب" />
                                                             </div>
                                                         </div>
                                                         <div className="form-group col-md-4">

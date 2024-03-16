@@ -18,7 +18,7 @@ function AddMatche() {
         e.preventDefault()
         if (dataMatche) {
             setLoading(true)
-            await axiosClinet.put(`api/matche/${id}`, dataMatche).then(
+            await axiosClinet.put(`/matche/${id}`, dataMatche).then(
                 (response) => {
                     const { data } = response;
                     if (data.status == true) {
@@ -34,13 +34,12 @@ function AddMatche() {
         if (dataAvert) {
             setLoading(true)
             console.log(id)
-            await axiosClinet.put(`api/avertissement/${id}`, dataAvert).then(
+            await axiosClinet.put(`/avertissement/${id}`, dataAvert).then(
                 (response) => {
                     const { data } = response;
                     console.log(response)
                     if (data.status == true) {
                         setLoading(false)
-                        navigate('/updatedMatche')
                     }
                 }
             ).catch((response) => {
@@ -50,12 +49,11 @@ function AddMatche() {
         }
         if (dataChangement) {
             setLoading(true)
-            await axiosClinet.put(`api/changement/${id}`, dataChangement).then(
+            await axiosClinet.put(`/changement/${id}`, dataChangement).then(
                 (response) => {
                     const { data } = response;
                     if (data.status == true) {
                         setLoading(false)
-                        navigate('/updatedMatche')
                     }
                 }
             ).catch((response) => {
@@ -65,12 +63,11 @@ function AddMatche() {
         }
         if (dataButs) {
             setLoading(true)
-            await axiosClinet.put(`api/but/${id}`, dataButs).then(
+            await axiosClinet.put(`/but/${id}`, dataButs).then(
                 (response) => {
                     const { data } = response;
                     if (data.status == true) {
                         setLoading(false)
-                        navigate('/updatedMatche')
                     }
                 }
             ).catch((response) => {

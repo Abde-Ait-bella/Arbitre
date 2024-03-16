@@ -77,7 +77,7 @@ function Register() {
         }, 2000)
 
         if (isValide) {
-            await axiosClinet.post('api/register', values).then(
+            await axiosClinet.post('/register', values).then(
                 (response) => {
 
                     console.log('full response', response)

@@ -19,12 +19,12 @@ function DelegueListe() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axiosClinet.get('api/delegue')
+        axiosClinet.get('/delegue')
             .then((res) => {
-                setDelegues(res.data.filter((d) => d.user_id === user?.id))
+                setDelegues(res.data.filter((d) => parseInt(d.user_id) === user?.id))
                 setDelegueDefault(res.data.filter((d) => d.user_id === null))
             })
-        axiosClinet.get('api/ville')
+        axiosClinet.get('/ville')
             .then((res) => {
                 setVilles(res.data)
                 setLoading(false)
@@ -35,7 +35,7 @@ function DelegueListe() {
     const handleDelete = (id) => {
         setLoadingDelete(true)
         setIdDelegue(id)
-        axiosClinet.delete(`api/delegue/${id}`).then(
+        axiosClinet.delete(`/delegue/${id}`).then(
             (response) => {
                 const { status } = response;
                 console.log(response)
@@ -96,7 +96,7 @@ function DelegueListe() {
                                                     <tr className="text-center" key={d.id}>
                                                         <td>{d.prenom.toUpperCase()}</td>
                                                         <td>{d.nom.toUpperCase()}</td>
-                                                        <td>{villes?.find(ville => ville.id === d.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(d.ville_id))?.nom}</td>
                                                         <td><i class="fa-solid fa-wrench text-dark"></i> <i class="fa-solid fa-trash text-dark me-3"></i></td>
                                                     </tr>
                                                 ))}
@@ -106,7 +106,7 @@ function DelegueListe() {
                                                     <tr className="text-center" key={d.id}>
                                                         <td>{d.prenom.toUpperCase()}</td>
                                                         <td>{d.nom.toUpperCase()}</td>
-                                                        <td>{villes?.find(ville => ville.id === d.ville_id)?.nom}</td>
+                                                        <td>{villes?.find(ville => ville.id === parseInt(d.ville_id))?.nom}</td>
                                                         <td className='col-3'><Link to={`/composants/updateDelegue/${d.id}`}><i class="fa-solid fa-wrench"></i></Link> <Link onClick={() => handleDelete(d.id)} >
                                                             {
                                                                 loadingDelete & idDelegue === d.id ? (
