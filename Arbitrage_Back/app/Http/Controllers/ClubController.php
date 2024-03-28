@@ -10,7 +10,7 @@ class ClubController extends Controller
 {
     public function index()
     {
-        $club = Club::with('Stade', 'Stade.Ville')->get();
+        $club = Club::with('stade', 'stade.Ville')->get();
         return $club;
     }
      /**

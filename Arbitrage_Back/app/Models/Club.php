@@ -18,7 +18,7 @@ class Club extends Model
     ];
 
     public function ville(){
-        return $this->belongsTo(ville::class);
+        return $this->belongsTo(Ville::class);
     }
     public function Stade(){
         return $this->belongsTo(Stade::class);

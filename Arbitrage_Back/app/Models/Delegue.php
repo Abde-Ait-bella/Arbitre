@@ -17,6 +17,6 @@ class Delegue extends Model
     ];
 
     public function Ville(){
-        return $this->belongsTo(ville::class);
+        return $this->belongsTo(Ville::class);
     }
 }

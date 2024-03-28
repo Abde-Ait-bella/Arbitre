@@ -10,7 +10,7 @@ class StadeController extends Controller
 {
     public function index()
     {
-        $stades = Stade::with('Ville')->get();
+        $stades = Stade::with('ville')->get();
         return $stades;
     }
     /**

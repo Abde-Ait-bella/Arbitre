@@ -24,7 +24,7 @@ class Changement extends Model
         "matche_id"
     ];
     public function club(){
-        return $this->belongsTo(club::class);
+        return $this->belongsTo(Club::class);
     }
 
 }

@@ -29,11 +29,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+//->middleware('auth:sanctum')
 Route::get('/matche' , [matcheController::class, 'index']);
 Route::post('/matche' , [matcheController::class, 'store']);
 Route::put('/matche/{id}' , [matcheController::class, 'update']);
-Route::delete('/matche/{id}' , [matcheController::class, 'destroy']);
+Route::delete('/matche/{id}' , [matcheController::class, 'destroy']);;
 
 
 // Route::apiResource('avertissemet', AvertissementCotroller::class);

@@ -10,7 +10,7 @@ class Stade extends Model
     use HasFactory;
 
     public function Ville(){
-        return $this->belongsTo(ville::class);
+        return $this->belongsTo(Ville::class);
     }
     public function Clube(){
         return $this->hasMany(Club::class);

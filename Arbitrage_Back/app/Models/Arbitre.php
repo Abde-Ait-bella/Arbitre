@@ -18,6 +18,6 @@ class Arbitre extends Model
     ];
 
     public function ville(){
-        return $this->belongsTo(ville::class);
+        return $this->belongsTo(Ville::class);
     }
 }

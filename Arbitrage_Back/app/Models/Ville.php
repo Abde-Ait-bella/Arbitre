@@ -15,15 +15,15 @@ class Ville extends Model
     ];
 
     public function club(){
-        return $this->hasMany(club::class);
+        return $this->hasMany(Club::class);
     }
     public function delegue(){
-        return $this->hasMany(delegue::class);
+        return $this->hasMany(Delegue::class);
     }
     public function stade(){
-        return $this->hasMany(stade::class);
+        return $this->hasMany(Stade::class);
     }
     public function matche(){
-        return $this->hasMany(matche::class);
+        return $this->hasMany(Matche::class);
     }
 }
