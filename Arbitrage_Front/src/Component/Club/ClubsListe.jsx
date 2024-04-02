@@ -25,7 +25,7 @@ function ClubListe() {
                 setLoading(false)
             })
         axiosClinet.get('/ville')
-            .then((res) => setVilles(res.data.filter((d) => parseInt(d.user_id) === user?.id)))
+            .then((res) => setVilles(res.data))
     }, [])
 
 

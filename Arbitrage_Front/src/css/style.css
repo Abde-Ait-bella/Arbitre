@@ -36,6 +36,7 @@ body::-webkit-scrollbar {
     visibility: hidden;
     transition: opacity .5s ease-out, visibility 0s linear .5s;
     z-index: 99999;
+    rotate: 100%;
 }
 
 #spinner.show {
@@ -44,6 +45,7 @@ body::-webkit-scrollbar {
     opacity: 1;
     display: flex;
     justify-content: center;
+    border-right-color: red;
 }
 
 /*** Spinner_component ***/

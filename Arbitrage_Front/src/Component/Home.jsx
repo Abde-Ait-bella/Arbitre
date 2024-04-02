@@ -3,10 +3,14 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar, Pie, PolarArea } from "react-chartjs-2";
 import { axiosClinet } from "../Api/axios";
 import { Line } from 'react-chartjs-2';
-import { Link, useNavigate } from "react-router-dom";
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { AuthUser } from "../AuthContext";
+import ImageYellow from "../../public/img/yellow-card.png";
+import ImageRed from "../../public/img/red-card.png";
+import ImageMatche from "../../public/img/matche.png";
+import ImageBalance from "../../public/img/balance.png";
+import Palestine from "../../public/img/palistaine.png";
 
 ChartJS.register(
     ArcElement,
@@ -36,15 +40,12 @@ function Home() {
     const [matcheSeason, setMatcheSeason] = useState();
     const [loading, setLoading] = useState(true);
     const { user } = AuthUser();
-    console.log('userdata', user);
 
     const pageRef = useRef();
 
 
     useEffect(() => {
-        // if (!window.localStorage.getItem('AUTHENTICATED')) {
-        //     navigate('/login')
-        // }
+
         axiosClinet.get('/matche')
             .then((res) => {
                 const dataMatche = res.data.filter((m) => parseInt(m.user_id) === user?.id)
@@ -382,6 +383,7 @@ function Home() {
     return (
         <>
             {/* <!-- Sale & Revenue Start --> */}
+
             < div class="container-fluid pt-4 px-4" ref={pageRef} id="myDIV">
                 <select class="form-select text-center" aria-label="Default select example" onChange={handelSelect}>
                     <option value={parseInt(new Date().getFullYear())} selected >{new Date().getFullYear()}</option>
@@ -411,7 +413,7 @@ function Home() {
                             :
                             <div className="col-sm-6 col-xl-4 mt-4">
                                 <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4">
-                                    <img src="../../public/img/yellow-card.png" style={{ height: '75px' }} alt="" />
+                                    <img src={ImageYellow} style={{ height: '75px' }} alt="" />
                                     <div class="ms-lg-3">
                                         <p class="mb-2 fs-5 fw-bold">عدد البطاقات الصفراء</p>
                                         <h6 class="mb-0">{avert_G?.length}</h6>
@@ -440,7 +442,7 @@ function Home() {
                             :
                             <div className="col-sm-6 col-xl-4 mt-4">
                                 <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4">
-                                    <img src="../../public/img/red-card.png" style={{ height: '75px' }} alt="" />
+                                    <img src={ImageRed} style={{ height: '75px' }} alt="" />
                                     <div class="ms-lg-3">
                                         <p class="mb-2 fs-5 text-center fw-bold">عدد البطاقات الحمراء</p>
                                         <h6 class="mb-0">{avert_R?.length}</h6>
@@ -469,7 +471,7 @@ function Home() {
                             :
                             <div className="col-sm-6 col-xl-4 mt-4">
                                 <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4">
-                                    <img src="../../public/img/matche.png" style={{ height: '75px' }} alt="" />
+                                    <img src={ImageMatche} style={{ height: '75px' }} alt="" />
                                     <div class="ms-lg-3">
                                         <p class="mb-2 fs-5 text-center fw-bold">عدد  المباريات</p>
                                         <h6 class="mb-0">{matcheSeason?.length}</h6>
@@ -600,7 +602,7 @@ function Home() {
 
                                     :
 
-                                    <Bar data={dataBar} options={optionsBar} height={237}/>
+                                    <Bar data={dataBar} options={optionsBar} height={237} />
                             }
                         </div>
                     </div>
@@ -753,7 +755,7 @@ function Home() {
                         </div>
 
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-4 mt-4" style={{ fontFamily: 'Amiri Quran' }}>
-                            <img src="../../public/img/balance.png" style={{ height: '42px' }} alt="" />
+                            <img src={ImageBalance} style={{ height: '42px' }} alt="" />
                             <div class="">
                                 <p class="mb-0 text-white text-center fs-5">"وَإِذَا حَكَمْتُم بَيْنَ النَّاسِ أَن تَحْكُمُوا بِالْعَدْلِ"</p>
                             </div>
@@ -848,11 +850,17 @@ function Home() {
 
                                     :
 
-                                    <PolarArea data={dataPolarAria} options={optionsPolarAria}  height={565} />
+                                    <PolarArea data={dataPolarAria} options={optionsPolarAria} height={565} />
                             }
                         </div>
                     </div>
                 </div>
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-2 bg-white mt-4" style={{ fontFamily: 'El Messiri', color:'red' }}>
+                            <img src={Palestine} style={{ height: '45px' }} alt="" />
+                            <div class="">
+                                <p class="mb-0 text-center fs-5">" بلادهم عرضة للضّياع وأمّتهم عرضة للفنا "</p>
+                            </div>
+                        </div>
             </div >
             {/* <!-- Sale & Revenue End --> */}
 

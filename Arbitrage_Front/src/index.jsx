@@ -15,7 +15,7 @@ root.render(
     <AuthProvider>
         <BrowserRouter>
             <Routes>
-                <Route path='/password-reset/:token' element={<ResetPassword />} />
+                <Route path='/password-reset/:token/:email' element={<ResetPassword />} />
                 <Route path='/forgot-password' element={<ForgotPassword />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />

@@ -26,7 +26,7 @@ function StadesListe() {
             })
         axiosClinet.get('/ville')
             .then((res) => {
-                setVilles(res.data.filter(item => parseInt(item.user_id) === user?.id || item.user_id === null))
+                setVilles(res.data)
                 setLoading(false)
             })
     }, [])

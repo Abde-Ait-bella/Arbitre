@@ -69,27 +69,25 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true)
-
-        setTimeout(() => {
-            setLoading(false);
-            setErrors(Validation(values))
-        }, 2000)
-
+        setErrorBack("")
         if (isValide) {
+            setLoading(true)
             await axiosClinet.post('/register', values).then(
                 (response) => {
-
+                    setLoading(false);
+                    
                     console.log('full response', response)
-
-                    const {status, data} = response;
-
-                    if (status === 204) {
+                    
+                    const {status} = response;
+                    
+                    if (status === 200) {
+                        
                         navigate('/login');
                     }
                 }
-            ).catch(({ response }) => {
-                setErrorBack(response?.data?.message)
+                ).catch(({ response }) => {
+                setLoading(false);
+                setErrorBack(response?.data?.message === "The email has already been taken." ? "البريد الالكتروني تم استعماله من قبل" : response?.data?.message)
             })
         }
     }
@@ -102,7 +100,7 @@ function Register() {
                     <div className="row h-100 align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
                         <div className="col-md-4">
                             <div className="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
-                                {errorBack && <p dir="ltr" className="text-danger me-3">{errorBack}</p>}
+                                {errorBack && <div dir="rtl" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
                                 <div className="d-flex align-items-center justify-content-between mb-3">
                                         <Link href="/" className="">
                                             <h3 className="text-primary"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i> ArbiTre</h3>
@@ -111,7 +109,7 @@ function Register() {
                                 </div>
                                 <div className="form-floating mb-3">
                                     <input type="text" className="form-control" id="floatingText" placeholder="jhondoe" name="name" onChange={handelCHange} />
-                                    <label for="floatingText">الاسم الكامل</label>
+                                    <label for="floatingText">الاسم الشخصي</label>
                                 </div>
                                 {errors?.name && <p className="text-danger me-3">{errors?.name}</p>}
                                 <div className="form-floating mb-3">

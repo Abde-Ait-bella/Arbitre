@@ -57,24 +57,19 @@ function ForgotPassword() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrors(Validation(values));
         setLoading(true)
         setErrorBack('')
         setResponce('')
-        setErrors(Validation(values))
-        // Validation(values);
 
-        // alert(isValide)
-        // if (isValide) {
-        // axiosClinet.get('/sanctum/csrf-cookie')
-        await axiosClinet.post('/forgot-password', values).then(
+        await axiosClinet.post('/sendPasswordResetLink', values).then(
             (response) => {
                 setLoading(false);
                 console.log('full response', response)
-                setResponce(response.data.status === "We have emailed your password reset link." ? "لقد أرسلنا عبر البريد الإلكتروني رابط إعادة تعيين كلمة المرور الخاصة بك." : response.data.status)
-
+                setResponce(response.data.data)
             }
         ).catch(({ response }) => {
-            setErrorBack(response?.data?.message === "We can't find a user with that email address." ? "لا يمكننا العثور على مستخدم لديه عنوان البريد الإلكتروني هذا" : response?.data?.message)
+            setErrorBack(response?.data?.error)
             setLoading(false)
         })
     }
@@ -91,13 +86,10 @@ function ForgotPassword() {
                                 <div className="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
                                     {responce && <div class="p-3 mb-4 bg-success text-white text-center rounded">{responce}</div>}
                                     {errorBack && <div dir="ltr" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
-                                    <div className="d-flex align-items-center justify-content-center mb-3">
-                                        <Link to='/'>
-                                            <h3 className="logo text-danger">
-                                                <i class="fa-solid fa-flag-checkered ms-2"></i>
-                                                {/* <img style={{ width: php'40px', height: '40px', marginLeft: '10px'}} src="./img/user.svg" alt="" /> */}
-                                                ArbiTre</h3>
-                                        </Link>
+                                    <div className="d-flex align-items-center justify-content-center mb-2">
+                                        <a href="/" className="">
+                                            <h3 className="text-primary"><i class="fa-solid fa-flag-checkered ms-2 "></i> ArbiTre</h3>
+                                        </a>
                                     </div>
                                     <div className="form-floating mb-3">
                                         <input type="email" name="email" className="form-control" id="floatingInput" placeholder="name@example.com" onChange={handelCHange} />

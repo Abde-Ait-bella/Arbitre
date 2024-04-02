@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Route, Link, NavLink, Outlet, Routes, useNavigate } from "react-router-dom";
+import { Route, Link, NavLink, Routes, useNavigate } from "react-router-dom";
 
 import Matches from './Component/Matche/MatchesListe';
 import UpdateMatche from './Component/Matche/UpdateMatche/UpdateMatche';
@@ -66,30 +66,23 @@ import ScrollToTop from 'react-scroll-to-top';
 function App() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [mobile, setMobile] = useState();
   const navigate = useNavigate();
   const pageRef = useRef();
-  // const [authenticated, _setAuthenticated] = useState('dtrue' === window.localStorage.getItem('AUTHENTICATED'))
 
   const { user, userDataLogout } = AuthUser();
 
   useEffect(() => {
 
-    axiosClinet.get('/check-auth')
-      .then((res) => {
-        console.log(res.data.isAuthenticated)
-        if (res.data.isAuthenticated === null) {
-          navigate('/login')
-        }
-      });
 
     if (user) {
       setLoading(false)
     } else {
-      window.localStorage.setItem('AUTHENTICATED', '')
-      window.localStorage.setItem('token', '')
       navigate('/login')
+      localStorage.removeItem('AUTHENTICATED')
+      localStorage.removeItem('token')
+      setLoading(false)
     }
 
     setMobile(window.innerWidth <= 390)
@@ -100,8 +93,6 @@ function App() {
   const logout = async () => {
     await axiosClinet.post('/logout').then((Response) => {
       console.log(Response)
-      window.localStorage.setItem('AUTHENTICATED', '')
-      window.localStorage.setItem('token', '')
       navigate('/login')
       userDataLogout();
     })
@@ -123,8 +114,6 @@ function App() {
     }
   };
 
-
-
   return (
 
     <>
@@ -132,7 +121,7 @@ function App() {
         {
           loading ?
             < div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-              <div class="spinner-border text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
+              <div class="spinner-border border-none text-primary" style={{ width: '3rem', height: '3rem' }} role="status">
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
@@ -149,9 +138,9 @@ function App() {
                         ArbiTre</h3>
                     </Link>
                   </div>
-                  <div class="me-4 w-100">
-                    <div class="position-relative me-2">
-                      <img class="rounded-circle" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
+                  <div class="w-100">
+                    <div class="position-relative me-3 mb-1">
+                      <img class="rounded-circle" src="img/arbitre.png" alt="" style={{ width: '35px', height: '35px' }} />
                       <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                     </div>
                     <div class="me-4">
@@ -176,12 +165,12 @@ function App() {
                         data-bs-toggle="dropdown" ><i class="fa-solid fa-screwdriver-wrench me-2 ms-3"></i>المكونات</NavLink>
                       <div class="dropdown-menu bg-transparent border-0"
                       >
-                        <Link to="/composants/stades" className="dropdown-item" >الملاعب<i class="fa-solid fa-ring me-3 mt-1"></i></Link>
-                        <Link to="/composants/clubs" className="dropdown-item">الأندية<i class="fa-solid fa-shield me-4 mt-1"></i></Link>
-                        <Link to="/composants/arbitres" className="dropdown-item">الحكام <i class="fa-solid fa-clone me-4 mt-1"></i></Link>
-                        <Link to='/composants/delegue' className="dropdown-item">المناديب <i class="fa-solid fa-user-tie me-2 mt-1"></i></Link>
-                        <Link to='/composants/joueur' className="dropdown-item">الاعبون <i class="fa-solid fa-person-running me-3 mt-1"></i></Link>
-                        <Link to='/composants/villes' className="dropdown-item">المدن <i class="fa-solid fa-city me-4 mt-1"></i></Link>
+                        <NavLink to={"/composants/stades"} className={({ isActive }) => isActive ? "dropdown-item text-white" : "dropdown-item"}>الملاعب<i class="fa-solid fa-ring me-3 mt-1"></i></NavLink>
+                        <NavLink to={"/composants/clubs"} className={({ isActive }) => isActive ? "dropdown-item text-white" : "dropdown-item"}>الأندية<i class="fa-solid fa-shield me-4 mt-1"></i></NavLink>
+                        <NavLink to={"/composants/arbitres"} className={({ isActive }) => isActive ? "dropdown-item text-white" : "dropdown-item"}>الحكام <i class="fa-solid fa-clone me-4 mt-1"></i></NavLink>
+                        <NavLink to={'/composants/delegue'} className={({ isActive }) => isActive ? "dropdown-item text-white" : "dropdown-item"}>المناديب <i class="fa-solid fa-user-tie me-2 mt-1"></i></NavLink>
+                        <NavLink to={'/composants/joueur'} className={({ isActive }) => isActive ? "dropdown-item text-white" : "dropdown-item"}>الاعبون <i class="fa-solid fa-person-running me-3 mt-1"></i></NavLink>
+                        <NavLink to={'/composants/villes'} className={({ isActive }) => isActive ? "dropdown-item text-white" : "dropdown-item"}>المدن <i class="fa-solid fa-city me-4 mt-1"></i></NavLink>
                       </div>
                     </div>
                     <div className='mt-1 me-2'>
@@ -213,9 +202,9 @@ function App() {
                   </Link>
 
                   <div class="navbar-nav align-items-center me-auto">
-                    <div class="nav-item dropdown ms-lg-4">
+                    <div class="nav-item dropdown ms-lg-5">
                       <Link href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <img class="rounded-circle me-lg-2 ms-2" src="img/user.png" alt="" style={{ width: '40px', height: '40px' }} />
+                        <img class="rounded-circle me-lg-2 ms-2" src="img/arbitre.png" alt="" style={{ width: '35px', height: '35px' }} />
                         <span class="d-none d-lg-inline-flex fw-bold ms-2 me-2">{user?.name}</span>
                       </Link>
                       <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0 w-20 select-menu me-4 me-lg-5">

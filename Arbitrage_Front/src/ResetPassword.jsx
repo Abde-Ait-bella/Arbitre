@@ -13,13 +13,16 @@ function ResetPassword() {
     const [errorBack, setErrorBack] = useState();
     const [loading, setLoading] = useState();
     const [searchParams] = useSearchParams();
-    const [email, setEmail] = useState();
+    // const [email, setEmail] = useState();
     const [status, setStatus] = useState();
     const { token } = useParams();
+    const { email } = useParams();
 
     useEffect(() => {
-        setEmail(searchParams.get('email'))
+        // setEmail(searchParams.get('/email'))
     }, [email, token])
+
+    console.log(email, token)
 
     const handelCHange = (e) => {
         const newObject = { ...values, [e.target.name]: e.target.value };
@@ -56,22 +59,20 @@ function ResetPassword() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true)
-        setErrors(Validation(values))
         setStatus('')
         setErrorBack('')
 
         if (isValide) {
-
-            setLoading(false);
-
-            await axiosClinet.post('/reset-password', { ...values, email, token }).then(
+            setLoading(true)
+            await axiosClinet.post('/resetPassword', { ...values, email, 'resetToken': token }).then(
                 (response) => {
-                    setStatus(response.data.status === "Your password has been reset." ? "تم إعادة تعيين كلمة المرور الخاصة بك" : response.data.status)
+                    setLoading(false)
+                    console.log(response)
+                    setStatus(response?.data.data)
                 }
             ).catch(({ response }) => {
                 setLoading(false);
-                setErrorBack(response?.data.message === "This password reset token is invalid." ? "رمز إعادة تعيين كلمة المرور هذا غير صالح." : response?.data.message)
+                setErrorBack(response?.data.message === "The password field confirmation does not match." ? " . تأكيد حقل كلمة المرور غير متطابق" : response?.data.error)
             })
 
         }
@@ -90,11 +91,11 @@ function ResetPassword() {
                                     <p className="mb-0"> الان قم <a className="text-warning" href="/login">بتسجيل الدخول</a></p>
                                 </div>}
                                 {errorBack && <div dir="ltr" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
-                                <div className="d-flex align-items-center justify-content-between mb-lg-4">
-                                    <a href="index.html" className="">
-                                        <h3 className="text-primary"><i className="fa fa-user-edit me-2"></i>DarkPan</h3>
+                                <div className="d-flex align-items-center justify-content-center mb-lg-4">
+                                    <a href="/" className="">
+                                        <h3 className="text-primary"><i class="fa-solid fa-flag-checkered ms-2"></i> ArbiTre</h3>
                                     </a>
-                                    <h3>Sign Up</h3>
+                                    {/* <h3>Reset PW</h3> */}
                                 </div>
                                 <div className="form-floating d-flex align-items-center justify-content-between mb-4">
                                     <div className="form-floating col-11">
