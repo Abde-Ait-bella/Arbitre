@@ -8,3 +8,9 @@ This application is designed to help football referees in managing match-related
 - **Match statistics:** The number of matches in months and years, the number of warnings, charts.
 - **Reports:** Generates detailed report and information about the matches and events that took place during the matches will be issued in the form of an official report that will be sent       to the regional league....
 - **Print the report:** The site provides the feature of printing the report and downloading it in a format PDF.
+## Technologies Used
+- Frontend: HTML, CSS, JavaScript (React.js)
+- Backend: Laravel
+- Database: Mysql
+- Authentication: JSON Web Tokens (JWT)
+- Other Tools: Git, GitHub, Postman (for API development and testing), Bootstrap, SASS (for design),
