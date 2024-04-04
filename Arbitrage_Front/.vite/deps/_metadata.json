@@ -1,0 +1,91 @@
+{
+  "hash": "20c70076",
+  "configHash": "347fac5e",
+  "lockfileHash": "cc1f7dd3",
+  "browserHash": "43bd1ce8",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "10d53584",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "0492ee35",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "cb8e335c",
+      "needsInterop": false
+    },
+    "react-scroll-to-top": {
+      "src": "../../node_modules/react-scroll-to-top/dist/index.js",
+      "file": "react-scroll-to-top.js",
+      "fileHash": "2b9b708a",
+      "needsInterop": true
+    },
+    "react-loading-skeleton": {
+      "src": "../../node_modules/react-loading-skeleton/dist/index.js",
+      "file": "react-loading-skeleton.js",
+      "fileHash": "29a6728b",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "82694739",
+      "needsInterop": false
+    },
+    "chart.js": {
+      "src": "../../node_modules/chart.js/dist/chart.js",
+      "file": "chart__js.js",
+      "fileHash": "06874768",
+      "needsInterop": false
+    },
+    "react-chartjs-2": {
+      "src": "../../node_modules/react-chartjs-2/dist/index.js",
+      "file": "react-chartjs-2.js",
+      "fileHash": "3a4d334b",
+      "needsInterop": false
+    },
+    "react-to-print": {
+      "src": "../../node_modules/react-to-print/lib/index.js",
+      "file": "react-to-print.js",
+      "fileHash": "132a2971",
+      "needsInterop": true
+    },
+    "react-select/creatable": {
+      "src": "../../node_modules/react-select/creatable/dist/react-select-creatable.esm.js",
+      "file": "react-select_creatable.js",
+      "fileHash": "b6606e56",
+      "needsInterop": false
+    },
+    "react-select": {
+      "src": "../../node_modules/react-select/dist/react-select.esm.js",
+      "file": "react-select.js",
+      "fileHash": "ceb0fa92",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-VMIZ37L6": {
+      "file": "chunk-VMIZ37L6.js"
+    },
+    "chunk-UF7DBQZA": {
+      "file": "chunk-UF7DBQZA.js"
+    },
+    "chunk-TQDKLHUW": {
+      "file": "chunk-TQDKLHUW.js"
+    },
+    "chunk-W44E3VKL": {
+      "file": "chunk-W44E3VKL.js"
+    },
+    "chunk-LNEMQRCO": {
+      "file": "chunk-LNEMQRCO.js"
+    }
+  }
+}

@@ -58,20 +58,22 @@ function ForgotPassword() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrors(Validation(values));
-        setLoading(true)
         setErrorBack('')
         setResponce('')
 
-        await axiosClinet.post('/sendPasswordResetLink', values).then(
-            (response) => {
-                setLoading(false);
-                console.log('full response', response)
-                setResponce(response.data.data)
-            }
-        ).catch(({ response }) => {
-            setErrorBack(response?.data?.error)
-            setLoading(false)
-        })
+        if (isValide) {
+            setLoading(true)
+            await axiosClinet.post('/sendPasswordResetLink', values).then(
+                (response) => {
+                    setLoading(false);
+                    console.log('full response', response)
+                    setResponce(response.data.data)
+                }
+            ).catch(({ response }) => {
+                setErrorBack(response?.data?.error)
+                setLoading(false)
+            })
+        }
     }
 
     return (

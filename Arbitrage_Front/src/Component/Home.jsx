@@ -858,7 +858,7 @@ function Home() {
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-around p-2 bg-white mt-4" style={{ fontFamily: 'El Messiri', color:'red' }}>
                             <img src={Palestine} style={{ height: '45px' }} alt="" />
                             <div class="">
-                                <p class="mb-0 text-center fs-5">" بلادهم عرضة للضّياع وأمّتهم عرضة للفنا "</p>
+                                <p class="mb-0 text-center">" بلادهم عرضة للضّياع وأمّتهم عرضة للفنا "</p>
                             </div>
                         </div>
             </div >
