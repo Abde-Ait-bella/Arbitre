@@ -103,7 +103,7 @@ function Register() {
                                 {errorBack && <div dir="rtl" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
                                 <div className="d-flex align-items-center justify-content-between mb-3">
                                         <Link href="/" className="">
-                                            <h3 className="text-primary"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i> ArbiTre</h3>
+                                            <h3 className="text-primary"><i class="text-primary fa-solid fa-flag-checkered ms-2 me-3"></i> ArbiTre</h3>
                                         </Link>
                                     <p className="fs-3 pt-2 fw-bold">Sign Up</p>
                                 </div>

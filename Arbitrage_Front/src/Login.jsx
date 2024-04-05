@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { axiosClinet } from "./Api/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthUser } from "./AuthContext";
 
 function Login() {
@@ -118,9 +118,9 @@ function Login() {
                                         <div className="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
                                             {errorBack && <div dir="rtl" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
                                             <div className="d-flex align-items-center justify-content-between mb-3">
-                                                <a href="/" className="">
-                                                    <h3 className="text-primary"><i class="fa-solid fa-flag-checkered ms-2 me-3"></i> ArbiTre</h3>
-                                                </a>
+                                                <Link href="/" className="logo">
+                                                    <h3 className="text-primary"><i class="text-primary fa-solid fa-flag-checkered ms-2 me-3"></i> ArbiTre</h3>
+                                                </Link>
                                                 <p className="fs-2 pt-2 fw-bold">Sign In</p>
                                             </div>
                                             <div className="form-floating mb-3">

@@ -90,7 +90,7 @@ function ForgotPassword() {
                                     {errorBack && <div dir="ltr" class="p-3 mb-4 bg-danger text-white text-center rounded">{errorBack}</div>}
                                     <div className="d-flex align-items-center justify-content-center mb-2">
                                         <a href="/" className="">
-                                            <h3 className="text-primary"><i class="fa-solid fa-flag-checkered ms-2 "></i> ArbiTre</h3>
+                                            <h3 className="text-primary"><i class="text-primary fa-solid fa-flag-checkered ms-2 "></i> ArbiTre</h3>
                                         </a>
                                     </div>
                                     <div className="form-floating mb-3">
