@@ -231,20 +231,6 @@ export function Matche(props) {
         }, [])
 
 
-
-    // const arbitreCentre = state.centre?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_c_id));
-    // const villeArbCentre = state.villes?.find((v) => v.value === parseInt(arbitreCentre?.ville?.id));
-
-    // const arbitre_a1 = state.assistant_1?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a1_id));
-    // const villeArb_a1 = state.villes?.find((v) => v.value === parseInt(arbitre_a1?.ville?.id));
-
-    // const arbitre_a2 = state.assistant_2?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a2_id));
-    // const villeArb_a2 = state.villes?.find((v) => v.value === parseInt(arbitre_a2?.ville?.id));
-
-    // const delegue = state.delegue?.find((d) => d.value === parseInt(matcheUpdate?.delegue_id));
-    // const villeDelegue = state.villes?.find((d) => d.value === parseInt(delegue?.ville?.id));
-
-
     const handleInputChange = (event) => {
 
         const { name, value } = event.target;
