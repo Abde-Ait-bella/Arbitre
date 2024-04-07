@@ -19,6 +19,7 @@ function DetailleRapport() {
     const [avertissemets, setAvertissemets] = useState();
     const [changements, setChangements] = useState();
     const [buts, setButs] = useState();
+    const [ville, setVille] = useState();
     const [loading, setLoading] = useState(true);
     const [skypTable, setSkypTable] = useState(false);
     const [marginB, setMarginB] = useState(false);
@@ -58,9 +59,13 @@ function DetailleRapport() {
         axiosClinet.get('/but')
             .then((respense) => {
                 setButs(respense.data)
-                setLoading(false)
             })
 
+        axiosClinet.get('/ville')
+            .then((respense) => {
+                setVille(respense.data)
+                setLoading(false)
+            })
 
     }, [])
 
@@ -189,7 +194,7 @@ function DetailleRapport() {
         <>
             {
                 loading ?
-                    
+
                     <div className="bg-white m-4 rounded">
                         <div className="row container-none container-lg-block mb-4 px-lg-4 py-4 d-flex justify-content-center">
                             <SkeletonTheme baseColor="#3a3f5c" highlightColor="#6C7293">
@@ -289,26 +294,26 @@ function DetailleRapport() {
                                             <tr>
                                                 <th class="p-1 px-3">الموسم الرياضي : {rapports?.saison?.nom}</th>
                                                 <th class="p-1 px-3">التاريخ : {rapports?.date}</th>
-                                                <th class="p-1 px-3">الحكم : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_c_id))?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_c_id))?.ville.nom}</th>
+                                                <th class="p-1 px-3"><span className="ms-3">الحكم :</span> {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_c_id))?.prenom.toUpperCase()} {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_c_id))?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {ville?.find((a) => a.id === parseInt(rapports?.centre_ville))?.nom}</th>
                                             </tr>
                                             <tr>
                                                 <th class="p-1 px-3">المقابلة: {club?.find((c) => c.id === parseInt(rapports?.club_id_1))?.abbr} # {club?.find((c) => c.id === parseInt(rapports?.club_id_2))?.abbr}</th>
                                                 <th class="p-1 px-3">التوقيت : {rapports?.temps}</th>
-                                                <th class="p-1 px-3">المساعد 1 : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a1_id))?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a1_id))?.ville.nom}</th>
+                                                <th class="p-1 px-3"><span className="ms-3">المساعد 1 :</span> {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a1_id))?.prenom.toUpperCase()} {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a1_id))?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {ville?.find((a) => a.id === parseInt(rapports?.assistant_1_ville))?.prenom} {ville?.find((a) => a.id === parseInt(rapports?.assistant_1_ville))?.nom}</th>
                                             </tr>
                                             <tr>
                                                 <th class="p-1 px-3">النتيجة : {rapports?.result_club_1} - {rapports?.result_club_2}</th>
                                                 <th class="p-1 px-3">الملعب : {rapports?.stade?.nom}</th>
-                                                <th class="p-1 px-3" >المساعد 2 : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a2_id))?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a2_id))?.ville.nom}</th>
+                                                <th class="p-1 px-3" ><span className="ms-3">المساعد 2 :</span> {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a2_id))?.prenom.toUpperCase()} {arbitre?.find((a) => a.id === parseInt(rapports?.arbitre_a2_id))?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {ville?.find((a) => a.id === parseInt(rapports?.assistant_2_ville))?.nom}</th>
                                             </tr>
                                             <tr>
                                                 <th class="p-1 px-3">المنافسة : {rapports?.competition?.nom} <span className="me-5">الفئة : {categories?.find((a) => a.id === rapports?.categorie_id)?.nom}</span></th>
                                                 <th class="p-1 px-3">المدينة : {rapports?.stade?.ville?.nom}</th>
-                                                <th class="p-1 px-3">المراقب : {rapports?.delegue?.nom.toUpperCase()}</th>
-                                                <th class="p-1 px-3">المدينة : {rapports?.delegue?.ville?.nom}</th>
+                                                <th class="p-1 px-3"><span className="ms-3">المراقب :</span> {rapports?.delegue?.prenom.toUpperCase()} {rapports?.delegue?.nom.toUpperCase()}</th>
+                                                <th class="p-1 px-3">المدينة : {ville?.find((a) => a.id === parseInt(rapports?.delegue_ville))?.nom}</th>
                                             </tr>
                                         </thead>
                                     </table>

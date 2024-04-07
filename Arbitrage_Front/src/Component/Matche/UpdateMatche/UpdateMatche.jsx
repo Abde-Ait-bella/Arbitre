@@ -26,27 +26,28 @@ function AddMatche() {
                         navigate('/updatedMatche')
                     }
                 }
-            ).catch((response) => {
-                setLoading(false)
-                console.log(response)
-            })
-        }
-        if (dataAvert) {
-            setLoading(true)
-            console.log(id)
-            await axiosClinet.put(`/avertissement/${id}`, dataAvert).then(
-                (response) => {
-                    const { data } = response;
+                ).catch((response) => {
+                    setLoading(false)
                     console.log(response)
-                    if (data.status == true) {
-                        setLoading(false)
+                })
+            }
+            if (dataAvert) {
+                setLoading(true)
+                console.log(id)
+                await axiosClinet.put(`/avertissement/${id}`, dataAvert).then(
+                    (response) => {
+                        const { data } = response;
+                        console.log(response)
+                        if (data.status == true) {
+                            setLoading(false)
+                            navigate('/updatedMatche')
+                        }
                     }
+                    ).catch((response) => {
+                        console.log(response)
+                        setLoading(false)
+                    })
                 }
-            ).catch((response) => {
-                console.log(response)
-                setLoading(false)
-            })
-        }
         if (dataChangement) {
             setLoading(true)
             await axiosClinet.put(`/changement/${id}`, dataChangement).then(
@@ -54,6 +55,7 @@ function AddMatche() {
                     const { data } = response;
                     if (data.status == true) {
                         setLoading(false)
+                        navigate('/updatedMatche')
                     }
                 }
             ).catch((response) => {
@@ -68,6 +70,7 @@ function AddMatche() {
                     const { data } = response;
                     if (data.status == true) {
                         setLoading(false)
+                        navigate('/updatedMatche')
                     }
                 }
             ).catch((response) => {

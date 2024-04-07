@@ -54,7 +54,7 @@ export function Matche(props) {
                 }))
 
                 const centre = transformedOption.filter(item => item.type === 'center')
-                const assistant = transformedOption.filter(item => item.type === 'Assistant')
+                const assistant = transformedOption.filter(item => item.type === 'assistant')
 
 
                 const arbireAssistant_1 = assistant.map(item => ({
@@ -232,17 +232,17 @@ export function Matche(props) {
 
 
 
-    const arbitreCentre = state.centre?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_c_id));
-    const villeArbCentre = state.villes?.find((v) => v.value === parseInt(arbitreCentre?.ville?.id));
+    // const arbitreCentre = state.centre?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_c_id));
+    // const villeArbCentre = state.villes?.find((v) => v.value === parseInt(arbitreCentre?.ville?.id));
 
-    const arbitre_a1 = state.assistant_1?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a1_id));
-    const villeArb_a1 = state.villes?.find((v) => v.value === parseInt(arbitre_a1?.ville?.id));
+    // const arbitre_a1 = state.assistant_1?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a1_id));
+    // const villeArb_a1 = state.villes?.find((v) => v.value === parseInt(arbitre_a1?.ville?.id));
 
-    const arbitre_a2 = state.assistant_2?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a2_id));
-    const villeArb_a2 = state.villes?.find((v) => v.value === parseInt(arbitre_a2?.ville?.id));
+    // const arbitre_a2 = state.assistant_2?.find((c) => c.value === parseInt(matcheUpdate?.arbitre_a2_id));
+    // const villeArb_a2 = state.villes?.find((v) => v.value === parseInt(arbitre_a2?.ville?.id));
 
-    const delegue = state.delegue?.find((d) => d.value === parseInt(matcheUpdate?.delegue_id));
-    const villeDelegue = state.villes?.find((d) => d.value === parseInt(delegue?.ville?.id));
+    // const delegue = state.delegue?.find((d) => d.value === parseInt(matcheUpdate?.delegue_id));
+    // const villeDelegue = state.villes?.find((d) => d.value === parseInt(delegue?.ville?.id));
 
 
     const handleInputChange = (event) => {
@@ -529,25 +529,25 @@ export function Matche(props) {
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled value={villeArbCentre} options={state.centreVille} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' value={state.villes?.find((v) => v.value === parseInt(matcheUpdate?.centre_ville))} options={state.centreVille} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.assistant_1_Ville} value={villeArb_a1} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' options={state.assistant_1_Ville} value={state.villes?.find((v) => v.value === parseInt(matcheUpdate?.assistant_1_ville))} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.assistant_2_Ville} value={villeArb_a2} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' options={state.assistant_2_Ville} value={state.villes?.find((v) => v.value === parseInt(matcheUpdate?.assistant_2_ville))} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.delegueVille} value={villeDelegue} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' options={state.delegueVille} value={state.villes?.find((v) => v.value === parseInt(matcheUpdate?.delegue_ville))} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                         </div>

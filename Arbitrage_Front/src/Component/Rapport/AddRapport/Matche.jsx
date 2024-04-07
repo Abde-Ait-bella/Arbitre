@@ -52,7 +52,7 @@ export function Matche(props) {
                 }))
 
                 const centre = transformedOption.filter(item => item.type === 'center')
-                const assistant = transformedOption.filter(item => item.type === 'Assistant')
+                const assistant = transformedOption.filter(item => item.type === 'assistant')
                 console.log('arbitreUser', arbitreUser)
 
                 const arbireAssistant_1 = assistant.map(item => ({
@@ -280,23 +280,30 @@ export function Matche(props) {
         var villeCentre = event?.name === "arbitre_c_id" ? event.ville : selectedSelect.villeCentre
         if (event?.name === "arbitre_c_id") {
             villeCentre = state.villes.find((v) => villeCentre?.id === v.value)
+        }else if(event?.name === "centre_ville"){
+            villeCentre = event
         }
 
         var villeAssistant_1 = event?.name === "arbitre_a1_id" ? event.ville : selectedSelect.villeAssistant_1
         if (event?.name === "arbitre_a1_id") {
             villeAssistant_1 = state.villes.find((v) => villeAssistant_1?.id === v.value)
+        }else if(event?.name === "assistant_1_ville"){
+            villeAssistant_1 = event
         }
 
         var villeAssistant_2 = event?.name === "arbitre_a2_id" ? event.ville : selectedSelect.villeAssistant_2
         if (event?.name === "arbitre_a2_id") {
             villeAssistant_2 = state.villes.find((v) => villeAssistant_2?.id === v.value)
+        }else if(event?.name === "assistant_2_ville"){
+            villeAssistant_2 = event
         }
 
         var villeDelegue = event?.name === "delegue_id" ? event.ville : selectedSelect.villeDelegue
         if (event?.name === "delegue_id") {
             villeDelegue = state.villes.find((v) => villeDelegue?.id === v.value)
+        }else if(event?.name === "delegue_ville"){
+            villeDelegue = event
         }
-
 
 
         setInputValue(prevValues => ({
@@ -304,6 +311,10 @@ export function Matche(props) {
             [name]: value,
             stade_id: stadeClub_1?.value,
             ville_id: stadeClub_1?.ville?.id,
+            centre_ville : villeCentre?.value,
+            assistant_1_ville: villeAssistant_1?.value,
+            assistant_2_ville: villeAssistant_2?.value,
+            delegue_ville: villeDelegue?.value,
         }));
 
 
@@ -324,7 +335,7 @@ export function Matche(props) {
     const sendData = () => {
         const numberKey = Object.keys(inputValue).length;
         console.log('numberKey', numberKey)
-        if (numberKey === 23) {
+        if (numberKey === 27) {
             props.dataMatche(inputValue);
             setIsValideData(prev => !prev)
             setError("")
@@ -557,7 +568,6 @@ export function Matche(props) {
                                                 <label htmlFor="inputEmail4">الحكم</label>
                                                 <div className='my-2'>
                                                     <Select className='text-light' options={state.centre} name={selectedSelect} onChange={handleSelectChange} placeholder="اختر..." />
-                                                    {/* onChange={(a) => setSelectedCentre(a)} */}
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
@@ -583,26 +593,25 @@ export function Matche(props) {
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.centreVille} value={selectedSelect?.villeCentre ? { value: selectedSelect?.villeCentre?.value, label: selectedSelect?.villeCentre?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' options={state.centreVille} value={selectedSelect?.villeCentre ? { value: selectedSelect?.villeCentre?.value, label: selectedSelect?.villeCentre?.label } : null} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.assistant_1_Ville} value={selectedSelect.villeAssistant_1 ? { value: selectedSelect.villeAssistant_1?.value, label: selectedSelect.villeAssistant_1?.label } : null} onChange={handleSelectChange} placeholder="..." />
-                                                    {/* value={selectedAsisstent_1 ? { value: selectedAsisstent_1.ville.id, label: selectedAsisstent_1.ville.nom } : null} */}
+                                                    <Select className='text-light' options={state.assistant_1_Ville} value={selectedSelect.villeAssistant_1 ? { value: selectedSelect.villeAssistant_1?.value, label: selectedSelect.villeAssistant_1?.label } : null} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.assistant_2_Ville} value={selectedSelect.villeAssistant_2 ? { value: selectedSelect.villeAssistant_2?.value, label: selectedSelect.villeAssistant_2?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' options={state.assistant_2_Ville} value={selectedSelect.villeAssistant_2 ? { value: selectedSelect.villeAssistant_2?.value, label: selectedSelect.villeAssistant_2?.label } : null} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                             <div className="form-group col-md-3">
                                                 <label htmlFor="inputEmail4">المدينة</label>
                                                 <div className='my-2'>
-                                                    <Select className='text-light' isDisabled options={state.delegueVille} value={selectedSelect.villeDelegue ? { value: selectedSelect?.villeDelegue?.value, label: selectedSelect?.villeDelegue?.label } : null} onChange={handleSelectChange} placeholder="..." />
+                                                    <Select className='text-light' options={state.delegueVille} value={selectedSelect.villeDelegue ? { value: selectedSelect?.villeDelegue?.value, label: selectedSelect?.villeDelegue?.label } : null} onChange={handleSelectChange} placeholder="..." />
                                                 </div>
                                             </div>
                                         </div>
@@ -668,7 +677,7 @@ export function Matche(props) {
                             <div className="form-group col-md-4">
                                 <label className='text-white' htmlFor="inputEmail4">المدينة</label>
                                 <div className="my-2">
-                                    <CreatableSelect className='text-light' php isDisabled value={selectedSelect?.stadeClub_1?.ville ? { value: selectedSelect?.stadeClub_1?.ville?.id, label: selectedSelect?.stadeClub_1?.ville?.nom } : null} options={state.villes} name={selectedSelect} onChange={handleSelectChange} placeholder="اكتب" />
+                                    <CreatableSelect className='text-light' php isDisabled value={selectedSelect?.stadeClub_1?.ville ? { value: selectedSelect?.stadeClub_1?.ville?.id, label: selectedSelect?.stadeClub_1?.ville?.nom } : null} options={state.villes} name={selectedSelect} onChange={handleSelectChange} placeholder="..." />
                                 </div>
                             </div>
                         </div>
